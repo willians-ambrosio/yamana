@@ -1,0 +1,156 @@
+/*********************************************************************************
+**
+** rip/ri0404rp.i2 - imprime totais
+**
+*********************************************************************************/    
+ 
+    case tt-param.tipo-se:
+        when 1 then assign i-tamanho-linha = 179.
+        when 2 then assign i-tamanho-linha = 181.
+        when 3 then assign i-tamanho-linha = 161.
+        when 4 then assign i-tamanho-linha = 146.
+    end case.        
+        
+    if tt-param.i-tip-relat = 1 /*resumido*/
+       and ( tt-param.tipo-sel = 1 /*bem*/ or tt-param.tipo-sel = 2 /*Documento*/) then
+        assign i-tamanho-linha = 134 /*124*/ .
+        
+    else if tt-param.i-tip-relat = 2 /*detalhado*/
+       and ( tt-param.tipo-sel = 1 /*bem*/) then
+       assign i-tamanho-linha = i-tamanho-linha + 17.
+       
+    else if tt-param.i-tip-relat = 2 /*detalhado*/
+       and ( tt-param.tipo-sel = 2 /*Docto*/) then
+       assign i-tamanho-linha = 162 /*175*/.
+       
+    else if  tt-param.tipo-sel = 3 /*Nr Patrimonio*/ then
+       assign i-tamanho-linha = 164.
+
+    PUT UNFORMATTED SKIP(1) "TOTAIS " FILL("-", i-tamanho-linha) SKIP.
+    
+    if tt-param.i-tip-relat = 1 /*resumido*/
+       and ( tt-param.tipo-sel = 1 /*bem*/ or tt-param.tipo-sel = 2 /*Documento*/) then do:
+    
+            if  tt-param.tipo-se = 1 then
+            DO:
+                DISP t-de-valor-atual-bem       @ de-valor-atual-bem
+                     t-de-vl-parcela            @ de-vl-parcela
+                     t-de-vl-tot-cred           @ de-vl-tot-cred
+                     t-de-vl-tot-recuperado     @ de-vl-tot-recuperado    
+                     t-de-vl-tot-nao-recuperado @ de-vl-tot-nao-recuperado
+                     t-de-vl-tot-baixa          @ de-vl-tot-baixa         
+                     t-de-vl-saldo-cred         @ de-vl-saldo-cred        
+                     t-de-vl-saldo-cp           @ de-vl-saldo-cp          
+                     t-de-vl-saldo-lp           @ de-vl-saldo-lp          
+                     WITH FRAME {1}-resum.
+            END.         
+            else if  tt-param.tipo-se = 2 then         
+            DO:
+                DISP t-de-val-contabil          @ de-val-contabil
+                     t-de-valor-atual-bem       @ de-valor-atual-bem                     
+                     t-de-vl-parcela            @ de-vl-parcela
+                     t-de-vl-tot-cred           @ de-vl-tot-cred
+                     t-de-vl-tot-recuperado     @ de-vl-tot-recuperado    
+                     t-de-vl-tot-nao-recuperado @ de-vl-tot-nao-recuperado
+                     t-de-vl-tot-baixa          @ de-vl-tot-baixa         
+                     t-de-vl-saldo-cred         @ de-vl-saldo-cred        
+                     t-de-vl-saldo-cp           @ de-vl-saldo-cp          
+                     t-de-vl-saldo-lp           @ de-vl-saldo-lp          
+                     WITH FRAME {1}-resum.   
+               IF  tt-param.l-gera-planilha THEN DO:
+                   PUT STREAM s-planilha UNFORMATTED
+                         ";"
+                         t-de-val-contabil           FORMAT "->>>>>,>>9.99" ";"
+                         t-de-valor-atual-bem        FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-parcela             FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-tot-cred            FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-tot-recuperado      FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-tot-nao-recuperado  FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-tot-baixa           FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-saldo-cred          FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-saldo-cp            FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-saldo-lp            FORMAT "->>>>>,>>9.99" ";" skip.
+                END.
+            END.         
+            else
+                DISP t-de-valor-atual-bem       @ de-valor-atual-bem
+                     t-de-vl-parcela            @ de-vl-parcela
+                     t-de-vl-tot-cred           @ de-vl-tot-cred 
+                     t-de-vl-tot-recuperado     @ de-vl-tot-recuperado    
+                     t-de-vl-tot-nao-recuperado @ de-vl-tot-nao-recuperado
+                     t-de-vl-tot-baixa          @ de-vl-tot-baixa         
+                     t-de-vl-saldo-cred         @ de-vl-saldo-cred        
+                     t-de-vl-saldo-cp           @ de-vl-saldo-cp          
+                     t-de-vl-saldo-lp           @ de-vl-saldo-lp          
+                     WITH FRAME {1}-resum.
+    end.    
+       
+    else do: /* Detalhado */
+    
+            if  tt-param.tipo-se = 1 then
+            DO:
+                DISP t-de-valor-atual-bem       @ de-valor-atual-bem
+                     t-de-vl-parcela            @ de-vl-parcela
+                     t-de-vl-tot-cred           @ de-vl-tot-cred
+                     t-de-vl-tot-recuperado     @ de-vl-tot-recuperado    
+                     t-de-vl-tot-nao-recuperado @ de-vl-tot-nao-recuperado
+                     t-de-vl-tot-baixa          @ de-vl-tot-baixa         
+                     t-de-vl-saldo-cred         @ de-vl-saldo-cred        
+                     t-de-vl-saldo-cp           @ de-vl-saldo-cp          
+                     t-de-vl-saldo-lp           @ de-vl-saldo-lp          
+                     WITH FRAME {1}.
+               IF  tt-param.l-gera-planilha THEN DO:
+                   PUT STREAM s-planilha UNFORMATTED
+                         ";;;;;;"
+                         t-de-valor-atual-bem       FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-parcela            FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-tot-cred           FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-tot-recuperado     FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-tot-nao-recuperado FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-tot-baixa          FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-saldo-cred         FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-saldo-cp           FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-saldo-lp           FORMAT "->>>>>,>>9.99" ";" skip.
+               END.      
+            END.         
+            else if  tt-param.tipo-se = 2 then do:
+              put unformatted 
+                         t-de-val-contabil              FORMAT "->>>>>,>>9.99" TO 43 /*56*/
+                         t-de-valor-atual-bem           FORMAT "->>>>>,>>9.99" TO 57 /*70*/
+                         t-de-vl-parcela                FORMAT "->>>>>,>>9.99" TO 71 /*84*/
+                         t-de-vl-tot-cred               FORMAT "->>>>>,>>9.99" TO 85 /*98*/
+                         t-de-vl-tot-recuperado         FORMAT "->>>>>,>>9.99" TO 99  /*112*/ 
+                         t-de-vl-tot-nao-recuperado     FORMAT "->>>>>,>>9.99" TO 113 /*126*/ 
+                         t-de-vl-tot-baixa              FORMAT "->>>>>,>>9.99" TO 127 /*140*/ 
+                         t-de-vl-saldo-cred             FORMAT "->>>>>,>>9.99" TO 141 /*154*/ 
+                         t-de-vl-saldo-cp               FORMAT "->>>>>,>>9.99" TO 155 /*168*/ 
+                         t-de-vl-saldo-lp               FORMAT "->>>>>,>>9.99" TO 169 /*182*/.           
+               IF  tt-param.l-gera-planilha THEN DO:
+                   PUT STREAM s-planilha UNFORMATTED
+                         ";;;"
+                         t-de-val-contabil              FORMAT "->>>>>,>>9.99" ";"
+                         t-de-valor-atual-bem           FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-parcela                FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-tot-cred               FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-tot-recuperado         FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-tot-nao-recuperado     FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-tot-baixa              FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-saldo-cred             FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-saldo-cp               FORMAT "->>>>>,>>9.99" ";"
+                         t-de-vl-saldo-lp               FORMAT "->>>>>,>>9.99" ";" skip.
+               END.
+            end.                
+            else
+                DISP t-de-valor-atual-bem       @ de-valor-atual-bem
+                     t-de-vl-parcela            @ de-vl-parcela
+                     t-de-vl-tot-cred           @ de-vl-tot-cred 
+                     t-de-vl-tot-recuperado     @ de-vl-tot-recuperado    
+                     t-de-vl-tot-nao-recuperado @ de-vl-tot-nao-recuperado
+                     t-de-vl-tot-baixa          @ de-vl-tot-baixa         
+                     t-de-vl-saldo-cred         @ de-vl-saldo-cred        
+                     t-de-vl-saldo-cp           @ de-vl-saldo-cp          
+                     t-de-vl-saldo-lp           @ de-vl-saldo-lp          
+                     WITH FRAME {1}.
+    end.             
+
+/* rip/ri0404.i2 */

@@ -1,0 +1,35 @@
+/******************************************************************************
+***
+*** esp/esap0749rp.i2 - Variaveis.
+***
+******************************************************************************/
+
+def var i-tipo                  as integer   format "99" init "".
+def var l-display               as logical   format "yes/no" init "no".
+def var i-origem                as integer   format "9" init "".
+def var c-conta                 as character format "x(20)" init "".
+def var c-inventario            as character format "x(20)" init "".
+def var c-multiplanta           as character format "x(20)" init "".
+def var c-outros                as character format "x(20)" init "".
+def var c-todos                 as character format "x(20)" init "".
+def var c-rac                   as character format "x(20)" init "".
+def var de-valor-mov-tt-001     like mov-ap.valor-mov no-undo.
+def var de-tot-geral            as decimal   format ">>>,>>>,>>>,>>9.99" label "Total Geral" no-undo.
+def var de-tot-dia              as decimal   format ">>>,>>>,>>>,>>9.99" label "Total dia" no-undo.
+def var h-acomp                 as handle no-undo.
+def var v-cod-destino-impres    as char   no-undo.
+def var v-num-reg-lidos         as int    no-undo.
+def var v-num-point             as int    no-undo.
+def var v-num-set               as int    no-undo.
+def var v-num-linha             as int    no-undo.
+def var c-tot-ger               as char    format "x(17)"    no-undo.
+def var c-total                 as char    format "x(17)"    no-undo.
+def var c-sel                   as char    format "x(30)"    no-undo.
+def var c-par                   as char    format "x(30)"    no-undo.
+def var c-imp                   as char    format "x(30)"    no-undo.
+def var c-destino               as char    format "x(30)"    no-undo.
+def var c-cla                   as char    format "x(30)"    no-undo.
+def var c-cla-2                 as char    format "x(30)"    no-undo.
+def var de-valor-saldo          as decimal format ">>,>>>,>>>,>>9.99" init "".
+def var da-data-trans           like mov-ap.dt-transacao     no-undo.
+

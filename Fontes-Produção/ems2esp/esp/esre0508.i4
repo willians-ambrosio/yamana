@@ -1,0 +1,94 @@
+/* Temporary Table Definitions ---                                      */
+    /************************************************************ 
+     *  Pr‚-Processador para - 2.03
+     ************************************************************/      
+     &if defined (bf_mat_versao_ems)  &then
+        &if {&bf_mat_versao_ems} >= 2.03 &then do:
+            define temp-table tt-param no-undo
+                field destino            as integer
+                field arquivo            as char
+                field usuario            as char format "x(12)"
+                field data-exec          as date
+                field hora-exec          as integer
+                field classifica         as integer
+                field desc-classifica    as char format "x(40)"
+                field c-ini-estabel      as char
+                field c-fim-estabel      as char
+                field c-ini-nro-docto    as char
+                field c-fim-nro-docto    as char
+                field c-ini-serie-docto  as char
+                field c-fim-serie-docto  as char
+                field c-ini-nat-operacao as char
+                field c-fim-nat-operacao as char
+                field c-ini-it-codigo    as char
+                field c-fim-it-codigo    as char
+                field i-ini-ge-codigo    as int
+                field i-fim-ge-codigo    as int                
+                field nr-ato-conce       as char
+                field nr-ato-conce-fim   as char
+                field i-ini-cod-emitente as integer 
+                field i-fim-cod-emitente as integer 
+                field da-ini-per         as date
+                field da-fim-per         as date
+                field l-sai-ben          as logical
+                field l-ent-ben          as logical
+                field l-transf           as logical
+                field l-sai-cons         as logical
+                field l-ent-cons         as logical
+                field l-preco-medio      as logical
+                field l-saldo-zerado     as logical
+                field l-lista-narra      as logical
+                field l-drawback         as logical
+                field l-ent-fut          as logical
+                field tp-emis-relat      as int
+                field param-impr         as log.
+
+        end.   
+        &endif
+        &else   define temp-table tt-param no-undo
+                field destino            as integer
+                field arquivo            as char
+                field usuario            as char format "x(12)"
+                field data-exec          as date
+                field hora-exec          as integer
+                field classifica         as integer
+                field desc-classifica    as char format "x(40)"
+                field c-ini-nro-docto    as char
+                field c-fim-nro-docto    as char
+                field c-ini-serie-docto  as char
+                field c-fim-serie-docto  as char
+                field c-ini-nat-operacao as char
+                field c-fim-nat-operacao as char
+                field c-ini-it-codigo    as char
+                field c-fim-it-codigo    as char
+                field i-ini-ge-codigo    as int
+                field i-fim-ge-codigo    as int                           
+                field i-ini-cod-emitente as integer 
+                field i-fim-cod-emitente as integer 
+                field da-ini-per         as date
+                field da-fim-per         as date
+                field l-sai-ben          as logical
+                field l-ent-ben          as logical
+                field l-transf           as logical
+                field l-sai-cons         as logical
+                field l-ent-cons         as logical
+                field l-preco-medio      as logical
+                field l-saldo-zerado     as logical
+                field l-lista-narra      as logical
+                field tp-emis-relat      as int
+                field param-impr         as log.
+        &endif     
+
+
+define temp-table tt-digita no-undo
+    field i-seq            as   integer
+    field tipo-digita      as   integer
+    field nat-operacao     like natur-oper.nat-operacao
+    field denominacao      like natur-oper.denominacao
+    field tipo             like natur-oper.tipo
+    field cod-estabel      like estabelec.cod-estabel
+    field nome             like estabelec.nome
+    index id is primary unique
+        i-seq
+        nat-operacao
+        cod-estabel.

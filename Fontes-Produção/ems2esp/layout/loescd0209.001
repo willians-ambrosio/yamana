@@ -1,0 +1,52 @@
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                             Layout do Arquivo de Importaá∆o de Itens                                             |
+|----------------------------------------------------------------------------------------------------------------------------------|
+|                                                     Nome do Arquivo: A ser informado                                             |
+|                                                             Formato: Texto                                                       |
+|                                                 Tamanho do Registro: 979                                                         |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Ordem |                         Descriá∆o                       | Tamanho | In°cio | TÇrmino | Conte£do | Decimais | Obrigat¢rio |
+|-------+---------------------------------------------------------+---------+--------+---------+----------+----------+-------------|
+|    1  | Tipo de Transaá∆o                                       |     1   |     1  |     1   | Inteiro  |          |     Sim     |
+|       | Onde    1 - Inclus∆o                                    |         |        |         |          |          |             |
+|       |         2 - Modifiá∆o                                   |         |        |         |          |          |             |
+|       |         3 - Eliminaá∆o                                  |         |        |         |          |          |             |
+|    2  | C¢digo do Item                                          |    16   |     2  |    17   | Caracter |          |     Sim     |
+|    3  | Descriá∆o                                               |    60   |    18  |    77   | Caracter |          |     Sim     |
+|    4  | C¢digo do Grupo de Estoque                              |     2   |    78  |    79   | Inteiro  |          |     Sim     |
+|    5  | C¢digo da Fam°lia de Material                           |     8   |    80  |    87   | Caracter |          |     Sim     |
+|    6  | Fam°lia Comercial                                       |     8   |    88  |    95   | Caracter |          |     N∆o     |
+|    7  | Unidade de Medida                                       |     2   |    96  |    97   | Caracter |          |     Sim     |
+|    8  | Estabelecimento Padr∆o                                  |     3   |    98  |   100   | Caracter |          |     Sim     |
+|    9  | Situaá∆o                                                |     2   |   101  |   102   | Inteiro  |          |     Sim     |
+|       | Onde    1 - Ativo                                       |         |        |         |          |          |             |
+|       |         2 - Obsoleto Ordens Autom†ticas                 |         |        |         |          |          |             |
+|       |         3 - Obsoleto Todas as Ordens                    |         |        |         |          |          |             |
+|       |         4 - Totalmente Obsoleto                         |         |        |         |          |          |             |
+|   10  | Data de Implantaá∆o                                     |     8   |   103  |   110   | Data     |          |     Sim     |
+|       | Formato mmddaaaa                                        |         |        |         |          |          |             |
+|       | Onde    mm   = Màs                                      |         |        |         |          |          |             |
+|       |         dd   = Dia                                      |         |        |         |          |          |             |
+|       |         aaaa = Ano                                      |         |        |         |          |          |             |
+|   11  | Data de Liberaá∆o                                       |     8   |   111  |   118   | Data     |          |     Sim     |
+|       | Formato mmddaaaa                                        |         |        |         |          |          |             |
+|       | Onde    mm   = Màs                                      |         |        |         |          |          |             |
+|       |         dd   = Dia                                      |         |        |         |          |          |             |
+|       |         aaaa = Ano                                      |         |        |         |          |          |             |
+|   12  | Folha de Especificaá∆o                                  |     8   |   119  |   126   | Caracter |          |     N∆o     |
+|   13  | Tipo Controle                                           |     2   |   127  |   128   | Inteiro  |          |     Sim     |
+|       | Onde    1 - F°sico                                      |         |        |         |          |          |             |
+|       |         2 - Total                                       |         |        |         |          |          |             |
+|       |         3 - Consignado                                  |         |        |         |          |          |             |
+|       |         4 - DÇbito Direto                               |         |        |         |          |          |             |
+|   14  | Aplicaá∆o (1-Serviáo 2-Material)                        |     2   |   129  |   130   | Inteiro  |          |     Sim     |
+|       | Onde    1 - Serviáo                                     |         |        |         |          |          |             |
+|       |         2 - Material                                    |         |        |         |          |          |             |
+|   15  | Lote Econìmico                                          |    13   |   131  |   143   | Decimal  |     4    |     N∆o     |
+|   16  | C¢digo Complementar                                     |    20   |   144  |   163   | Caracter |          |     N∆o     |
+|   17  | Informaá‰es Complementares                              |    16   |   164  |   179   | Caracter |          |     N∆o     |
+|   18  | Imagem                                                  |    30   |   180  |   209   | Caracter |          |     N∆o     |
+|   19  | Narrativa                                               |  2000   |   210  |  2209   | Caracter |          |     N∆o     |
++----------------------------------------------------------------------------------------------------------------------------------+
+

@@ -1,0 +1,26 @@
+/*******************************************************************************
+**
+**    CE0340.I5 - Assign das variaveis utilizadas nos algoritmos de ressuprimento
+**
+******************************************************************************/
+
+assign c-it-codigo-aux     = item.it-codigo
+       c-cod-estabel-aux   = estab-mat.cod-estabel-prin
+       de-consumo-prev-aux = item.consumo-prev
+       i-tipo-est-seg-aux  = item.tipo-est-seg
+       de-quant-segur-aux  = item.quant-segur
+       i-tempo-segur-aux   = item.tempo-segur
+       i-res-int-comp-aux  = item.res-int-comp
+       i-res-for-comp-aux  = item.res-for-comp
+       i-res-cq-comp-aux   = item.res-cq-comp
+       de-pto-enc-aux      = item-mat.ponto-encomenda
+       de-fator-refugo-aux = item.fator-refugo
+       de-quant-perda-aux  = item.quant-perda
+       de-lote-economi-aux = item.lote-economi
+       de-lote-minimo-aux  = item.lote-minimo
+       de-lote-multipl-aux = item.lote-multipl
+       i-cd-freq-aux       = item-mat.cd-freq
+       da-ult-ressup-aux   = item-mat.data-ult-ressup
+       de-lote-max-aux     = item-mat.lote-per-max.
+       
+/* Fim da Include */       

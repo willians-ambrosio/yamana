@@ -1,0 +1,45 @@
+/******************************************************************************
+***
+*** esp/esap0749rp.i1 - Temp-Tables.
+***
+******************************************************************************/
+
+define temp-table tt-param no-undo
+    field destino               as integer
+    field arquivo               as char format "x(35)"
+    field usuario               as char format "x(12)"
+    field data-exec             as date
+    field hora-exec             as integer
+    field classifica            as integer
+    field desc-classifica       as char format "x(40)"
+    field cod-estabel-ini       as CHARACTER FORMAT "X(3)"
+    field cod-estabel-fim       as CHARACTER FORMAT "X(3)"
+    field cod-esp-ini           as CHARACTER FORMAT "!!" 
+    field cod-esp-fim           as CHARACTER FORMAT "!!" 
+    field cod-emit-ini          as INTEGER   FORMAT ">>>>>>>>9"
+    field cod-emit-fim          as INTEGER   FORMAT ">>>>>>>>9"
+    field dt-trans-ini          as DATE      FORMAT "99/99/9999"
+    field dt-trans-fim          as DATE      FORMAT "99/99/9999"
+    field dt-venci-ini          as DATE      FORMAT "99/99/9999"
+    field dt-venci-fim          as DATE      FORMAT "99/99/9999"
+    field l-tit-subs            as log     
+    field l-nota-db-cr          as log
+    field c-origem              as char      
+    field ep-codigo             as char 
+    field imp-par               as logical
+    FIELD referencia-ini        LIKE mov-ap.referencia
+    FIELD referencia-fim        LIKE mov-ap.referencia
+    field dt-maq-ini            as date FORMAT "99/99/9999"
+    field dt-maq-fim            as date FORMAT "99/99/9999"
+    field tg-excel              as log
+    field c-arquivo-csv         as char format "x(50)".
+
+def temp-table tt-raw-digita no-undo
+   field raw-digita      as raw.
+
+def temp-table tt-mov-ap no-undo like movto_tit_ap
+    field cod_ser_docto     like tit_ap.cod_ser_docto
+    field cod_parcela       like tit_ap.cod_parcela
+    field dat_vencto_tit_ap like tit_ap.dat_vencto_tit_ap
+    field nom_abrev         like ems5.fornecedor.nom_abrev
+    field dat_emis_docto    like tit_ap.dat_emis_docto.

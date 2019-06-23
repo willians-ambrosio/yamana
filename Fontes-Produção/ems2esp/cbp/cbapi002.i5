@@ -1,0 +1,13 @@
+/*************************************************************************
+* Include : cdp/cbapi002.i5 tt_erros_modulo
+*  Autor  : DATASUL S.A.
+**************************************************************************/
+
+define temp-table tt_erros_modulo no-undo
+       field identifi-msg                   as int
+       field num-sequencia-erro             as int  format "9999"
+       field cod-erro                       as int  format "99999"
+       field des-erro                       as char format "x(120)"
+       field cod-processo                   as int  format ">>>>>9".
+       
+/* cbapi002.i5 */     

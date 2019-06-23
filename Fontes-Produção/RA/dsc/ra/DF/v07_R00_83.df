@@ -1,0 +1,12 @@
+UPDATE FIELD  "item-cod-localiz" OF "nfe-it-nota-fisc-rec"
+  FORMAT "x(20)"
+
+.
+
+PSC
+
+cpstream=ibm850
+
+.
+
+0001234567

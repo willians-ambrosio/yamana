@@ -1,0 +1,141 @@
+/**********************************************************************
+*  in0518.i5
+*  Cabe‡alho
+***********************************************************************/
+
+procedure INIC-FORMS.
+
+  /****************************************************************************
+   **  Identico: I-RPCAB.I - Form do Cabe‡alho PadrÆo e Rodap‚ (ex-CD9500.F)
+   **              {&STREAM} - indica o nome da stream (opcional)
+   ****************************************************************************/
+
+  /* Rodape */
+  c-rodape = "DATASUL - " + c-sistema + " - " + c-prg-obj + " - V:" + c-prg-vrs.
+  c-rodape = fill("-", 233 - length(c-rodape)) + c-rodape.
+  form header
+       c-rodape format 'x(233)'
+       with stream-io width 233 no-labels no-box page-bottom frame f-rodape.
+
+  /* Cabecalho */
+  &IF "{&LANGUAGE-CODE}" = "ING" &THEN 
+     &IF  "{&STREAM}" = "" &THEN
+        form header
+            fill("-", 233) format "x(233)" skip
+            c-empresa c-titulo-relat at 50
+            "Page:" at 224 page-number  at 229 format ">>>>9" skip
+            fill("-", 213) format "x(211)" today format "99/99/9999"
+            "-" string(time, "HH:MM:SS") skip(1)
+            with stream-io width 233 no-labels no-box page-top frame f-cabec.
+
+        form header
+            fill("-", 233) format "x(233)" skip
+            c-empresa c-titulo-relat at 50
+            "Page:" at 224 page-number  at 229 format ">>>>9" skip
+            "Period:" i-numper-x at 09 "-"
+            da-iniper-x at 14 "to" da-fimper-x
+            fill("-", 175) format "x(173)" today format "99/99/9999"
+            "-" string(time, "HH:MM:SS") skip(1)
+            with stream-io width 233 no-labels no-box page-top frame f-cabper.
+     &ELSE
+        form header
+            fill("-", 233) format "x(233)" skip
+            c-empresa c-titulo-relat at 50
+            "Page:" at 224 page-number({&STREAM})  at 229 format ">>>>9" skip
+            fill("-", 213) format "x(211)" today format "99/99/9999"
+            "-" string(time, "HH:MM:SS") skip(1)
+            with stream-io width 233 no-labels no-box page-top frame f-cabec.
+
+        form header
+            fill("-", 233) format "x(233)" skip
+            c-empresa c-titulo-relat at 50
+            "Page:" at 224 page-number({&STREAM})  at 229 format ">>>>9" skip
+            "Period:" i-numper-x at 10 "-"
+            da-iniper-x at 14 "to" da-fimper-x
+            fill("-", 175) format "x(173)" today format "99/99/9999"
+            "-" string(time, "HH:MM:SS") skip(1)
+            with stream-io width 233 no-labels no-box page-top frame f-cabper.
+     &ENDIF
+
+  &ELSEIF "{&LANGUAGE-CODE}" = "ESP" &THEN
+     &IF  "{&STREAM}" = "" &THEN
+        form header
+            fill("-", 233) format "x(233)" skip
+            c-empresa c-titulo-relat at 50
+            "P gina:" at 222 page-number  at 227 format ">>>>9" skip
+            fill("-", 213) format "x(211)" today format "99/99/9999"
+            "-" string(time, "HH:MM:SS") skip(1)
+            with stream-io width 233 no-labels no-box page-top frame f-cabec.
+
+        form header
+            fill("-", 233) format "x(233)" skip
+            c-empresa c-titulo-relat at 50
+            "P gina:" at 222 page-number  at 227 format ">>>>9" skip
+            "Periodo:" i-numper-x at 10 "-"
+            da-iniper-x at 15 "hasta" da-fimper-x
+            fill("-", 167) format "x(165)" today format "99/99/9999"
+            "-" string(time, "HH:MM:SS") skip(1)
+            with stream-io width 233 no-labels no-box page-top frame f-cabper.
+     &ELSE
+        form header
+            fill("-", 233) format "x(233)" skip
+            c-empresa c-titulo-relat at 50
+            "P gina:" at 222 page-number({&STREAM})  at 227 format ">>>>9" skip
+            fill("-", 213) format "x(211)" today format "99/99/9999"
+            "-" string(time, "HH:MM:SS") skip(1)
+            with stream-io width 233 no-labels no-box page-top frame f-cabec.
+
+        form header
+            fill("-", 233) format "x(233)" skip
+            c-empresa c-titulo-relat at 50
+            "P gina:" at 222 page-number({&STREAM})  at 227 format ">>>>9" skip
+            "Periodo:" i-numper-x at 10 "-"
+            da-iniper-x at 15 "hasta" da-fimper-x
+            fill("-", 167) format "x(165)" today format "99/99/9999"
+            "-" string(time, "HH:MM:SS") skip(1)
+            with stream-io width 233 no-labels no-box page-top frame f-cabper.
+     &ENDIF
+
+  &ELSE
+     &IF "{&STREAM}" = "" &THEN
+        form header
+            fill("-", 233) format "x(233)" skip
+            c-empresa c-titulo-relat at 50
+            "Folha:"  at 223 page-number  at 229 format ">>>>9" skip
+            fill("-", 213) format "x(211)" today format "99/99/9999"
+            "-" string(time, "HH:MM:SS") skip(1)
+            with stream-io width 233 no-labels no-box page-top frame f-cabec.
+
+        form header
+            fill("-", 233) format "x(233)" skip
+            c-empresa c-titulo-relat at 50
+            "Folha:" at 223 page-number  at 229 format ">>>>9" skip
+            "Periodo:" i-numper-x at 10 "-"
+            da-iniper-x at 15 "a" da-fimper-x
+            fill("-", 163) format "x(161)" today format "99/99/9999"
+            "-" string(time, "HH:MM:SS") skip(1)
+            with stream-io width 233 no-labels no-box page-top frame f-cabper.
+     &ELSE
+        form header
+            fill("-", 233) format "x(233)" skip
+            c-empresa c-titulo-relat at 50
+            "Folha:" at 223 page-number({&STREAM})  at 229 format ">>>>9" skip
+            fill("-", 213) format "x(211)" today format "99/99/9999"
+            "-" string(time, "HH:MM:SS") skip(1)
+            with stream-io width 233 no-labels no-box page-top frame f-cabec.
+
+        form header
+            fill("-", 233) format "x(233)" skip
+            c-empresa c-titulo-relat at 50
+            "Folha:" at 223 page-number({&STREAM})  at 229 format ">>>>9" skip
+            "Periodo:" i-numper-x at 10 "-"
+            da-iniper-x at 15 "a" da-fimper-x
+            fill("-", 163) format "x(161)" today format "99/99/9999"
+            "-" string(time, "HH:MM:SS") skip(1)
+            with stream-io width 233 no-labels no-box page-top frame f-cabper.
+     &ENDIF
+  &ENDIF
+
+end procedure.
+
+/* Fim in0518.i5 *************************/

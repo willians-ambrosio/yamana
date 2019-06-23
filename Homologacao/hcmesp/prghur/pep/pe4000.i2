@@ -1,0 +1,354 @@
+ /***** include - pe4000.i2 ****************************************/
+
+assign i-dif-hrs-pag     = 0
+       v_log_movto_extra = yes
+       v_cod_tip_dia_aux = substr(bco_hrs_compens_func.cod_livre_1,1,2).
+
+find efp_tip_dias_sind where
+     efp_tip_dias_sind.cdn_empresa   = bfunc-ponto.cdn_empresa and
+     efp_tip_dias_sind.cdn_sindicato = bfunc-ponto.cdn_sindicato and
+     efp_tip_dias_sind.cod_tip_dia   = v_cod_tip_dia_aux no-lock no-error.
+if not available efp_tip_dias_sind then do:
+   find agrup_tip_dia_sind where
+        agrup_tip_dia_sind.cdn_empresa       = bfunc-ponto.cdn_empresa and
+        agrup_tip_dia_sind.cdn_sindicato     = bfunc-ponto.cdn_sindicato and
+        agrup_tip_dia_sind.cod_tip_dia_agrup = v_cod_tip_dia_aux no-lock no-error.
+   if not available agrup_tip_dia_sind then do:
+      assign v_num_erro = v_num_erro + 1.
+      run utp/ut-msgs.p (input "msg",input 16602,
+                         input v_cod_tip_dia_aux + "~~" + string(bfunc-ponto.cdn_sindicato)).
+      create tt_erro.
+      assign tt_erro.num_erro = v_num_erro
+             tt_erro.des_erro = trim(return-value)
+             tt_erro.log_erro = yes.
+      next.
+   end.
+   find efp_tip_dias_sind where
+        efp_tip_dias_sind.cdn_empresa   = bfunc-ponto.cdn_empresa and
+        efp_tip_dias_sind.cdn_sindicato = bfunc-ponto.cdn_sindicato and
+        efp_tip_dias_sind.cod_tip_dia   = agrup_tip_dia_sind.cod_tip_dia no-lock no-error.
+   if not available efp_tip_dias_sind then do:
+      assign v_num_erro = v_num_erro + 1.
+      run utp/ut-msgs.p (input "msg",input 16602,
+                         input agrup_tip_dia_sind.cod_tip_dia + "~~" + string(bfunc-ponto.cdn_sindicato)).
+      create tt_erro.
+      assign tt_erro.num_erro = v_num_erro
+             tt_erro.des_erro = trim(return-value)
+             tt_erro.log_erro = yes.
+      next.
+   end.
+   assign v_cod_tip_dia_aux = agrup_tip_dia_sind.cod_tip_dia.
+end.
+
+if can-find(first funcionario of bfunc-ponto 
+            where funcionario.dat_desligto <> ? 
+            and   funcionario.dat_desligto  >= v_dat_term_compens ) then do:
+            assign i-tratam = 5.
+             
+   if not can-find(first efp_hora_extra_tip_dia_sind no-lock where
+               efp_hora_extra_tip_dia_sind.cdn_empresa     = bfunc-ponto.cdn_empresa
+               and efp_hora_extra_tip_dia_sind.cdn_sindicato   = bfunc-ponto.cdn_sindicato
+               and efp_hora_extra_tip_dia_sind.idi_tratam_hora = i-tratam
+               and efp_hora_extra_tip_dia_sind.cod_tip_dia     = v_cod_tip_dia_aux) then do:
+               assign i-tratam = 4.
+               
+           if not can-find(first efp_hora_extra_tip_dia_sind no-lock where
+                       efp_hora_extra_tip_dia_sind.cdn_empresa     = bfunc-ponto.cdn_empresa
+                       and efp_hora_extra_tip_dia_sind.cdn_sindicato   = bfunc-ponto.cdn_sindicato
+                       and efp_hora_extra_tip_dia_sind.idi_tratam_hora = i-tratam
+                       and efp_hora_extra_tip_dia_sind.cod_tip_dia     = v_cod_tip_dia_aux) then
+                       assign i-tratam = 1.                                                           
+   end.
+end.            
+else do:
+        assign i-tratam = 4.
+        if can-find(first efp_hora_extra_tip_dia_sind no-lock where
+                          efp_hora_extra_tip_dia_sind.cdn_empresa     = bfunc-ponto.cdn_empresa
+                      and efp_hora_extra_tip_dia_sind.cdn_sindicato   = bfunc-ponto.cdn_sindicato
+                      and efp_hora_extra_tip_dia_sind.idi_tratam_hora = i-tratam
+                      and efp_hora_extra_tip_dia_sind.cod_tip_dia     = v_cod_tip_dia_aux) = no then do:
+           assign i-tratam = 1.
+        end.
+        else.
+end.
+/******** Chamada EPC - Jeziel **********/
+for each tt-epc exclusive-lock
+     where tt-epc.cod-event = "EFP_SIND":
+    delete tt-epc. 
+end.
+create tt-epc.
+&if "{&cd_rel_hr}" >= "2.11" &then
+assign tt-epc.cod-event = "EFP_SIND"
+       tt-epc.val-parameter = string(bfunc-ponto.cdn_empresa) + "|" +
+                              string(bfunc-ponto.cdn_estab) + "|" +
+                              string(bfunc-ponto.cdn_funcionario).
+&else
+assign tt-epc.cod-event = "EFP_SIND"
+       tt-epc.val-parameter = string(bfunc-ponto.cdn_empresa,"999") +
+                              string(bfunc-ponto.cdn_estab,"999") +
+                              string(bfunc-ponto.cdn_funcionario,"99999999").
+&endif 
+
+                              
+{include/i-epc201.i "EFP_SIND"}
+
+if  return-value = 'EVT-EXTRA' then do:
+    ASSIGN i-tratam = 1.
+end.
+
+find first efp_hora_extra_tip_dia_sind where
+           efp_hora_extra_tip_dia_sind.cdn_empresa     = bfunc-ponto.cdn_empresa
+       and efp_hora_extra_tip_dia_sind.cdn_sindicato   = bfunc-ponto.cdn_sindicato
+       and efp_hora_extra_tip_dia_sind.idi_tratam_hora = i-tratam
+       and efp_hora_extra_tip_dia_sind.cod_tip_dia     = v_cod_tip_dia_aux no-lock no-error.
+
+if not available efp_hora_extra_tip_dia_sind then do:
+    assign v_num_erro = v_num_erro + 1.
+    {utp/ut-liter.i Evento_n∆o_cadastrado_para_Tipo_Dia mpe}
+    create tt_erro.
+    assign tt_erro.num_erro = v_num_erro
+           tt_erro.des_erro = trim(return-value) + " " + v_cod_tip_dia_aux
+           tt_erro.log_erro = yes.
+    next.
+end.
+
+
+if efp_hora_extra_tip_dia_sind.idi_integr_period_mpe = 1 then do: /** tipo de dia hora extra por dia **/
+   assign v_ind_int = 1.
+   find first tt_hora_extra where
+              tt_hora_extra.cod_tip_dia = v_cod_tip_dia_aux no-error.
+   if not avail tt_hora_extra then do:
+      create tt_hora_extra.
+      assign tt_hora_extra.cod_tip_dia = v_cod_tip_dia_aux.
+   end.
+   else
+      assign tt_hora_extra.qtd_hrs_extra = 0.
+   for each efp_par_marcac_ptoelet of bfunc-ponto where
+       efp_par_marcac_ptoelet.dat_proces_mpe       = bco_hrs_compens_func.dat_atualiz_bco_hora and
+       efp_par_marcac_ptoelet.idi_tip_ocor_ptoelet = 1 and
+       efp_par_marcac_ptoelet.num_horar_inic_proces_mpe < bco_hrs_compens_func.num_horar_inic_mpe no-lock:
+       assign tt_hora_extra.qtd_hrs_extra = tt_hora_extra.qtd_hrs_extra + efp_par_marcac_ptoelet.qti_hrs_marcac_ptoelet.
+   end.    
+end.
+else do:
+   if efp_hora_extra_tip_dia_sind.idi_integr_period_mpe = 2 then do:
+      assign v_ind_int = 2.
+      find first tt_hora_extra where
+                 tt_hora_extra.cod_tip_dia = v_cod_tip_dia_aux no-error.
+      if not avail tt_hora_extra then do:
+         create tt_hora_extra.
+         assign tt_hora_extra.cod_tip_dia   = v_cod_tip_dia_aux
+                tt_hora_extra.qtd_hrs_extra = 0.
+         assign v_dat_ini_extra           = bcontrole-catponto.dat_inic_period_apurac_pto_mes.
+      end.
+   end.
+   else do:
+      if efp_hora_extra_tip_dia_sind.idi_integr_period_mpe = 3 then do:
+         assign v_ind_int = 3.
+         find first tt_hora_extra where
+                    tt_hora_extra.cod_tip_dia = v_cod_tip_dia_aux no-error.
+         if not avail tt_hora_extra then do:
+            create tt_hora_extra.
+            assign tt_hora_extra.cod_tip_dia   = v_cod_tip_dia_aux
+                   tt_hora_extra.qtd_hrs_extra = 0
+                   tt_hora_extra.num_mes_extra = month(bco_hrs_compens_func.dat_atualiz_bco_hora).
+            if bcontrole-catponto.dat_inic_period_apurac_pto_mes < dat-ini-mes and
+               month(bco_hrs_compens_func.dat_atualiz_bco_hora) = month(bcontrole-catponto.dat_inic_period_apurac_pto_mes) then do:
+               assign v_dat_ini_extra = date(month(bcontrole-catponto.dat_inic_period_apurac_pto_mes),01,year(bcontrole-catponto.dat_inic_period_apurac_pto_mes)).
+               for each bfunc-bcohrs of bfunc-ponto no-lock where
+                        bfunc-bcohrs.cdn_tip_compcao_hrs       = 1 and
+                        bfunc-bcohrs.dat_atualiz_bco_hora     >= v_dat_ini_extra and
+                        bfunc-bcohrs.dat_atualiz_bco_hora     < bcontrole-catponto.dat_inic_period_apurac_pto_mes and
+                        bfunc-bcohrs.idi_hrs_posit             = 5 and
+                        bfunc-bcohrs.idi_tratam_lancto_bco_hrs = 1 and
+                        substr(bfunc-bcohrs.cod_livre_1,1,2)   = v_cod_tip_dia_aux:
+                  assign tt_hora_extra.qtd_hrs_extra = tt_hora_extra.qtd_hrs_extra + bfunc-bcohrs.qti_hrs_marcac_ptoelet_orig.
+               end.
+            end.
+            else
+               assign v_dat_ini_extra = dat-ini-mes.
+         end.
+         else do:
+            if month(bco_hrs_compens_func.dat_atualiz_bco_hora) <> tt_hora_extra.num_mes_extra then
+               assign tt_hora_extra.qtd_hrs_extra = 0
+                      tt_hora_extra.num_mes_extra = month(bco_hrs_compens_func.dat_atualiz_bco_hora).
+         end.
+      end.
+      else do:
+         assign v_ind_int = 4.
+         find first tt_hora_extra where
+                    tt_hora_extra.cod_tip_dia = v_cod_tip_dia_aux no-error.
+         if not avail tt_hora_extra then do:
+            create tt_hora_extra.
+            assign tt_hora_extra.cod_tip_dia   = v_cod_tip_dia_aux
+                   tt_hora_extra.qtd_hrs_extra = 0.
+            find last tt-extra-semana no-lock where
+                      tt-extra-semana.dat_ini <= bco_hrs_compens_func.dat_atualiz_bco_hora no-error.
+            if avail tt-extra-semana then do:
+               assign v_dat_ini_extra = tt-extra-semana.dat_ini
+                      v_num_sem       = tt-extra-semana.num_sem.
+               if tt-extra-semana.dat_ini < bco_hrs_compens_func.dat_atualiz_bco_hora then do:
+                  for each bfunc-bcohrs of bfunc-ponto no-lock where
+                           bfunc-bcohrs.cdn_tip_compcao_hrs       = 1 and
+                           bfunc-bcohrs.dat_atualiz_bco_hora     >= v_dat_ini_extra and
+                           bfunc-bcohrs.dat_atualiz_bco_hora     <  bco_hrs_compens_func.dat_atualiz_bco_hora and
+                           bfunc-bcohrs.idi_hrs_posit             = 5 and
+                           bfunc-bcohrs.idi_tratam_lancto_bco_hrs = 1 and
+                           substr(bfunc-bcohrs.cod_livre_1,1,2)   = v_cod_tip_dia_aux:
+                     assign tt_hora_extra.qtd_hrs_extra = tt_hora_extra.qtd_hrs_extra + bfunc-bcohrs.qti_hrs_marcac_ptoelet_orig.
+                  end.
+               end.
+            end.
+            else
+               assign v_dat_ini_extra = bcontrole-catponto.dat_inic_period_apurac_pto_mes.
+         end.
+         else do:
+            find last tt-extra-semana no-lock where
+                      tt-extra-semana.dat_ini <= bco_hrs_compens_func.dat_atualiz_bco_hora no-error.
+            if avail tt-extra-semana and
+                     tt-extra-semana.num_sem <> v_num_sem then do:
+               assign tt_hora_extra.qtd_hrs_extra = 0
+                      v_num_sem                   = tt-extra-semana.num_sem.
+            end.
+         end.
+      end.
+   end.
+   for each efp_par_marcac_ptoelet of bfunc-ponto where  /*** tipo de dia hora extra por periodo ***/
+            efp_par_marcac_ptoelet.dat_proces_mpe >= v_dat_ini_extra and
+            efp_par_marcac_ptoelet.dat_proces_mpe <= bco_hrs_compens_func.dat_atualiz_bco_hora /*bcontrole-catponto.dat_term_period_apurac_pto_mes */ and 
+            efp_par_marcac_ptoelet.idi_tip_ocor_ptoelet = 1 and
+            efp_par_marcac_ptoelet.cod_tip_dia          = v_cod_tip_dia_aux no-lock:
+       if efp_par_marcac_ptoelet.dat_proces_mpe = bco_hrs_compens_func.dat_atualiz_bco_hora and
+          efp_par_marcac_ptoelet.num_horar_inic_proces_mpe > bco_hrs_compens_func.num_horar_inic_mpe then
+          next.
+          
+       if can-find(tt_hex_ja_lida where
+                   tt_hex_ja_lida.num_dia  = efp_par_marcac_ptoelet.dat_proces_mpe and
+                   tt_hex_ja_lida.num_hora = efp_par_marcac_ptoelet.num_horar_inic_proces_mpe) then
+          next.
+
+       if v_ind_int = 3 then do:
+          if month(efp_par_marcac_ptoelet.dat_proces_mpe) = tt_hora_extra.num_mes_extra then do:
+             assign tt_hora_extra.qtd_hrs_extra = tt_hora_extra.qtd_hrs_extra + efp_par_marcac_ptoelet.qti_hrs_marcac_ptoelet.
+          
+             if not can-find(tt_hex_ja_lida where
+                             tt_hex_ja_lida.num_dia  = efp_par_marcac_ptoelet.dat_proces_mpe and
+                             tt_hex_ja_lida.num_hora = efp_par_marcac_ptoelet.num_horar_inic_proces_mpe) then do:
+                create tt_hex_ja_lida.
+                assign tt_hex_ja_lida.num_dia  = efp_par_marcac_ptoelet.dat_proces_mpe
+                       tt_hex_ja_lida.num_hora = efp_par_marcac_ptoelet.num_horar_inic_proces_mpe.
+             end. 
+          end.
+       end.
+       else do:
+          if v_ind_int = 4 then do:
+             find last tt-extra-semana no-lock where
+                       tt-extra-semana.dat_ini <= efp_par_marcac_ptoelet.dat_proces_mpe no-error.
+             if tt-extra-semana.num_sem = v_num_sem then do:
+                assign tt_hora_extra.qtd_hrs_extra = tt_hora_extra.qtd_hrs_extra + efp_par_marcac_ptoelet.qti_hrs_marcac_ptoelet.
+                
+                if not can-find(tt_hex_ja_lida where
+                                tt_hex_ja_lida.num_dia  = efp_par_marcac_ptoelet.dat_proces_mpe and
+                                tt_hex_ja_lida.num_hora = efp_par_marcac_ptoelet.num_horar_inic_proces_mpe) then do:
+                   create tt_hex_ja_lida.
+                   assign tt_hex_ja_lida.num_dia  = efp_par_marcac_ptoelet.dat_proces_mpe
+                          tt_hex_ja_lida.num_hora = efp_par_marcac_ptoelet.num_horar_inic_proces_mpe.
+                end. 
+             end.
+          end.
+          else do:
+             assign tt_hora_extra.qtd_hrs_extra = tt_hora_extra.qtd_hrs_extra + efp_par_marcac_ptoelet.qti_hrs_marcac_ptoelet.
+             
+             if not can-find(tt_hex_ja_lida where
+                             tt_hex_ja_lida.num_dia  = efp_par_marcac_ptoelet.dat_proces_mpe and
+                             tt_hex_ja_lida.num_hora = efp_par_marcac_ptoelet.num_horar_inic_proces_mpe) then do:
+                create tt_hex_ja_lida.
+                assign tt_hex_ja_lida.num_dia  = efp_par_marcac_ptoelet.dat_proces_mpe
+                       tt_hex_ja_lida.num_hora = efp_par_marcac_ptoelet.num_horar_inic_proces_mpe.
+             end. 
+          end.
+       end.
+       if bco_hrs_compens_func.dat_atualiz_bco_hora > v_dat_ini_extra then
+          assign v_dat_ini_extra = bco_hrs_compens_func.dat_atualiz_bco_hora.
+   end.
+end.
+
+if v_ind_int = 1 then do:
+   for each bfunc-bcohrs of bfunc-ponto no-lock where
+            bfunc-bcohrs.cdn_tip_compcao_hrs       = 1 and
+            bfunc-bcohrs.dat_atualiz_bco_hora      = bco_hrs_compens_func.dat_atualiz_bco_hora and
+            bfunc-bcohrs.idi_hrs_posit             = 5 and
+            bfunc-bcohrs.idi_tratam_lancto_bco_hrs = 1:
+       assign tt_hora_extra.qtd_hrs_extra = tt_hora_extra.qtd_hrs_extra + bfunc-bcohrs.qti_hrs_marcac_ptoelet_orig.
+   end.  
+end.
+
+if tt_hora_extra.qtd_hrs_extra > 0 then do:  
+   find last efp_hora_extra_tip_dia_sind no-lock where 
+             efp_hora_extra_tip_dia_sind.cdn_empresa     = bfunc-ponto.cdn_empresa
+         and efp_hora_extra_tip_dia_sind.cdn_sindicato   = bfunc-ponto.cdn_sindicato
+         and efp_hora_extra_tip_dia_sind.idi_tratam_hora = i-tratam
+         and efp_hora_extra_tip_dia_sind.cod_tip_dia     = v_cod_tip_dia_aux
+         and efp_hora_extra_tip_dia_sind.num_horar_inic_interv_refei <= int(tt_hora_extra.qtd_hrs_extra + 60) no-error.
+   if efp_hora_extra_tip_dia_sind.num_horar_inic_interv_refei = 0 then
+      assign i-dif-hrs-pag = tt_hora_extra.qtd_hrs_extra - efp_hora_extra_tip_dia_sind.num_horar_inic_interv_refei.
+   else
+      assign i-dif-hrs-pag = tt_hora_extra.qtd_hrs_extra - (efp_hora_extra_tip_dia_sind.num_horar_inic_interv_refei - 60).
+   assign v_row_pri_evt = ?.
+end.
+else do:
+   find first efp_hora_extra_tip_dia_sind no-lock where
+              efp_hora_extra_tip_dia_sind.cdn_empresa     = bfunc-ponto.cdn_empresa
+          and efp_hora_extra_tip_dia_sind.cdn_sindicato   = bfunc-ponto.cdn_sindicato
+          and efp_hora_extra_tip_dia_sind.idi_tratam_hora = i-tratam
+          and efp_hora_extra_tip_dia_sind.cod_tip_dia     = v_cod_tip_dia_aux no-error.
+   if avail efp_hora_extra_tip_dia_sind then
+      assign v_row_pri_evt = rowid(efp_hora_extra_tip_dia_sind).
+end.        
+
+assign i-dif-qtd-hrs = bco_hrs_compens_func.qti_hrs_marcac_ptoelet_orig + i-dif-hrs-pag.
+repeat:
+   assign v_qti_extra = efp_hora_extra_tip_dia_sind.qti_hora_extra.
+   if i-dif-qtd-hrs > v_qti_extra then do:
+      if i-dif-qtd-hrs > i-dif-hrs-pag then do:
+         assign i-dif-qtd-hrs = i-dif-qtd-hrs - v_qti_extra.
+         /*** cria mvtoponto com hetpdias.qtd-hrs. **/
+         assign i-ev-codigo = if bco_hrs_compens_func.log_hrs_diurno = yes /*diurno*/
+                              then efp_hora_extra_tip_dia_sind.cdn_efp_hora_extra_diurno
+                              else efp_hora_extra_tip_dia_sind.cdn_efp_hora_extra_notur
+                i-qtd-hrs   = (v_qti_extra - i-dif-hrs-pag) / 3600
+                tt_hora_extra.qtd_hrs_extra = tt_hora_extra.qtd_hrs_extra + (v_qti_extra - i-dif-hrs-pag).
+         {prghur/pep/pe4000.i1}.  
+         find next efp_hora_extra_tip_dia_sind no-lock where 
+                   efp_hora_extra_tip_dia_sind.cdn_empresa     = bfunc-ponto.cdn_empresa
+               and efp_hora_extra_tip_dia_sind.cdn_sindicato   = bfunc-ponto.cdn_sindicato
+               and efp_hora_extra_tip_dia_sind.idi_tratam_hora = i-tratam
+               and efp_hora_extra_tip_dia_sind.cod_tip_dia     = v_cod_tip_dia_aux no-error.
+         assign i-dif-hrs-pag = 0.
+      end.
+      else do:
+         assign i-dif-qtd-hrs = i-dif-qtd-hrs - v_qti_extra.
+         assign i-qtd-hrs = (i-dif-qtd-hrs + v_qti_extra - i-dif-hrs-pag) / 3600
+                tt_hora_extra.qtd_hrs_extra = tt_hora_extra.qtd_hrs_extra + (i-dif-qtd-hrs + v_qti_extra - i-dif-hrs-pag).
+         if i-qtd-hrs > 0 then do:
+            assign i-ev-codigo = if bco_hrs_compens_func.log_hrs_diurno = yes /* diurno */
+                                 then efp_hora_extra_tip_dia_sind.cdn_efp_hora_extra_diurno
+                                 else efp_hora_extra_tip_dia_sind.cdn_efp_hora_extra_notur.
+           {prghur/pep/pe4000.i1}.
+         end.
+         leave.
+      end.
+   end.
+   else do:
+      /* cria mvtoponto com i-dif-qtd-hrs - i-dif-hrs-pag.    */
+      assign i-ev-codigo = if bco_hrs_compens_func.log_hrs_diurno = yes /* diurno */
+                              then efp_hora_extra_tip_dia_sind.cdn_efp_hora_extra_diurno
+                              else efp_hora_extra_tip_dia_sind.cdn_efp_hora_extra_notur
+             i-qtd-hrs   = (i-dif-qtd-hrs - i-dif-hrs-pag) / 3600
+             tt_hora_extra.qtd_hrs_extra = tt_hora_extra.qtd_hrs_extra + (i-dif-qtd-hrs - i-dif-hrs-pag).
+      {prghur/pep/pe4000.i1}. 
+      leave. 
+   end.   
+end.
+
+/*** fim include - pe4000.i2 *****************/

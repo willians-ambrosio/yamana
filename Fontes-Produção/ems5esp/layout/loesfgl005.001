@@ -1,0 +1,11 @@
++-----------------------------------------------------------------------+
+| Coluna    |   Campo             |   Tamanho                           |
++-----------------------------------------------------------------------+
+| A         |   Empresa EMS5      |   3                                 |
+| B         |   Conta             |   8                                 |
+| C         |   Centro de Custo   |   6                                 |
++-----------------------------------------------------------------------+
+Obs:
+* As contas Desativadas n∆o ser∆o modificadas;
+* Ser∆o considerados todas as Unidades do EMS5 para gerar a sub-conta;
+* Contas que comeáam com 1 e 2 n∆o ser∆o alteradas. 

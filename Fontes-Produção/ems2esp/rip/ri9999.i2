@@ -1,0 +1,41 @@
+DEF VAR c-logical-name AS CHAR.
+
+/*    
+IF SESSION:TIME-SOURCE = ""
+
+OR SESSION:TIME-SOURCE = "LOCAL" THEN DO:
+
+    
+
+    ASSIGN  c-logical-name = LDBNAME(1)
+
+            SESSION:TIME-SOURCE = c-logical-name.
+
+ 
+
+    IF  TODAY > 01/01/2999 THEN DO:
+
+        MESSAGE "Prazo de Execucao Expirado" VIEW-AS ALERT-BOX.
+
+        ASSIGN SESSION:TIME-SOURCE = "LOCAL".
+
+        RETURN.
+
+    END.
+
+    ASSIGN SESSION:TIME-SOURCE = "LOCAL".
+
+END.
+
+ELSE DO:
+
+    IF  TODAY > 01/01/2999 THEN DO:
+
+        MESSAGE "Prazo de Execucao Expirado" VIEW-AS ALERT-BOX.
+
+        RETURN.
+
+    END.
+
+END.
+*/

@@ -1,0 +1,177 @@
+/*****************************************************************************
+**
+** cc0302.i2 - Rotina de impressao da Ficha de Cotacao para item desconhecido
+**
+*****************************************************************************/
+
+assign de-quant = 0.
+       i-cont   = 0.
+
+for each prazo-compra
+    where prazo-compra.numero-ordem = ordem-compra.numero-ordem no-lock:
+    assign de-quant = de-quant + prazo-compra.quantidade
+           c-un     = prazo-compra.un.
+end.
+
+assign c-descricao = item.desc-item.
+disp item.it-codigo
+     "" @ item-fornec.item-do-forn
+     c-descricao
+     ordem-compra.conta-contabil
+     with frame f-item.
+
+/* Imprime Narrativa da Ordem */
+run pi-print-editor (ordem-compra.narrativa, 60).
+for each tt-editor:
+    if  tt-editor.linha = 1 then
+        put unformatted
+            fill("-",24) " " c-lb-ordem " " fill("-",29) skip.
+    disp tt-editor.conteudo with frame f-narrativa.
+    down with frame f-narrativa.
+end.
+put skip(1).
+assign c-natureza = {ininc/i01in274.i 04 ordem-compra.natureza}.
+
+disp c-lb-ordem
+     c-lb-natur
+     c-lb-qtd-ord
+     c-lb-un
+     c-lb-emissao
+     c-lb-requis
+     c-lb-compr
+     with frame f-cab-ordem.
+disp ordem-compra.numero-ordem
+     c-natureza
+     de-quant
+     c-un @ item-fornec.unid-med-for
+     ordem-compra.data-emissao
+     ordem-compra.requisitante
+     ordem-compra.cod-comprado
+     with frame f-ordem.
+put skip(1).
+assign i-cont = 0.
+for each prazo-compra
+    where prazo-compra.numero-ordem = ordem-compra.numero-ordem no-lock:
+    assign i-cont = i-cont + 1.
+    if  i-cont > 9 then leave.
+end.
+if  not tt-param.l-parcela or i-cont <= 9 then do i-cont = 1 to 9:
+    if  i-cont = 1 then
+        find first prazo-compra
+            where prazo-compra.numero-ordem = ordem-compra.numero-ordem
+            no-lock no-error.
+    else
+        find next prazo-compra
+            where prazo-compra.numero-ordem = ordem-compra.numero-ordem
+            no-lock no-error.
+    if  avail prazo-compra then do:
+        if  i-cont = 1 then
+            put ordem-compra.ordem-servic at 3.
+        put prazo-compra.parcela      at 17
+            prazo-compra.quantidade   at 22
+            prazo-compra.data-entrega at 41
+            "________________"        at 52
+            "____/____/____"          at 69 skip.
+    end.
+    else put skip(1).
+end.
+else
+for each prazo-compra
+    where prazo-compra.numero-ordem = ordem-compra.numero-ordem no-lock:
+    assign de-quant = prazo-compra.quantidade * de-indice.
+    if  i-cont = 1 then
+        put ordem-compra.ordem-servic at 3.
+    put prazo-compra.parcela      at 17
+        prazo-compra.quantidade   at 22
+        prazo-compra.data-entrega at 41
+        "________________"        at 52
+        "____/____/____"          at 69 skip.
+end.
+
+if l-ultima-compra then do:
+    put unformatted
+        fill("-", 30) " " c-lb-compra " " fill("-", 30) skip.
+    disp "" @ emitente.nome-abrev
+         "" @ b-ordem.num-pedido
+         "" @ b-ordem.data-pedido
+         "" @ c-natureza
+         "" @ item.un
+         "" @ b-ordem.cod-cond-pag
+         "" @ c-moeda
+         "" @ b-ordem.preco-unit
+         "" @ de-quant
+         "" @ b-ordem.aliquota-ipi
+         "" @ b-ordem.codigo-ipi
+         with frame f-ult-compra.
+end.             
+
+put unformatted
+    skip(1)
+    fill("-", 57) " " c-lb-fornec " " fill("-", 54) skip(7).
+
+{utp/ut-liter.i Com * r}
+assign c-lit = trim(return-value).
+disp c-lit
+     "" @ b-ordem.data-pedido
+     "" @ c-natureza
+     "" @ c-moeda
+     "" @ b-ordem.cod-cond-pag
+     "" @ item.un
+     "" @ b-ordem.num-pedido
+     "" @ b-ordem.numero-ordem
+     "" @ b-ordem.preco-unit
+     "" @ b-ordem.aliquota-ipi
+     "" @ b-ordem.codigo-ipi
+     with frame f-cotacao-item.
+disp c-lit
+     "" @ b-ordem.data-pedido
+     "" @ c-natureza
+     "" @ c-moeda
+     "" @ b-ordem.cod-cond-pag
+     "" @ item.un
+     "" @ b-ordem.num-pedido
+     "" @ b-ordem.numero-ordem
+     "" @ b-ordem.preco-unit
+     "" @ b-ordem.aliquota-ipi
+     "" @ b-ordem.codigo-ipi
+     with frame f-cotacao-item.
+
+{utp/ut-liter.i Cot * r}
+assign c-lit = trim(return-value).
+disp c-lit
+     "" @ b-ordem.data-pedido
+     "" @ c-natureza
+     "" @ c-moeda
+     "" @ b-ordem.cod-cond-pag
+     "" @ item.un
+     "" @ b-ordem.num-pedido
+     "" @ b-ordem.numero-ordem
+     "" @ b-ordem.preco-unit
+     "" @ b-ordem.aliquota-ipi
+     "" @ b-ordem.codigo-ipi
+     with frame f-cotacao-item.
+disp c-lb-data[1]      c-lb-data[2]
+     c-lb-incluso[1]   c-lb-naoincl[1]
+     c-lb-incluso[2]   c-lb-naoincl[2]
+     c-lb-incluso[3]   c-lb-naoincl[3]
+     c-lb-cotacao      c-lb-dt-cot
+     c-lb-frete        c-lb-contato
+     c-lb-comprador    c-lb-compr
+     c-lb-encarg       c-lb-taxa
+     c-lb-gerente      c-lb-coment
+     c-lb-aprov        c-lb-moeda
+     c-lb-indust       c-lb-consumo
+     c-lb-perc         c-lb-prazo
+     c-lb-un-med       c-lb-cpg
+     c-lb-ipi          c-lb-icms
+     c-lb-sim          c-lb-nao
+     c-lb-vl-fre       c-lb-prc-un
+     c-lb-cot-apr      c-lb-cot-mo
+     c-lb-al-ipi       c-lb-al-icms
+     c-lb-al-iss       c-lb-prc-for
+     c-traco1          c-traco2
+     c-traco3          c-traco4
+     c-traco5
+     with frame f-fim.
+
+/* fim do include */

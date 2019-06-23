@@ -1,0 +1,271 @@
+/****************************************************************************
+**
+**   CC0341.I2 - Completa ordem compra e cria prazo compra
+**
+****************************************************************************/
+
+
+def var i-m-ordem like ordem-compra.numero-ordem no-undo.
+    
+ /* geracao de Ordens de Compra */
+ &if defined(bf_mat_uni_estab) &then /* EMS 2.04 */
+     if param-compra.int-2 = 2 then do: /* por comprador */
+         if avail item-uni-estab then
+             assign tt-ordem-compra.cod-comprado   = item-uni-estab.cod-comprado
+                    c-grp-cod-comprado             = item-uni-estab.cod-comprado.
+         else 
+             assign tt-ordem-compra.cod-comprado   = item.cod-comprado
+                    c-grp-cod-comprado             = item.cod-comprado.
+     end.
+     if param-compra.int-2 = 1 then do: /* por grupo de compras */
+         &if "{&mgind_dbtype}" = "progress" &then 
+            if avail item-uni-estab then
+                &if '{&bf_mat_versao_ems}' >= '2.071' &then
+                    assign tt-ordem-compra.cod-grp-compra = item-uni-estab.cod-grp-compra
+                           c-grp-cod-comprado             = item-uni-estab.cod-grp-compra.
+                &else
+                    assign substring(tt-ordem-compra.char-2,188,12) = item-uni-estab.cod-grp-compra
+                           c-grp-cod-comprado                       = item-uni-estab.cod-grp-compra.
+                &endif
+            else
+                &if '{&bf_mat_versao_ems}' >= '2.071' &then
+                    assign tt-ordem-compra.cod-grp-compra = substring(item.char-2,188,12)
+                           c-grp-cod-comprado             = substring(item.char-2,188,12).
+                &else
+                    assign substring(tt-ordem-compra.char-2,188,12) = substring(item.char-2,188,12)
+                           c-grp-cod-comprado                       = substring(item.char-2,188,12).
+                &endif
+        &else
+            if avail item-uni-estab then
+                &if '{&bf_mat_versao_ems}' >= '2.071' &then
+                    assign tt-ordem-compra.cod-grp-compra = item-uni-estab.cod-grp-compra  
+                           c-grp-cod-comprado             = item-uni-estab.cod-grp-compra. 
+                &else
+                    assign substring(tt-ordem-compra.char-2,88,12) = item-uni-estab.cod-grp-compra
+                           c-grp-cod-comprado                      = item-uni-estab.cod-grp-compra.
+                &endif
+            else
+                &if '{&bf_mat_versao_ems}' >= '2.071' &then
+                    assign tt-ordem-compra.cod-grp-compra = substring(item.char-2,88,12) 
+                           c-grp-cod-comprado             = substring(item.char-2,88,12).
+                &else
+                    assign substring(tt-ordem-compra.char-2,88,12) = substring(item.char-2,88,12)
+                           c-grp-cod-comprado                      = substring(item.char-2,88,12).
+                &endif
+        &endif
+    end.
+ &else
+     if param-compra.int-2 = 2 then do:   /* por comprador */
+         if avail item-mat-estab then
+             assign tt-ordem-compra.cod-comprado   = item-mat-estab.cod-comprado
+                    c-grp-cod-comprado             = item-mat-estab.cod-comprado.
+         else 
+             assign tt-ordem-compra.cod-comprado   = item.cod-comprado
+                    c-grp-cod-comprado             = item.cod-comprado.
+     end.
+     if param-compra.int-2 = 1 then do: /* por grupo de compras */
+         &if "{&mgind_dbtype}" = "progress" &then 
+            if avail item-mat-estab then
+                assign substring(tt-ordem-compra.char-2,188,12) = item-mat-estab.cod-grp-compra
+                       c-grp-cod-comprado                       = item-mat-estab.cod-grp-compra.
+            else 
+                assign substring(tt-ordem-compra.char-2,188,12) = substring(item.char-2,188,12)
+                       c-grp-cod-comprado                       = substring(item.char-2,188,12).
+         &else
+            if avail item-mat-estab then
+                assign substring(tt-ordem-compra.char-2,88,12) = item-mat-estab.cod-grp-compra
+                       c-grp-cod-comprado                      = item-mat-estab.cod-grp-compra.
+            else 
+                assign substring(tt-ordem-compra.char-2,88,12) = substring(item.char-2,88,12)
+                       c-grp-cod-comprado                      = substring(item.char-2,88,12).
+         &endif
+     end.
+ &endif
+
+ assign i-empresa = param-global.empresa-prin.
+ &if defined (bf_dis_consiste_conta) &then
+    find estabelec where
+         estabelec.cod-estabel = esp-necessidade-oc.cod-estabel no-lock no-error.
+    run cdp/cd9970.p (input rowid(estabelec),
+                      output i-empresa).
+ &endif                      
+
+ assign tt-ordem-compra.cod-cond-pag   = 0
+        tt-ordem-compra.situacao       = 1
+        tt-ordem-compra.origem         = 3
+        tt-ordem-compra.usuario        = c-seg-usuario
+        tt-ordem-compra.cod-estabel    = esp-necessidade-oc.cod-estabel
+        tt-ordem-compra.it-codigo      = esp-necessidade-oc.it-codigo
+        tt-ordem-compra.num-pedido     = 0
+        tt-ordem-compra.conta-contabil = item.conta-aplicacao
+        tt-ordem-compra.ct-codigo      = item.ct-codigo
+        tt-ordem-compra.sc-codigo      = item.sc-codigo
+        tt-ordem-compra.tp-despesa     = item.tp-desp-padrao
+        tt-ordem-compra.qt-solic       = tt-digita.qt-ordem
+        tt-ordem-compra.data-emissao   = today
+        tt-ordem-compra.impr-ficha     = param-compra.imprime-fich
+        tt-ordem-compra.ep-codigo      = i-empresa
+        tt-ordem-compra.data-atualiz   = today        
+        tt-ordem-compra.hora-atualiz   = string(time,"hh:mm:ss")
+        tt-ordem-compra.narrativa      = " "
+        tt-ordem-compra.natureza       = 1 /*Compra*/
+        tt-ordem-compra.requisitante   = tt-param.c-requisitante
+        tt-ordem-compra.sequencia      = 0
+        tt-ordem-compra.num-ord-inv    = 0
+        tt-ordem-compra.dep-almoxar    = item.deposito-pad
+        tt-ordem-compra.codigo-icm     = tt-param.i-icms.
+
+&if defined(bf_mat_uni_estab) &then /* EMS 2.04 */
+    if  avail item-uni-estab then
+        assign tt-ordem-compra.tp-despesa  = item-uni-estab.tp-desp-padrao
+               tt-ordem-compra.dep-almoxar = item-uni-estab.deposito-pad.
+&endif                                               
+
+&if defined(bf_mat_contratos) &then
+      if substring(param-compra.char-2,97,3) = "YES" then do:
+         find item-mat-estab where 
+              item-mat-estab.it-codigo   = tt-ordem-compra.it-codigo and
+              item-mat-estab.cod-estabel = tt-ordem-compra.cod-estabel no-lock no-error.
+          assign tt-ordem-compra.cod-estab-gestor = if avail item-mat-estab then
+                                                       item-mat-estab.cod-estab-gestor
+                                                    else "".
+      end.                                  
+&endif                                               
+
+&if defined(bf_mat_uni_estab) &then /* EMS 2.04 */
+      if  substring(param-compra.char-2,97,3) = "YES" then do:
+          assign tt-ordem-compra.cod-estab-gestor = if avail item-uni-estab then
+                                                       item-uni-estab.cod-estab-gestor
+                                                    else "".
+      end.                                  
+&endif 
+
+ /*********** Chamada EPC - Fo 745.361  ****************************/   
+ for each tt-epc where 
+     tt-epc.cod-event = "tipo-icms" : 
+     delete tt-epc.
+ end.            
+
+ create tt-epc.
+ assign tt-epc.cod-event     = "tipo-icms"
+        tt-epc.cod-parameter = "icms-ent"
+        tt-epc.val-parameter = string(tt-ordem-compra.numero-ordem). 
+
+ {include/i-epc201.i "tipo-icms"}
+
+ if return-value = "OK":U then do:
+    for each tt-epc no-lock
+        where tt-epc.cod-event = "tipo-icms":
+        if string(tt-epc.cod-parameter,"x(20)") = "icms-sai" then
+           assign tt-ordem-compra.codigo-icm = int(tt-epc.val-parameter).
+    end.
+ end.
+ /************************* Fim chamada EPC **************************/
+
+ /* Nao Agrupar itens conforme a selecao */
+ do  for prazo-compra: 
+     create tt-prazo-compra.
+     assign tt-prazo-compra.numero-ordem = tt-ordem-compra.numero-ordem
+            tt-prazo-compra.parcela      = 1
+            tt-prazo-compra.natureza     = tt-ordem-compra.natureza
+            tt-prazo-compra.situacao     = tt-ordem-compra.situacao
+            tt-prazo-compra.it-codigo    = tt-ordem-compra.it-codigo
+            tt-prazo-compra.cod-alter    = no
+            tt-prazo-compra.quantidade   = tt-digita.qt-ordem
+            tt-prazo-compra.quant-saldo  = tt-digita.qt-ordem
+            tt-prazo-compra.quantid-orig = tt-digita.qt-ordem 
+            tt-prazo-compra.un           = item.un
+            tt-prazo-compra.pedido-clien = ""
+            tt-prazo-compra.nr-sequencia = 0
+            tt-prazo-compra.data-entrega = tt-digita.data-entrega
+            tt-prazo-compra.quantid-orig = tt-digita.qt-ordem
+            tt-prazo-compra.data-orig    = esp-necessidade-oc.data-geracao /*tt-prazo-compra.data-geracao*/.
+
+     for first calen-prod fields (cod-estabel data tipo-dia) where 
+           calen-prod.cod-estabel = tt-ordem-compra.cod-estabel and
+          calen-prod.data        = tt-prazo-compra.data-entrega no-lock: end.
+     if  avail calen-prod then do while true:
+         if  calen-prod.tipo-dia = 1 then
+             leave.
+         else do:
+             assign tt-prazo-compra.data-entrega = tt-prazo-compra.data-entrega - 1.
+             find first calen-prod
+                 where calen-prod.cod-estabel = tt-ordem-compra.cod-estabel
+                 and   calen-prod.data        = tt-prazo-compra.data-entrega
+                 no-lock no-error.
+         end.
+     end.
+     assign tt-prazo-compra.data-orig = tt-prazo-compra.data-entrega
+            i-ordem-aux               = tt-ordem-compra.numero-ordem
+            l-erro                    = no
+            i-m-ordem                 = tt-ordem-compra.numero-ordem.     
+     run ccp/ccapi012.p (input-output table tt-ordem-compra,
+                         input-output table tt-prazo-compra,
+                         output       table tt-erro,
+                         input        tt-param.l-split). 
+
+     for each tt-erro:
+         assign l-erro = yes.
+         put unformatted
+             c-lb-erro at 5 ": "  tt-erro.cd-erro
+             c-lb-msg  at 5 ".: " tt-erro.mensagem format "x(120)"
+             skip(1).
+     end.
+     /*
+     ** Inicio MultiPlanta
+     */
+     if l-erro = no and
+        avail param-global AND
+        param-global.modulo-mp = yes then do:
+        for each tt-ordem-compra:
+            if  tt-ordem-compra.cod-estab-gestor <> "" then do:
+                find first b-ordem
+                     where b-ordem.numero-ordem = tt-ordem-compra.numero-ordem
+                     no-lock no-error.
+                if avail b-ordem and b-ordem.nr-contrato = 0 then
+                    run ccp/ccapi200.p(input "Ordem-compra":U, 
+                                       input rowid(b-ordem),
+                                       input 1, 
+                                       input-output table tt-erro).
+            end.
+        end.
+     end.
+     /*
+     ** Fim Multiplanta
+     */
+     if  l-erro = yes then undo, next.
+     for each tt-ordem-compra 
+        where tt-ordem-compra.l-gerou:
+
+         for first ordem-compra no-lock
+             where ordem-compra.numero-ordem = tt-ordem-compra.numero-ordem.
+         end.
+         
+         if avail ordem-compra
+              and ordem-compra.dat-ordem <> today then do:
+              next.
+         end.
+         
+         /***-------------------- Cria mensagem de confirmacao --------------------***/
+         create tt-msg.
+         assign tt-msg.nr-ordem   = tt-ordem-compra.numero-ordem
+                tt-msg.it-codigo  = tt-ordem-compra.it-codigo
+                tt-msg.comprador  = c-grp-cod-comprado
+                tt-msg.estabel    = tt-ordem-compra.cod-estabel
+                tt-msg.conta      = tt-ordem-compra.conta-contabil
+                tt-msg.qtd        = if tt-ordem-compra.qt-solic = 0 then tt-digita.qt-ordem
+                                    else tt-ordem-compra.qt-solic
+                tt-msg.pedido     = tt-ordem-compra.num-pedido
+                tt-msg.natureza   = {ininc/i01in274.i 04 tt-ordem-compra.natureza}
+                tt-msg.situacao   = {ininc/i02in274.i 04 tt-ordem-compra.situacao}
+                tt-msg.origem     = {ininc/i03in274.i 04 tt-ordem-compra.origem}
+                tt-msg.cond-pag   = tt-ordem-compra.cod-cond-pag
+                tt-msg.despesa    = tt-ordem-compra.tp-despesa
+                tt-msg.dt-emissao = tt-digita.data-entrega
+                tt-msg.narrativa  = tt-ordem-compra.narrativa.
+         /***-----------------------------------------------------------------------***/
+     end.     
+end.
+ /* Fim Include */
+
+

@@ -1,0 +1,1101 @@
+/********************************************************************************
+** Copyright DATASUL S.A. (1997)
+** Todos os Direitos Reservados.
+**
+** Este fonte e de propriedade exclusiva da DATASUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+*******************************************************************************/
+{include/i-prgvrs.i PE4000R6 1.02.00.093 } /*** 010093 ***/
+
+&IF "{&EMSFND_VERSION}" >= "1.00" &THEN
+    {include/i-license-manager.i pe4000r6 MPE}
+&ENDIF
+
+/******************************************************************************
+**       Programa: PE4000R6.P - c lculo das horas de situac, trab, dsr, fer
+**                              para funcion rios mensalistas
+******************************************************************************/
+/* vari veis do rp */
+
+{include/i-epc200.i pe4000r6}
+ 
+{prghur/pep/pe4000tt.i SHARED}
+FIND FIRST tt-param NO-LOCK.
+
+def shared var v_num_erro              as int no-undo.
+def shared var i-ev-supnot             /*as int*/ LIKE event_fp.cdn_event_fp no-undo.
+def shared var l-sup-evnot             as log no-undo.
+def shared var l-adc-evnot             as log no-undo. /* cris turno m¢vel */
+def shared var i-ev-trbdiu             /*as int*/ LIKE event_fp.cdn_event_fp no-undo.
+def shared var i-ev-trbnot             /*as int*/ LIKE event_fp.cdn_event_fp no-undo.
+def shared var i-ev-dsrdiu             /*as int*/ LIKE event_fp.cdn_event_fp no-undo.
+def shared var i-ev-dsrnot             /*as int*/ LIKE event_fp.cdn_event_fp no-undo.
+def shared var i-ev-dsrdiuper          /*as int*/ LIKE event_fp.cdn_event_fp no-undo.
+def shared var i-ev-dsrnotper          /*as int*/ LIKE event_fp.cdn_event_fp no-undo.
+def shared var i-ev-ferdiuper          /*as int*/ LIKE event_fp.cdn_event_fp no-undo.
+def shared var i-ev-fernotper          /*as int*/ LIKE event_fp.cdn_event_fp no-undo.
+def shared var i-ev-desc-hrs-diu       /*as int*/ LIKE event_fp.cdn_event_fp no-undo.
+def shared var i-ev-desc-hrs-not       /*as int*/ LIKE event_fp.cdn_event_fp no-undo.
+DEF SHARED VAR i-ev-hrs-dif-diu        /*as int*/ LIKE event_fp.cdn_event_fp no-undo.
+DEF SHARED VAR i-ev-hrs-dif-not        /*as int*/ LIKE event_fp.cdn_event_fp no-undo.
+DEF SHARED VAR v_log_mes_seg           AS LOG NO-UNDO.
+
+/* vari veis do r1 */
+def shared var dt-ini-out          as date no-undo.
+def shared var dt-fim-out          as date no-undo. 
+def shared var d-qtd-hrs-sup-not   as dec no-undo. /* cris */
+def shared var l-func-normal       as log no-undo.
+def shared var d-qtd-hrs-diu       as dec no-undo.
+def shared var d-qtd-hrs-not       as dec no-undo.
+def shared var d-qtd-hrs-diu-dsr   as dec no-undo.
+def shared var d-qtd-hrs-not-dsr   as dec no-undo.
+def shared var d-qtd-hrs-diu-fer   as dec no-undo.
+def shared var d-qtd-hrs-not-fer   as dec no-undo.
+def shared var d-hrs-diu-dsr-per   as dec no-undo.
+def shared var d-hrs-not-dsr-per   as dec no-undo.         
+def shared var d-hrs-diu-fer-per   as dec no-undo.
+def shared var d-hrs-not-fer-per   as dec no-undo.         
+def shared var d-hrs-diu-dsr-sit   as dec no-undo.
+def shared var d-hrs-not-dsr-sit   as dec no-undo.         
+def shared var d-hrs-diu-fer-sit   as dec no-undo.
+def shared var d-hrs-not-fer-sit   as dec no-undo.         
+def shared var d-hrs-diu-trb-sit   as dec no-undo.
+def shared var d-hrs-not-trb-sit   as dec no-undo.
+def shared var d-tot-hrs-trb       as dec no-undo.
+def shared var d-tot-hrs-dsr       as dec no-undo.
+def shared var d-tot-hrs-fer       as dec no-undo.
+def shared var d-tot-hrs-sit       as dec no-undo.
+def shared var d-tot-hrs-trb-diu   as dec no-undo.
+def shared var d-tot-hrs-trb-not   as dec no-undo.
+def shared var d-tot-hrs-sup-not   as dec no-undo.
+def shared var d-tot-hrs-dsr-diu   as dec no-undo.
+def shared var d-tot-hrs-dsr-not   as dec no-undo.
+def shared var d-tot-hrs-fer-diu   as dec no-undo.
+def shared var d-tot-hrs-fer-not   as dec no-undo.
+def shared var d-hrs-sup-sit-not   as dec no-undo. 
+def shared var d-hrs-afast-diu     as dec no-undo. /* cris afast */
+def shared var d-hrs-afast-not     as dec no-undo. /* cris afast */
+def shared var d-hrs-afast         as dec no-undo. /* cris afast */
+def shared var d-hrs-dsr-afast-diu as dec no-undo. /* cris afast */
+def shared var d-hrs-dsr-afast-not as dec no-undo. /* cris afast */
+def shared var d-hrs-fer-afast-diu as dec no-undo. /* cris afast */
+def shared var d-hrs-fer-afast-not as dec no-undo. /* cris afast */
+def shared var l-afast-mes         as log no-undo.
+def shared var d-tot-hrsmes        as dec no-undo.
+def shared var v_qtd_hrs_not_adc   as dec  no-undo.
+def shared var v_hrs_sit_not_per   as dec  no-undo.
+DEF SHARED VAR v_log_calend_func   AS LOG NO-UNDO.
+def shared var l-afast-periodo     as log no-undo.
+def shared var dat-fim-mes         as date no-undo.
+def shared var v_qtd_hrs_padr_mes_rh like turno_trab.qtd_hrs_padr_mes_rh no-undo.
+def shared var v_log_upc_mrs         as log init no                      no-undo.
+def        var v_qtd_hrs_mes_rh      like turno_trab.qtd_hrs_padr_mes_rh no-undo.
+
+/* vari veis locais */
+def var i-ev-codigo                     /*as int*/ LIKE event_fp.cdn_event_fp no-undo.
+/* def var i-ev-percdsr                    as int no-undo. */
+def var i-qtd-hrs                       like movto_ptoelet.qtd_movto_ptoelet no-undo.
+def var d-tot-hrs-mes                   as dec no-undo.
+def var d-per-calc-diu                 as dec no-undo.
+def var d-per-calc-not                 as dec no-undo.
+def var i-val-aux                      as dec no-undo.
+def var d-aux-tot-rat                  as dec no-undo.
+def var d-dif-aux                      as dec no-undo.
+def var v_tot_trb_not                  as dec no-undo. /* cris */
+def var v_qtd_hrs_diu_orig             as dec no-undo.
+def var v_qtd_hrs_not_orig             as dec no-undo.
+def var v_qtd_dsr_diu_orig             as dec no-undo.
+def var v_qtd_dsr_not_orig             as dec no-undo.
+def var v_log_movto_extra              as log no-undo.
+def var v_log_menor                    as log no-undo.
+def var v_qtd_menor                     like movto_ptoelet.qtd_movto_ptoelet no-undo.
+def var qtd-hrs-not-mes                as dec no-undo.
+def var v_log_alter                    as log no-undo.
+def var l-acerto-ferias                as log no-undo.
+DEF VAR v_tot_dsr_original             AS DEC NO-UNDO.
+
+/* variaveis necessarias para tratamento do dsr perdido 
+   quando a integracao nao abate as faltas e dsrs das horas de trabalho */
+DEF VAR v_idi_ident_desc_dsrdiu        AS INT NO-UNDO.
+DEF VAR v_idi_ident_desc_dsrnot        AS INT NO-UNDO.
+DEF VAR v_qtd_hrs_diu_dsr_per          AS DEC NO-UNDO.
+DEF VAR v_qtd_hrs_not_dsr_per          AS DEC NO-UNDO.         
+DEF VAR v_qtd_hrs_diu_fer_per          AS DEC NO-UNDO.
+DEF VAR v_qtd_hrs_not_fer_per          AS DEC NO-UNDO.         
+
+def shared temp-table tt_erro
+    field num_erro as int  format ">>>>>>>>>9"
+    field des_erro as char format "x(70)"
+    field log_erro as log.
+
+DEF SHARED TEMP-TABLE tt-calendar LIKE det_calend_turma_localid.
+
+def shared buffer bfunc-ponto        for func_ptoelet. 
+def shared buffer bcontrole-catponto for sit_calc_ptoelet_categ.
+def shared buffer bturnotrb          for turno_trab.  
+def shared buffer bcatponto          for categ_ptoelet.
+def shared buffer bparam-pe          for param_empres_tma.
+
+DEF BUFFER bevent_fp FOR event_fp.
+
+/* identificacao do evento de desconto de dsr diurno */
+FIND bevent_fp NO-LOCK WHERE
+     bevent_fp.cdn_empresa  = tt-param.v_cdn_empresa_evento AND
+     bevent_fp.cdn_event_fp = i-ev-dsrdiuper NO-ERROR.
+IF AVAIL bevent_fp THEN
+   ASSIGN v_idi_ident_desc_dsrdiu = bevent_fp.idi_ident_efp.
+
+/* identificacao do evento de desconto de dsr noturno */
+FIND bevent_fp NO-LOCK WHERE
+     bevent_fp.cdn_empresa  = tt-param.v_cdn_empresa_evento AND
+     bevent_fp.cdn_event_fp = i-ev-dsrnotper NO-ERROR.
+IF AVAIL bevent_fp THEN
+   ASSIGN v_idi_ident_desc_dsrdiu = bevent_fp.idi_ident_efp.
+
+assign v_log_movto_extra     = no
+       v_log_menor           = no
+       v_qtd_menor           = 0
+       v_tot_dsr_original    = 0
+       v_qtd_hrs_diu_dsr_per = 0
+       v_qtd_hrs_not_dsr_per = 0
+       v_qtd_hrs_diu_fer_per = 0
+       v_qtd_hrs_not_fer_per = 0.
+
+
+/* As variaveis v_qtd_hrs_diu_dsr_per, v_qtd_hrs_not_dsr_per, v_qtd_hrs_diu_fer_per e v_qtd_hrs_not_fer_per
+   sao para os testes da carga mensal do funcionario, pois quando nao sao abatidas as faltas/afastamentos das
+   horas normais o evento de desconto DSR eh do tipo Desconto */
+
+/* A criacao do evento de desconto de drs (PE4000r1) sera feito pelas variaveis 
+   d-hrs-diu-dsr-per e d-hrs-not-dsr-per */
+IF v_idi_ident_desc_dsrdiu = 2 THEN
+   ASSIGN v_qtd_hrs_diu_dsr_per = 0
+          v_qtd_hrs_not_dsr_per = 0
+          v_qtd_hrs_diu_fer_per = 0
+          v_qtd_hrs_not_fer_per = 0.
+ELSE 
+   ASSIGN v_qtd_hrs_diu_dsr_per = d-hrs-diu-dsr-per
+          v_qtd_hrs_not_dsr_per = d-hrs-not-dsr-per
+          v_qtd_hrs_diu_fer_per = d-hrs-diu-fer-per
+          v_qtd_hrs_not_fer_per = d-hrs-not-fer-per.
+
+/**************    in¡cio do c lculo das horas para funcion rios mensalistas    *******************/
+assign v_qtd_hrs_not_adc = d-qtd-hrs-not.
+
+assign v_qtd_hrs_diu_orig = d-qtd-hrs-diu
+       v_qtd_hrs_not_orig = d-qtd-hrs-not
+       v_qtd_dsr_diu_orig = d-qtd-hrs-diu-dsr
+       v_qtd_dsr_not_orig = d-qtd-hrs-not-dsr
+       v_qtd_hrs_mes_rh   = if v_log_upc_mrs then v_qtd_hrs_padr_mes_rh else
+                               bturnotrb.qtd_hrs_padr_mes_rh. /***ESPECIFICO MRS**********************/
+
+
+/**** verificato total horas de afastamento contra horas padrÆo do turno para mensalista ****/
+if d-hrs-diu-trb-sit > d-qtd-hrs-diu then
+   assign d-qtd-hrs-diu = 0
+          d-hrs-diu-trb-sit = 0.
+if d-hrs-not-trb-sit > d-qtd-hrs-not then
+   assign d-qtd-hrs-not = 0
+          d-hrs-not-trb-sit = 0.
+
+/** mantem horas trabalhadas *****/
+if bparam-pe.idi_fechto_hrs_mensalis = 1 then do:
+
+
+   IF d-tot-hrs-fer-not > (v_qtd_hrs_not_fer_per + d-hrs-not-fer-sit) THEN
+      ASSIGN d-tot-hrs-fer-not = d-qtd-hrs-not-fer - v_qtd_hrs_not_fer_per - d-hrs-not-fer-sit.
+   ELSE
+      ASSIGN d-tot-hrs-fer-not = 0.
+
+   ASSIGN d-tot-hrs-dsr-diu = d-qtd-hrs-diu-dsr + d-qtd-hrs-diu-fer
+          d-tot-hrs-dsr-not = d-qtd-hrs-not-dsr + d-qtd-hrs-not-fer
+          d-hrs-diu-dsr-sit = d-hrs-diu-dsr-sit + d-hrs-diu-fer-sit
+          d-hrs-not-dsr-sit = d-hrs-not-dsr-sit + d-hrs-not-fer-sit.
+
+   assign d-tot-hrs-dsr-diu = d-tot-hrs-dsr-diu - (v_qtd_hrs_diu_dsr_per + v_qtd_hrs_diu_fer_per) - d-hrs-diu-dsr-sit
+          d-tot-hrs-dsr-not = d-tot-hrs-dsr-not - (v_qtd_hrs_not_dsr_per + v_qtd_hrs_not_fer_per) - d-hrs-not-dsr-sit.
+
+   /***** tratamento para eliminar problemas com arredondamento das horas situa‡Æo *****/
+   if d-tot-hrs-dsr-diu < 0.1 then
+      assign d-tot-hrs-dsr-diu = 0.
+   if d-tot-hrs-dsr-not < 0.1 then
+      assign d-tot-hrs-dsr-not = 0. 
+   if d-tot-hrs-fer-diu < 0.1 then
+      assign d-tot-hrs-fer-diu = 0.
+   if d-tot-hrs-fer-not < 0.1 then
+      assign d-tot-hrs-fer-not = 0.
+
+
+
+   assign d-tot-hrs-trb-diu = d-qtd-hrs-diu - d-hrs-diu-trb-sit
+          d-tot-hrs-trb-not = d-qtd-hrs-not - d-hrs-not-trb-sit
+          d-tot-hrs-sup-not = if l-sup-evnot then
+                                 (d-tot-hrs-trb-not * 0.142857)
+                              else 0
+          d-tot-hrs-dsr = 0.
+
+    
+
+   if v_qtd_hrs_mes_rh < (d-tot-hrs-trb-diu + d-tot-hrs-trb-not + d-tot-hrs-sit + 
+                                       d-tot-hrs-sup-not + v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + 
+                                       v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per) then do:
+
+      if d-tot-hrs-trb-diu > 0 then do:
+         assign d-tot-hrs-trb-diu = v_qtd_hrs_mes_rh - ( d-tot-hrs-sit + d-tot-hrs-trb-not +
+                                    d-tot-hrs-sup-not + v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + 
+                                    v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per).
+         /*** cris 17/12/1999 ********/
+         if d-tot-hrs-trb-diu < 0 then
+            assign d-tot-hrs-trb-diu = 0.
+         if (d-tot-hrs-trb-diu + d-tot-hrs-trb-not + d-tot-hrs-sup-not + d-tot-hrs-sit +
+             v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per) > v_qtd_hrs_mes_rh then do:
+            assign v_tot_trb_not = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per).
+            if v_tot_trb_not > 0 then do:
+               if l-sup-evnot = yes then
+                  assign d-tot-hrs-trb-not = v_tot_trb_not / 1.1428571
+                         d-tot-hrs-sup-not = v_tot_trb_not - d-tot-hrs-trb-not.
+               else
+                  assign d-tot-hrs-trb-not = v_tot_trb_not.
+
+
+                
+            end.
+            else do:
+               assign d-tot-hrs-trb-not = 0
+                      d-tot-hrs-sup-not = 0.
+               if (d-tot-hrs-sit + v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + 
+                  v_qtd_hrs_not_fer_per) > v_qtd_hrs_mes_rh then do:
+                  if v_qtd_hrs_diu_dsr_per > 0 then do:
+                     assign v_qtd_hrs_diu_dsr_per = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_not_dsr_per + v_qtd_hrs_not_fer_per)
+                            v_qtd_hrs_diu_fer_per = 0
+                            d-hrs-diu-dsr-per     = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + d-hrs-not-dsr-per + d-hrs-not-fer-per)
+                            d-hrs-diu-fer-per     = 0.
+                         
+                     if v_qtd_hrs_diu_dsr_per <= 0 then
+                        assign v_qtd_hrs_not_dsr_per = v_qtd_hrs_mes_rh - d-tot-hrs-sit
+                               v_qtd_hrs_not_fer_per = 0
+                               d-hrs-not-dsr-per     = v_qtd_hrs_mes_rh - d-tot-hrs-sit
+                               d-hrs-not-fer-per     = 0.
+                  end.
+               end.
+            end.
+         end.
+      end.
+      else do: /*** cris 16/12/1999 ****/
+         assign v_tot_trb_not = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per).
+         if v_tot_trb_not > 0 then do:
+            if l-sup-evnot = yes then
+               assign d-tot-hrs-trb-not = v_tot_trb_not / 1.1428571
+                      d-tot-hrs-sup-not = v_tot_trb_not - d-tot-hrs-trb-not.
+            else
+               assign d-tot-hrs-trb-not = v_tot_trb_not.
+
+
+         end.
+         else do:
+            assign d-tot-hrs-trb-not = 0
+                   d-tot-hrs-sup-not = 0.
+            if (d-tot-hrs-sit + v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + 
+                v_qtd_hrs_not_fer_per) > v_qtd_hrs_mes_rh then do:
+               if v_qtd_hrs_diu_dsr_per > 0 then do:
+                  assign v_qtd_hrs_diu_dsr_per = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_not_dsr_per + v_qtd_hrs_not_fer_per)
+                         v_qtd_hrs_diu_fer_per = 0
+                         d-hrs-diu-dsr-per     = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + d-hrs-not-dsr-per + d-hrs-not-fer-per)
+                         d-hrs-diu-fer-per     = 0.
+                  if v_qtd_hrs_diu_dsr_per <= 0 then
+                     assign v_qtd_hrs_not_dsr_per = v_qtd_hrs_mes_rh - d-tot-hrs-sit
+                            v_qtd_hrs_not_fer_per = 0
+                            d-hrs-not-dsr-per     = v_qtd_hrs_mes_rh - d-tot-hrs-sit
+                            d-hrs-not-fer-per     = 0.
+               end.
+            end.
+         end.
+      end.
+      assign d-tot-hrs-dsr = 0.
+   end.
+   else do:
+
+      if bcatponto.num_livre_1 = 1 OR
+         bcatponto.num_livre_1 = 3 then do: /* mˆs refer */
+         assign d-tot-hrs-dsr = v_qtd_hrs_mes_rh - (d-tot-hrs-sit +
+                                d-tot-hrs-trb-diu + d-tot-hrs-trb-not + d-tot-hrs-sup-not + 
+                                v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per). 
+      end.
+      else do: /* per¡odo */
+         if d-tot-hrs-trb-diu = 0 and d-tot-hrs-trb-not = 0 then do:
+            if v_qtd_hrs_not_orig > 0 then do:
+               if (v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_diu_dsr_per + 
+                  v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per)) > v_qtd_hrs_not_orig then do:
+                  if v_qtd_hrs_diu_orig > 0 then
+                     assign v_tot_trb_not     = v_qtd_hrs_not_orig
+                            d-tot-hrs-trb-not = if l-sup-evnot = yes then 
+                                                   v_tot_trb_not / 1.1428571
+                                                else v_tot_trb_not
+                            d-tot-hrs-sup-not = if l-sup-evnot = yes then
+                                                   v_tot_trb_not - d-tot-hrs-trb-not
+                                                else 0
+                            d-tot-hrs-trb-diu = (v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + 
+                                                 v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per)) - v_tot_trb_not
+                            d-tot-hrs-dsr = 0.
+                  else
+                     assign v_tot_trb_not     = v_qtd_hrs_not_orig
+                            d-tot-hrs-trb-not = if l-sup-evnot = yes then
+                                                   v_tot_trb_not / 1.1428571
+                                                else v_tot_trb_not
+                            d-tot-hrs-sup-not = if l-sup-evnot = yes then
+                                                   v_tot_trb_not - d-tot-hrs-trb-not
+                                                else 0
+                            d-tot-hrs-dsr     = (v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + 
+                                                 v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per)) - v_tot_trb_not.
+
+
+               end.
+               else
+               DO:              
+                  assign v_tot_trb_not = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_diu_dsr_per + 
+                                          v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per)
+                         d-tot-hrs-trb-not = if l-sup-evnot = yes then
+                                                v_tot_trb_not / 1.1428571
+                                             else v_tot_trb_not
+                         d-tot-hrs-sup-not = if l-sup-evnot = yes then
+                                                v_tot_trb_not - d-tot-hrs-trb-not
+                                             else 0.
+
+
+               END.
+            end.
+            else do:
+                if v_qtd_hrs_diu_orig > 0 then do:
+                   if (v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + 
+                       v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per)) > v_qtd_hrs_diu_orig THEN 
+                      assign d-tot-hrs-trb-diu = v_qtd_hrs_diu_orig
+                             d-tot-hrs-dsr     = (v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_diu_dsr_per + 
+                                                 v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per)) - v_qtd_hrs_diu_orig.
+                   ELSE
+                      assign d-tot-hrs-trb-diu = (v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_diu_dsr_per + 
+                                                  v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per))
+                             d-tot-hrs-dsr     = 0.
+                end.
+            end.
+         end.
+         else
+            assign d-tot-hrs-dsr = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + d-tot-hrs-trb-diu + 
+                                   d-tot-hrs-trb-not + d-tot-hrs-sup-not + v_qtd_hrs_diu_dsr_per + 
+                                   v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per).
+      end.
+   end.
+   if d-tot-hrs-dsr <= 0 then  /*** cris 11/11 *******/
+      assign d-qtd-hrs-diu-dsr = 0
+             d-qtd-hrs-not-dsr = 0
+             d-tot-hrs-dsr-diu = 0
+             d-tot-hrs-dsr-not = 0.
+
+   if d-tot-hrs-dsr-not > 0 then do:
+      if d-tot-hrs-dsr > d-tot-hrs-dsr-not then do:
+         if d-tot-hrs-fer-not > 0 and l-sup-evnot = yes and bparam-pe.log_livre_2 = no then do:
+            if d-tot-hrs-fer-not <= d-tot-hrs-dsr-not then
+               assign d-tot-hrs-sup-not = d-tot-hrs-sup-not + (d-tot-hrs-fer-not * 0.142857)
+                      d-tot-hrs-dsr     = d-tot-hrs-dsr - (d-tot-hrs-fer-not * 0.142857).
+            else
+               assign d-tot-hrs-sup-not = d-tot-hrs-sup-not + (d-tot-hrs-dsr-not * 0.142857)
+                      d-tot-hrs-dsr     = d-tot-hrs-dsr - (d-tot-hrs-dsr-not * 0.142857).
+         end.
+         if d-tot-hrs-dsr > d-tot-hrs-dsr-not and d-tot-hrs-dsr-diu > 0 then do:
+            assign d-tot-hrs-dsr-diu = d-tot-hrs-dsr - d-tot-hrs-dsr-not.
+         end.
+         else
+            assign d-tot-hrs-dsr-not = d-tot-hrs-dsr
+                   d-tot-hrs-dsr-diu = 0.
+      end.
+      else do:
+         assign d-tot-hrs-dsr-not = d-tot-hrs-dsr
+                d-tot-hrs-dsr-diu = 0.
+         if d-tot-hrs-fer-not > 0 and l-sup-evnot = yes and bparam-pe.log_livre_2 = no then do:
+            if d-tot-hrs-fer-not <= d-tot-hrs-dsr-not then
+               assign d-tot-hrs-sup-not = d-tot-hrs-sup-not + (d-tot-hrs-fer-not * 0.142857)
+                      d-tot-hrs-dsr-not = d-tot-hrs-dsr-not - (d-tot-hrs-fer-not * 0.142857).
+            else
+               assign d-tot-hrs-sup-not = d-tot-hrs-sup-not + (d-tot-hrs-dsr * 0.142857)
+                      d-tot-hrs-dsr-not = d-tot-hrs-dsr-not - (d-tot-hrs-dsr * 0.142857).
+         end.
+      end.
+   end.
+   else do:
+      if d-tot-hrs-dsr-diu > 0 then
+         assign d-tot-hrs-dsr-not = 0
+                d-tot-hrs-dsr-diu = d-tot-hrs-dsr.
+      else
+         assign d-tot-hrs-dsr-not = 0
+                d-tot-hrs-dsr-diu = 0.
+   end.
+end.
+/**************** MANTM O DSR ********************/
+else do:
+    MESSAGE "d-tot-hrs-trb-not " d-tot-hrs-trb-not SKIP
+            "d-qtd-hrs-not " d-qtd-hrs-not
+        VIEW-AS ALERT-BOX INFO BUTTONS OK.
+
+   IF d-qtd-hrs-not-fer > (v_qtd_hrs_not_fer_per + d-hrs-not-fer-sit) THEN
+      ASSIGN d-tot-hrs-fer-not = d-qtd-hrs-not-fer - v_qtd_hrs_not_fer_per - d-hrs-not-fer-sit.
+   ELSE
+      ASSIGN d-tot-hrs-fer-not = 0.
+
+   ASSIGN d-tot-hrs-dsr-diu = d-qtd-hrs-diu-dsr + d-qtd-hrs-diu-fer
+          d-tot-hrs-dsr-not = d-qtd-hrs-not-dsr + d-qtd-hrs-not-fer
+          d-hrs-diu-dsr-sit = d-hrs-diu-dsr-sit + d-hrs-diu-fer-sit
+          d-hrs-not-dsr-sit = d-hrs-not-dsr-sit + d-hrs-not-fer-sit.
+
+   assign v_tot_dsr_original = d-tot-hrs-dsr-diu
+          d-tot-hrs-dsr-diu = d-tot-hrs-dsr-diu - (v_qtd_hrs_diu_dsr_per + v_qtd_hrs_diu_fer_per) - d-hrs-diu-dsr-sit
+          d-tot-hrs-dsr-not = d-tot-hrs-dsr-not - (v_qtd_hrs_not_dsr_per + v_qtd_hrs_not_fer_per) - d-hrs-not-dsr-sit.
+
+   /***** tratamento para eliminar problemas com arredondamento das horas situa‡Æo *****/
+   if d-tot-hrs-dsr-diu < 0.1 then
+      assign d-tot-hrs-dsr-diu = 0.
+   if d-tot-hrs-dsr-not < 0.1 then
+      assign d-tot-hrs-dsr-not = 0. 
+   if d-tot-hrs-fer-diu < 0.1 then
+      assign d-tot-hrs-fer-diu = 0.
+   if d-tot-hrs-fer-not < 0.1 then
+      assign d-tot-hrs-fer-not = 0.  
+
+   /********* tratamento horas suplementares no feriado ********************************/
+   if d-tot-hrs-fer-not > 0 and l-sup-evnot and bparam-pe.log_livre_2 = no then 
+      assign d-tot-hrs-sup-not = truncate(round(d-tot-hrs-fer-not * 0.1428571,3),3).
+   else
+      assign d-tot-hrs-sup-not = 0.
+
+   assign d-tot-hrs-trb-diu = d-qtd-hrs-diu - d-hrs-diu-trb-sit
+          d-tot-hrs-trb-not = d-qtd-hrs-not - d-hrs-not-trb-sit
+          d-tot-hrs-sup-not = if l-sup-evnot then 
+                                 d-tot-hrs-sup-not + (d-tot-hrs-trb-not * 0.1428571)
+                              else 0.
+
+    MESSAGE "ponto 6" SKIP
+            "d-tot-hrs-trb-not         = " d-tot-hrs-trb-not SKIP
+            "d-qtd-hrs-not             = " d-qtd-hrs-not       SKIP  
+            "d-hrs-not-trb-sit         = " d-hrs-not-trb-sit             
+        VIEW-AS ALERT-BOX INFO BUTTONS OK.
+
+   if (d-tot-hrs-sit + v_qtd_hrs_diu_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_dsr_per + v_qtd_hrs_not_fer_per) >=
+       v_qtd_hrs_mes_rh then do:
+       MESSAGE "ponto 6.1"
+           VIEW-AS ALERT-BOX INFO BUTTONS OK.
+      assign d-tot-hrs-dsr-diu = 0
+             d-tot-hrs-dsr-not = 0
+             d-tot-hrs-trb-diu = 0
+             d-tot-hrs-trb-not = 0
+             d-tot-hrs-sup-not = 0
+             d-qtd-hrs-diu     = 0
+             d-qtd-hrs-not     = 0.
+      if v_qtd_hrs_not_dsr_per > 0 or v_qtd_hrs_not_fer_per > 0 then do:
+          MESSAGE "ponto 6.2"
+              VIEW-AS ALERT-BOX INFO BUTTONS OK.
+         if (d-tot-hrs-sit + v_qtd_hrs_not_dsr_per) >= v_qtd_hrs_mes_rh then
+            assign v_qtd_hrs_diu_dsr_per = 0
+                   v_qtd_hrs_diu_fer_per = 0
+                   v_qtd_hrs_not_fer_per = 0
+                   v_qtd_hrs_not_dsr_per = v_qtd_hrs_mes_rh - d-tot-hrs-sit
+                   d-hrs-diu-dsr-per     = 0
+                   d-hrs-diu-fer-per     = 0
+                   d-hrs-not-fer-per     = 0
+                   d-hrs-not-dsr-per     = v_qtd_hrs_mes_rh - d-tot-hrs-sit.
+         else do:
+             MESSAGE "ponto 6.2"
+                 VIEW-AS ALERT-BOX INFO BUTTONS OK.
+            if (d-tot-hrs-sit + v_qtd_hrs_not_dsr_per + v_qtd_hrs_not_fer_per) >= v_qtd_hrs_mes_rh then
+               assign v_qtd_hrs_diu_dsr_per = 0
+                      v_qtd_hrs_diu_fer_per = 0
+                      v_qtd_hrs_not_fer_per = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_not_dsr_per)
+                      d-hrs-diu-dsr-per     = 0
+                      d-hrs-diu-fer-per     = 0
+                      d-hrs-not-fer-per     = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + d-hrs-not-dsr-per).
+         end.
+      end.
+      if v_qtd_hrs_diu_dsr_per > 0 or v_qtd_hrs_diu_fer_per > 0 then do:
+          MESSAGE "ponto 6.3"
+              VIEW-AS ALERT-BOX INFO BUTTONS OK.
+         if (d-tot-hrs-sit + v_qtd_hrs_not_dsr_per + 
+             v_qtd_hrs_not_fer_per + v_qtd_hrs_diu_dsr_per) >= v_qtd_hrs_mes_rh then
+            assign v_qtd_hrs_diu_fer_per = 0
+                   v_qtd_hrs_diu_dsr_per = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_not_dsr_per + 
+                                                                        v_qtd_hrs_not_fer_per)
+                   d-hrs-diu-fer-per     = 0
+                   d-hrs-diu-dsr-per     = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + d-hrs-not-dsr-per + 
+                                                                        d-hrs-not-fer-per).
+         else do:
+             MESSAGE "ponto 6.4"
+                 VIEW-AS ALERT-BOX INFO BUTTONS OK.
+           if (d-tot-hrs-sit + v_qtd_hrs_not_dsr_per + v_qtd_hrs_not_fer_per + 
+               v_qtd_hrs_diu_dsr_per + v_qtd_hrs_diu_fer_per) >= v_qtd_hrs_mes_rh then
+               assign v_qtd_hrs_diu_fer_per = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_not_dsr_per + 
+                                                                           v_qtd_hrs_not_fer_per + v_qtd_hrs_diu_dsr_per)
+                      d-hrs-diu-fer-per     = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + d-hrs-not-dsr-per + 
+                                                                           d-hrs-not-fer-per + d-hrs-diu-dsr-per).
+         end.
+      end.
+   end.
+   else do:
+      if (v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_diu_dsr_per + v_qtd_hrs_diu_fer_per +
+         v_qtd_hrs_not_dsr_per + v_qtd_hrs_not_fer_per)) < (d-tot-hrs-dsr-diu + d-tot-hrs-dsr-not + d-tot-hrs-sup-not)
+         then do:
+          MESSAGE "ponto 6.5"
+              VIEW-AS ALERT-BOX INFO BUTTONS OK.
+         assign d-dif-aux = v_qtd_hrs_mes_rh - (d-tot-hrs-sit + v_qtd_hrs_diu_dsr_per + 
+                            v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_dsr_per + v_qtd_hrs_not_fer_per)
+                d-tot-hrs-dsr-diu = d-dif-aux * (d-tot-hrs-dsr-diu / 
+                                   (d-tot-hrs-dsr-diu + d-tot-hrs-dsr-not + d-tot-hrs-sup-not)).
+         if l-sup-evnot then do:
+            assign d-tot-hrs-dsr-not = d-dif-aux * (d-tot-hrs-dsr-not / 
+                                      (d-tot-hrs-dsr-diu + d-tot-hrs-dsr-not + d-tot-hrs-sup-not))
+                   d-tot-hrs-sup-not = d-dif-aux - d-tot-hrs-dsr-diu - d-tot-hrs-dsr-not. 
+         end.
+         else do:
+             MESSAGE "ponto 6.6"
+                 VIEW-AS ALERT-BOX INFO BUTTONS OK.
+            assign d-tot-hrs-dsr-not = d-dif-aux - d-tot-hrs-dsr-diu.
+         end.          
+      end.
+      else do:       
+          assign  d-tot-hrs-trb = v_qtd_hrs_mes_rh - d-tot-hrs-sit - 
+                                  d-tot-hrs-dsr-diu - d-tot-hrs-dsr-not - v_qtd_hrs_diu_dsr_per -
+                                  v_qtd_hrs_diu_fer_per - v_qtd_hrs_not_dsr_per - v_qtd_hrs_not_fer_per.
+      end.                            
+   end.
+
+   MESSAGE 
+       "d-qtd-hrs-diu   =  " d-qtd-hrs-diu   skip
+       "d-qtd-hrs-not   =  " d-qtd-hrs-not   skip
+       VIEW-AS ALERT-BOX INFO BUTTONS OK.
+
+
+   if d-qtd-hrs-diu > 0 and
+      d-qtd-hrs-not > 0 then do:
+       MESSAGE "ponto 6.7" SKIP
+           "d-tot-hrs-trb-not " d-tot-hrs-trb-not SKIP
+           "d-tot-hrs-sup-not " d-tot-hrs-sup-not SKIP
+           "d-tot-hrs-trb     " d-tot-hrs-trb     SKIP
+           "l-sup-evnot       " l-sup-evnot       SKIP
+           VIEW-AS ALERT-BOX INFO BUTTONS OK.
+       if d-tot-hrs-trb < (d-tot-hrs-trb-not + d-tot-hrs-sup-not) then do:
+          assign d-tot-hrs-trb-not = if l-sup-evnot = yes then
+                                        (d-tot-hrs-trb / 1.1428571)
+                                     else d-tot-hrs-trb
+                 d-tot-hrs-sup-not = if l-sup-evnot = yes then
+                                        d-tot-hrs-trb - d-tot-hrs-trb-not
+                                     else 0
+                 d-tot-hrs-trb-diu = 0
+                 d-qtd-hrs-diu     = 0.
+       end.
+       else 
+          assign d-tot-hrs-trb-diu = d-tot-hrs-trb - (d-tot-hrs-trb-not + d-tot-hrs-sup-not).
+
+       MESSAGE "d-tot-hrs-trb-not ponto 7 = "  d-tot-hrs-trb-not VIEW-AS ALERT-BOX INFO BUTTONS OK.
+   end. 
+   else do:
+          if d-tot-hrs-trb-diu > 0 THEN 
+             assign d-tot-hrs-trb-diu = d-tot-hrs-trb
+                    d-tot-hrs-trb-not = 0.  
+          ELSE 
+             if d-tot-hrs-trb-not > 0 then
+                assign d-tot-hrs-trb-not = if l-sup-evnot = yes then
+                                              (d-tot-hrs-trb / 1.1428571)
+                                           else d-tot-hrs-trb
+                       d-tot-hrs-sup-not = if l-sup-evnot = yes then
+                                              d-tot-hrs-trb - d-tot-hrs-trb-not
+                                           else 0
+                       d-tot-hrs-trb-diu = 0
+                       d-qtd-hrs-diu     = 0.
+
+           MESSAGE "d-tot-hrs-trb-not ponto 8 = "  d-tot-hrs-trb-not VIEW-AS ALERT-BOX INFO BUTTONS OK.
+       /*end.*/
+   end.
+end.     
+
+/*** trata funcionarios com l-afast-mes = yes - afastado durante todo o mes *******/
+assign i-qtd-hrs = v_qtd_hrs_mes_rh - d-tot-hrs-sit.
+if (l-afast-mes or
+    l-afast-periodo) and
+    i-qtd-hrs > 0 then do:
+    find last sit_afast_func of bfunc-ponto where
+        sit_afast_func.dat_inic_sit_afast <= dt-fim-out no-lock no-error.
+    if available sit_afast_func then do:
+        find sit_afast of sit_afast_func no-lock no-error.
+        if sit_afast.idi_signif_sit = 2 or 
+            sit_afast.idi_signif_sit = 10 /** Contrato Desativado - Jeziel **/ then do:
+            if sit_afast_func.dat_inic_pagto_inss <= dt-ini-out or
+                sit_afast_func.dat_inic_sit_afast + sit_afast.qti_dias_pago_empres <= dt-fim-out THEN
+                assign i-ev-codigo = sit_afast.cdn_event_afast_inss.
+            else do:
+                if sit_afast.idi_hrs_desc_dia = 2 then
+                    assign i-ev-codigo = sit_afast.cdn_event_afast_empres.
+                if sit_afast.idi_hrs_desc_dia = 1 then do:
+                    if sit_afast.idi_signif_sit = 2  or 
+                        sit_afast.idi_signif_sit = 10 /** Contrato Desativado - Jeziel **/ then
+                        assign i-ev-codigo = sit_afast.cdn_event_afast_empres.
+                    else do:
+                        if d-tot-hrs-trb-diu > 0 then
+                            assign i-ev-codigo = sit_afast.cdn_event_afast_diurno.
+                        else
+                            assign i-ev-codigo = sit_afast.cdn_event_afast_notur.
+                    end.
+                end.
+                if sit_afast.idi_hrs_desc_dia = 3 then do:
+                    if d-tot-hrs-trb-diu > 0 then
+                        assign i-ev-codigo = sit_afast.cdn_event_afast_diurno.
+                    else
+                        assign i-ev-codigo = sit_afast.cdn_event_afast_notur.
+                end.
+            end.   
+            IF l-afast-mes THEN DO:
+                assign d-tot-hrs-sit = d-tot-hrs-sit + i-qtd-hrs. 
+                run pi-movto-ptoelet.
+            END.
+        end.
+        else do:
+            if sit_afast.idi_signif_sit = 7 or
+                sit_afast.idi_signif_sit = 9 then do:
+                find first event_fp no-lock where
+                    event_fp.cdn_empresa  = tt-param.v_cdn_empresa_evento and
+                    event_fp.cdn_event_fp = i-ev-codigo no-error.
+                if avail event_fp and event_fp.idi_ident_efp <> 2 THEN DO:
+                    if d-tot-hrs-trb-diu > 0 or 
+                        d-tot-hrs-dsr-diu > 0 then do:
+                        assign i-ev-codigo = sit_afast.cdn_event_afast_diurno
+                               d-tot-hrs-sit = d-tot-hrs-sit + i-qtd-hrs. 
+                        run pi-movto-ptoelet.
+                    end.          
+                    else do:
+                        assign i-ev-codigo = sit_afast.cdn_event_afast_notur
+                               d-tot-hrs-sit = d-tot-hrs-sit + i-qtd-hrs.
+                        run pi-movto-ptoelet.
+                    end.
+                END.
+            end.
+            else do:
+                if sit_afast.idi_signif_sit = 5 and l-afast-mes then do:
+                    assign i-ev-codigo   = IF bcontrole-catponto.num_mes_primei_calc_realzdo = 2 then
+                                           i-ev-trbdiu
+                                           ELSE ""
+                           d-tot-hrs-sit = d-tot-hrs-sit + i-qtd-hrs.
+
+                    MESSAGE "ponto 1 pe4000r6.p"
+                        VIEW-AS ALERT-BOX INFO BUTTONS OK.
+                    run pi-movto-ptoelet.
+                end.
+            end.
+        end.
+    end.
+end.
+
+/*** Calcula 31 dias em mˆs, F‚rias - Jeziel ***/
+IF CAN-FIND(FIRST rh_estab OF bfunc-ponto WHERE
+                  rh_estab.LOG_consid_31_dias = YES) THEN DO:
+   FIND FIRST param_empres_rh WHERE 
+              param_empres_rh.cdn_empresa = bfunc-ponto.cdn_empresa NO-LOCK NO-ERROR.
+   IF param_empres_rh.num_mes_refer_calc_efetd <> 02 AND param_empres_rh.num_mes_refer_calc_efetd <> 04 AND
+      param_empres_rh.num_mes_refer_calc_efetd <> 06 AND param_empres_rh.num_mes_refer_calc_efetd <> 09 AND
+      param_empres_rh.num_mes_refer_calc_efetd <> 11 THEN DO:
+
+      /*** Somente quando as f‚rias forem de 30 dias dentro do mˆs de 31 dias ****/
+      FOR EACH sit_afast_func OF bfunc-ponto NO-LOCK WHERE 
+               sit_afast_func.qti_dias_sit_func         = 30 AND
+               MONTH(sit_afast_func.dat_inic_sit_afast) = MONTH(sit_afast_func.dat_term_sit_afast) AND
+               DATE(MONTH(sit_afast_func.dat_inic_sit_afast),01,YEAR(sit_afast_func.dat_inic_sit_afast)) = DATE(param_empres_rh.num_mes_refer_calc_efetd,01,param_empres_rh.num_ano_refer_calc_efetd),         
+         FIRST sit_afast NO-LOCK WHERE
+               sit_afast.cdn_sit_afast_func = sit_afast_func.cdn_sit_afast_func AND
+               sit_afast.idi_signif_sit     = 5:
+         ASSIGN i-ev-codigo = i-ev-trbdiu
+                i-qtd-hrs   = TRUNCATE(ROUND(v_qtd_hrs_mes_rh / 30,3),3).
+
+                    MESSAGE "ponto 2 pe4000r6.p"
+                        VIEW-AS ALERT-BOX INFO BUTTONS OK.
+         RUN pi-movto-ptoelet.
+      END.
+   END.
+END.
+
+/*** cria mvtoponto com horas dsr/trb mensalistas *****/
+if bcatponto.num_livre_1 = 2 then do: /* per¡odo ponto */
+   if v_qtd_hrs_not_adc > d-tot-hrs-trb-not and
+      l-adc-evnot = yes then do:
+      find sindicato no-lock where
+           sindicato.cdn_sindicato = bfunc-ponto.cdn_sindicato no-error.
+      if avail sindicato then do:
+         if sindicato.cdn_efp_adc_notur > "" /*0*/ then do:
+            run pi-calcula-adc-notur.
+
+            /* se a suplementacao nao entra na carga do mes, o que for gerado
+               de adicional noturno deve ser suplementado */
+            IF substr(bcatponto.cod_livre_2,23,1) = "S" THEN DO:
+               find event_fp where
+                    event_fp.cdn_empresa  = tt-param.v_cdn_empresa_evento AND
+                    event_fp.cdn_event_fp = i-ev-trbnot no-lock no-error. 
+               if avail event_fp AND 
+                  event_fp.cdn_efp_suplem_hrs_notur > "" /*0*/ then
+                  assign l-sup-evnot = yes.
+            END.
+
+            if qtd-hrs-not-mes > 0 then do:
+               assign i-qtd-hrs   = if l-sup-evnot = yes then
+                                       truncate(round(qtd-hrs-not-mes * 1.142857,3),3)
+                                    else
+                                       qtd-hrs-not-mes
+                      i-ev-codigo = sindicato.cdn_efp_adc_notur.
+
+
+                    MESSAGE "ponto 3 pe4000r6.p"
+                        VIEW-AS ALERT-BOX INFO BUTTONS OK.
+               run pi-movto-ptoelet.
+            end.
+         end.
+      end.
+   end.
+end. 
+if l-afast-mes = yes /*or
+   l-afast-periodo*/ AND 
+   d-tot-hrs-sit > 0 then  /*** cris turno m¢vel / per¡odo ***/
+   assign d-tot-hrs-trb-diu = 0
+          d-tot-hrs-trb-not = 0
+          d-tot-hrs-sup-not = 0
+          d-tot-hrs-dsr-diu = 0 
+          d-tot-hrs-dsr-not = 0.
+
+assign d-tot-hrs-trb-diu  = truncate(round(d-tot-hrs-trb-diu,3),3)
+       d-tot-hrs-trb-not  = truncate(round(d-tot-hrs-trb-not,3),3)
+       d-tot-hrs-sup-not  = truncate(round(d-tot-hrs-sup-not,3),3)
+       d-tot-hrs-dsr-diu  = truncate(round(d-tot-hrs-dsr-diu,3),3)
+       d-tot-hrs-dsr-not  = truncate(round(d-tot-hrs-dsr-not,3),3)
+       d-tot-hrs-sup-not  = truncate(round(d-tot-hrs-sup-not,3),3)
+       d-tot-hrs-sit      = truncate(round(d-tot-hrs-sit,3),3).
+
+assign v_qtd_hrs_diu_dsr_per = truncate(round((v_qtd_hrs_diu_dsr_per),3),3)
+       v_qtd_hrs_not_dsr_per = truncate(round((v_qtd_hrs_not_dsr_per),3),3)
+       v_qtd_hrs_diu_fer_per = truncate(round((v_qtd_hrs_diu_fer_per),3),3)
+       v_qtd_hrs_not_fer_per = truncate(round((v_qtd_hrs_not_fer_per),3),3)
+       d-hrs-diu-dsr-per     = truncate(round((d-hrs-diu-dsr-per),3),3)
+       d-hrs-not-dsr-per     = truncate(round((d-hrs-not-dsr-per),3),3)
+       d-hrs-diu-fer-per     = truncate(round((d-hrs-diu-fer-per),3),3)
+       d-hrs-not-fer-per     = truncate(round((d-hrs-not-fer-per),3),3).
+
+for each tt-epc exclusive-lock where tt-epc.cod-event = "SUPL":U:
+   delete tt-epc. 
+end.
+
+create tt-epc.
+assign tt-epc.cod-event     = "SUPL":U.
+
+{include/i-epc201.i "SUPL"}
+if (d-tot-hrs-sit + d-tot-hrs-trb-diu + d-tot-hrs-trb-not + d-tot-hrs-sup-not + d-tot-hrs-dsr-diu + d-tot-hrs-dsr-not + 
+   v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per) > d-tot-hrsmes then do:
+   if v_qtd_hrs_diu_dsr_per > 0 then
+      assign v_qtd_hrs_diu_dsr_per = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-trb-diu + d-tot-hrs-trb-not + d-tot-hrs-sup-not + d-tot-hrs-dsr-diu + d-tot-hrs-dsr-not + 
+                                 v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per)
+             d-hrs-diu-dsr-per     = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-trb-diu + d-tot-hrs-trb-not + d-tot-hrs-sup-not + d-tot-hrs-dsr-diu + d-tot-hrs-dsr-not + 
+                                 d-hrs-not-dsr-per + d-hrs-diu-fer-per + d-hrs-not-fer-per).
+   else do:
+      if v_qtd_hrs_diu_fer_per > 0 then
+         assign v_qtd_hrs_diu_fer_per = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-trb-diu + d-tot-hrs-trb-not + d-tot-hrs-sup-not + d-tot-hrs-dsr-diu + d-tot-hrs-dsr-not + 
+                                                    v_qtd_hrs_not_dsr_per + v_qtd_hrs_not_fer_per)
+                d-hrs-diu-fer-per     = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-trb-diu + d-tot-hrs-trb-not + d-tot-hrs-sup-not + d-tot-hrs-dsr-diu + d-tot-hrs-dsr-not + 
+                                                    d-hrs-not-dsr-per + d-hrs-not-fer-per).
+      else
+         if d-tot-hrs-trb-diu > 0 then
+            assign d-tot-hrs-trb-diu = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-trb-not + d-tot-hrs-sup-not + d-tot-hrs-dsr-diu + d-tot-hrs-dsr-not + 
+                                                       v_qtd_hrs_not_dsr_per + v_qtd_hrs_not_fer_per).
+         else
+            if d-tot-hrs-dsr-diu > 0 then
+               assign d-tot-hrs-dsr-diu = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-trb-not + d-tot-hrs-sup-not + d-tot-hrs-dsr-not + 
+                                                          v_qtd_hrs_not_dsr_per + v_qtd_hrs_not_fer_per).
+            else
+               if v_qtd_hrs_not_dsr_per > 0 then
+                  assign v_qtd_hrs_not_dsr_per = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-trb-not + d-tot-hrs-sup-not + d-tot-hrs-dsr-not + 
+                                                             v_qtd_hrs_not_fer_per)
+                         d-hrs-not-dsr-per     = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-trb-not + d-tot-hrs-sup-not + d-tot-hrs-dsr-not + 
+                                                             d-hrs-not-fer-per).
+               else
+                  if v_qtd_hrs_not_fer_per > 0 then
+                     assign v_qtd_hrs_not_fer_per = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-trb-not + d-tot-hrs-sup-not + d-tot-hrs-dsr-not)
+                            d-hrs-not-fer-per     = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-trb-not + d-tot-hrs-sup-not + d-tot-hrs-dsr-not).
+                  else
+                     if d-tot-hrs-dsr-not > 0 then
+                        assign d-tot-hrs-dsr-not = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-trb-not + d-tot-hrs-sup-not).
+                     else
+                        assign v_tot_trb_not      = d-tot-hrsmes - d-tot-hrs-sit
+                               d-tot-hrs-trb-not  = if l-sup-evnot = yes then
+                                                       v_tot_trb_not / 1.1428571
+                                                    else v_tot_trb_not
+                               d-tot-hrs-sup-not  = if l-sup-evnot = yes then
+                                                       v_tot_trb_not - d-tot-hrs-trb-not
+                                                    else 0.
+   end.
+end.
+else do:
+   if (d-tot-hrs-sit + d-tot-hrs-trb-diu + d-tot-hrs-trb-not + d-tot-hrs-sup-not + d-tot-hrs-dsr-diu + d-tot-hrs-dsr-not + 
+       v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per) < d-tot-hrsmes then do:
+      assign v_log_menor = yes
+             v_qtd_menor = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-trb-diu + d-tot-hrs-trb-not + 
+                           d-tot-hrs-sup-not + d-tot-hrs-dsr-diu + d-tot-hrs-dsr-not + v_qtd_hrs_diu_dsr_per + 
+                           v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per).
+      if d-tot-hrs-trb-diu > 0 THEN
+         assign d-tot-hrs-trb-diu = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-trb-not + d-tot-hrs-sup-not + d-tot-hrs-dsr-diu + d-tot-hrs-dsr-not + 
+                                    v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per)
+                v_log_menor = no
+                v_qtd_menor = 0.
+      else
+         if d-tot-hrs-trb-not > 0 then
+            assign v_tot_trb_not      = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-dsr-diu + d-tot-hrs-dsr-not + 
+                                        v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per)
+                   d-tot-hrs-trb-not = if l-sup-evnot = yes then
+                                          v_tot_trb_not / 1.1428571
+                                       else v_tot_trb_not
+                   d-tot-hrs-sup-not = if l-sup-evnot = yes then
+                                          v_tot_trb_not - d-tot-hrs-trb-not
+                                       else 0
+                   v_log_menor = no
+                   v_qtd_menor = 0.
+         else
+            if d-tot-hrs-dsr-diu > 0 then
+               assign d-tot-hrs-dsr-diu = d-tot-hrsmes - (d-tot-hrs-sit + d-tot-hrs-dsr-not + 
+                                        v_qtd_hrs_diu_dsr_per + v_qtd_hrs_not_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per)
+                      v_log_menor = no
+                      v_qtd_menor = 0.
+            else
+               if d-tot-hrs-dsr-not > 0 then
+                  assign d-tot-hrs-dsr-not = d-tot-hrsmes - (d-tot-hrs-sit + v_qtd_hrs_not_dsr_per + 
+                                             v_qtd_hrs_diu_dsr_per + v_qtd_hrs_diu_fer_per + v_qtd_hrs_not_fer_per)
+                         v_log_menor = no
+                         v_qtd_menor = 0.
+   end.
+end.
+if d-tot-hrs-trb-diu > 0 then do:
+   assign i-ev-codigo = i-ev-trbdiu
+          i-qtd-hrs   = d-tot-hrs-trb-diu.
+/*                                                            */
+/*                     MESSAGE "ponto 4 pe4000r6.p"           */
+/*                         VIEW-AS ALERT-BOX INFO BUTTONS OK. */
+   run pi-movto-ptoelet.
+end.          
+if d-tot-hrs-trb-not > 0 then do:
+   assign i-ev-codigo = i-ev-trbnot
+          i-qtd-hrs   = d-tot-hrs-trb-not.
+
+   MESSAGE "ponto 5 pe4000r6.p" SKIP 
+           "d-tot-hrs-trb-not " d-tot-hrs-trb-not SKIP
+       "i-ev-trbnot " i-ev-trbnot
+       VIEW-AS ALERT-BOX INFO BUTTONS OK.
+   run pi-movto-ptoelet.
+end.          
+if d-tot-hrs-sup-not > 0 then do:
+   assign i-ev-codigo = i-ev-supnot
+          i-qtd-hrs   = d-tot-hrs-sup-not.
+
+/*                     MESSAGE "ponto 6 pe4000r6.p"           */
+/*                         VIEW-AS ALERT-BOX INFO BUTTONS OK. */
+   run pi-movto-ptoelet.
+end.          
+if d-tot-hrs-dsr-diu > 0 then do:
+   assign i-ev-codigo = i-ev-dsrdiu
+          i-qtd-hrs   = d-tot-hrs-dsr-diu.
+
+/*                     MESSAGE "ponto 7 pe4000r6.p"           */
+/*                         VIEW-AS ALERT-BOX INFO BUTTONS OK. */
+   run pi-movto-ptoelet.
+end.          
+
+if d-tot-hrs-dsr-not > 0 then do:
+   assign i-ev-codigo = i-ev-dsrnot 
+          i-qtd-hrs   = d-tot-hrs-dsr-not.
+
+/*                     MESSAGE "ponto 8 pe4000r6.p"           */
+/*                         VIEW-AS ALERT-BOX INFO BUTTONS OK. */
+   run pi-movto-ptoelet.
+end.          
+/*** cria mvtoponto com percentual sobre dsr **************** 
+assign i-ev-codigo = i-ev-percdsr
+       i-qtd-hrs   = d-qtd-hrs-not-dsr.
+run pi-movto-ptoelet. 
+******************************************************************/
+
+if v_log_menor = yes and v_qtd_menor > 0 then do:
+      /** Tratamento quando funcionario esta de ferias de 30 dias em mes de 30 dias iniciando as ferias no dia 2 e
+       se o dia 1o e um dia compensado - Sera somado a quantidade de horas padrao dia no evento normal diurno (renato)
+   **/ 
+   assign l-acerto-ferias = no.
+   if not l-afast-mes and 
+      v_qtd_menor = round(bturnotrb.qtd_hrs_padr_dia_rh,3) and
+      not can-find(first rh_estab OF bfunc-ponto where
+                         rh_estab.log_consid_31_dias = yes) 
+   then do:
+      find param_empres_rh no-lock where
+           param_empres_rh.cdn_empresa = bfunc-ponto.cdn_empresa no-error.
+      if avail param_empres_rh and
+         (param_empres_rh.num_mes_refer_calc_efetd = 04 or param_empres_rh.num_mes_refer_calc_efetd = 06 or
+          param_empres_rh.num_mes_refer_calc_efetd = 09 or param_empres_rh.num_mes_refer_calc_efetd = 11) then do: 
+         for each sit_afast_func of bfunc-ponto no-lock where
+                  sit_afast_func.dat_inic_sit_afast = date(param_empres_rh.num_mes_refer_calc_efetd,02,param_empres_rh.num_ano_refer_calc_efetd) and
+                  sit_afast_func.qti_dias_sit_func  = 30,
+            first sit_afast no-lock where
+                  sit_afast.cdn_sit_afast_func = sit_afast_func.cdn_sit_afast_func and
+                  sit_afast.idi_signif_sit     = 5:
+            assign l-acerto-ferias = yes.
+            leave.
+         end.   
+      end.
+   end.
+
+   /* FO 1224.226 - Husmann */
+
+   if not l-afast-mes and 
+      v_qtd_menor = round(bturnotrb.qtd_hrs_padr_dia_rh,3) THEN DO:
+      IF truncate(round(v_tot_dsr_original,3),3) = truncate(round(d-hrs-diu-dsr-sit,3),3) THEN DO:
+         for each sit_afast_func of bfunc-ponto no-lock where
+                  sit_afast_func.dat_inic_sit_afast >=  date(param_empres_rh.num_mes_refer_calc_efetd,02,param_empres_rh.num_ano_refer_calc_efetd) and
+                  sit_afast_func.dat_inic_sit_afast <= dat-fim-mes,
+             FIRST sit_afast no-lock where
+                   sit_afast.cdn_sit_afast_func = sit_afast_func.cdn_sit_afast_func AND
+                   sit_afast.idi_signif_sit = 5 :
+             assign l-acerto-ferias = yes.
+             leave.
+         end.   
+      END.
+   END.
+
+   IF not l-afast-mes THEN DO:
+      /* ferias de 30 dias apartir de 01/02 - FO 1281.284 */
+      find param_empres_rh no-lock where
+           param_empres_rh.cdn_empresa = bfunc-ponto.cdn_empresa no-error.
+      if avail param_empres_rh and
+         (param_empres_rh.num_mes_refer_calc_efetd = 2) then do:
+         for each sit_afast_func of bfunc-ponto no-lock where
+                  sit_afast_func.dat_inic_sit_afast = date(param_empres_rh.num_mes_refer_calc_efetd,01,param_empres_rh.num_ano_refer_calc_efetd) and
+                  sit_afast_func.qti_dias_sit_func  = 30,
+            first sit_afast no-lock where
+                  sit_afast.cdn_sit_afast_func = sit_afast_func.cdn_sit_afast_func and
+                  sit_afast.idi_signif_sit     = 5:
+            assign l-acerto-ferias = yes.
+            leave.
+         end.
+      end.
+   END.
+
+   if l-acerto-ferias then do:
+      assign i-ev-codigo = IF bparam-pe.idi_fechto_hrs_mensalis = 1 /* horas trabalhadas */
+                           THEN i-ev-trbdiu
+                           ELSE i-ev-dsrdiu
+             i-qtd-hrs   = v_qtd_menor.
+
+/*                     MESSAGE "ponto 9 pe4000r6.p"           */
+/*                         VIEW-AS ALERT-BOX INFO BUTTONS OK. */
+      run pi-movto-ptoelet.
+   end.
+   else do:
+      find last movto_ptoelet exclusive-lock where
+                movto_ptoelet.cdn_empresa       = bfunc-ponto.cdn_empresa     and
+                movto_ptoelet.cdn_estab         = bfunc-ponto.cdn_estab       and
+                movto_ptoelet.cdn_funcionario   = bfunc-ponto.cdn_funcionario and
+                movto_ptoelet.num_ano_refer_fp  = bcontrole-catponto.num_ano_primei_calc_ptoelet and
+                movto_ptoelet.num_mes_refer_fp  = bcontrole-catponto.num_mes_primei_calc_realzdo and
+                movto_ptoelet.idi_tip_fp_calcul           = 1 and
+                movto_ptoelet.num_parc_calc_movto_ptoelet = 9 and
+                movto_ptoelet.log_livre_1                 = no no-error.
+      if avail movto_ptoelet then do:
+         assign movto_ptoelet.qtd_movto_ptoelet = movto_ptoelet.qtd_movto_ptoelet + v_qtd_menor.
+      end.
+   end.
+end.
+
+return.
+
+PROCEDURE pi-movto-ptoelet:
+
+    IF i-ev-codigo = "003" THEN
+    MESSAGE "antes de criar pi-movto-ptoelet pe4000r6.p"
+        VIEW-AS ALERT-BOX INFO BUTTONS OK.
+
+   {prghur/pep/pe4000.i1}.
+
+   IF i-ev-codigo = "003" THEN
+    MESSAGE "depois de criar pi-movto-ptoelet pe4000r6.p"
+        VIEW-AS ALERT-BOX INFO BUTTONS OK.
+END.
+
+PROCEDURE pi-calcula-adc-notur:
+   def var v_cdn_turno   like turno_trab.cdn_turno_trab               no-undo.
+   def var v_cdn_turma   like turma_trab.cdn_turma_trab               no-undo.
+   def var v_cod_pais    like localidade.cod_pais                     no-undo.
+   def var v_cdn_localid like localidade.cdn_localidade               no-undo.
+   def var v_cdn_jorn    like jorn_trab.cdn_jorn_trab                 no-undo.
+   def var v_cdn_interv  like interv_refei_jorn_trab.cdn_interv_refei no-undo.
+
+   def var v_dat_fim_localid as date format "99/99/9999" no-undo.
+   def var v_dat_fim_emprest as date format "99/99/9999" no-undo.
+   def var v_dat_fim_lotac   as date format "99/99/9999" no-undo.
+   def var v_log_emprest     as log  initial no          no-undo.
+   def var v_dat_aux_proc    as date format "99/99/9999" no-undo.
+   def var dt-dia-cal        as date format "99/99/9999" no-undo.
+   def var v_qti_hrs_falta   as int                      no-undo.
+   def var v_qti_trab_falta  as int                      no-undo.
+
+   assign v_dat_fim_localid = &IF "{&ems_dbtype}":U = "MSS":U &THEN date(01,01,1800) &ELSE date(01,01,0001) &ENDIF 
+          v_dat_fim_emprest = &IF "{&ems_dbtype}":U = "MSS":U &THEN date(01,01,1800) &ELSE date(01,01,0001) &ENDIF 
+          v_dat_fim_lotac   = &IF "{&ems_dbtype}":U = "MSS":U &THEN date(01,01,1800) &ELSE date(01,01,0001) &ENDIF 
+          v_log_emprest     = no
+          qtd-hrs-not-mes   = 0.
+
+   do dt-dia-cal = bcontrole-catponto.dat_inic_period_apurac_pto_mes to bcontrole-catponto.dat_term_period_apurac_pto_mes:
+
+      {prghur/pep/pe9994.i dt-dia-cal} 
+
+      if can-find(first tt-calendar where
+                        tt-calendar.cdn_turno_trab   = v_cdn_turno   and
+                        tt-calendar.cdn_turma_trab   = v_cdn_turma   and
+                        tt-calendar.cod_pais         = v_cod_pais    and
+                        tt-calendar.cdn_localidade   = v_cdn_localid and
+                        tt-calendar.dat_refer_calend = dt-dia-cal    and
+                        tt-calendar.idi_sit_dia_trab = 1             and
+                        tt-calendar.qti_padr_hrs_notur <> 0) then do:
+         find tt-calendar where
+              tt-calendar.cdn_turno_trab   = v_cdn_turno   and
+              tt-calendar.cdn_turma_trab   = v_cdn_turma   and
+              tt-calendar.cod_pais         = v_cod_pais    and
+              tt-calendar.cdn_localidade   = v_cdn_localid and
+              tt-calendar.dat_refer_calend = dt-dia-cal no-lock no-error.
+         if not can-find(first sit_afast_func of bfunc-ponto where
+                               sit_afast_func.dat_inic_proces_sit_afast <= dt-dia-cal and
+                               sit_afast_func.dat_term_proces_sit_afast >= dt-dia-cal) then 
+            assign qtd-hrs-not-mes = qtd-hrs-not-mes + tt-calendar.qti_padr_hrs_notur.
+         else do:
+            find first sit_afast_func of bfunc-ponto use-index stfstfnc_proces where
+                 sit_afast_func.dat_inic_proces_sit_afast <= dt-dia-cal and
+                 sit_afast_func.dat_term_proces_sit_afast >= dt-dia-cal no-lock no-error.
+            if can-find(first sit_afast where
+                              sit_afast.cdn_sit_afast_func = sit_afast_func.cdn_sit_afast_func and
+                              sit_afast.idi_signif_sit = 8 /* Jornada Incompleta */ ) then do:
+               assign v_qti_hrs_falta = 0.
+               for each efp_par_marcac_ptoelet no-lock where
+                        efp_par_marcac_ptoelet.cdn_empresa        = bfunc-ponto.cdn_empresa AND
+                        efp_par_marcac_ptoelet.cdn_estab          = bfunc-ponto.cdn_estab   AND
+                        efp_par_marcac_ptoelet.cdn_funcionario    = bfunc-ponto.cdn_funcionario AND
+                        efp_par_marcac_ptoelet.dat_proces_mpe     = dt-dia-cal and
+                        efp_par_marcac_ptoelet.cdn_sit_afast_func = sit_afast_func.cdn_sit_afast_func and
+                        efp_par_marcac_ptoelet.log_hrs_diurno     = no:
+                  assign v_qti_hrs_falta = v_qti_hrs_falta + efp_par_marcac_ptoelet.qti_hrs_marcac_ptoelet.
+               end.
+               assign v_qti_trab_falta = tt-calendar.qti_padr_hrs_notur - v_qti_hrs_falta.
+                      qtd-hrs-not-mes  = if v_qti_trab_falta > 0 then
+                                            qtd-hrs-not-mes + v_qti_trab_falta
+                                         else qtd-hrs-not-mes.
+            end. /* sit_afast */
+         end. /* else sit_afast_func */
+      end. /* btt-calendar */
+   end. /* do */
+
+   ASSIGN qtd-hrs-not-mes = truncate(round(qtd-hrs-not-mes / 3600,3),3).
+   if qtd-hrs-not-mes > d-tot-hrs-trb-not then
+      assign qtd-hrs-not-mes = qtd-hrs-not-mes - d-tot-hrs-trb-not.
+   else
+      assign qtd-hrs-not-mes = 0.
+
+END PROCEDURE.

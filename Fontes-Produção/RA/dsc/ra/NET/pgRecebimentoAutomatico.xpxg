@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<WSAD xmlns="urn:schemas-progress-com:WSAD:0004" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <AppObject>
+    <PGVersion>
+      <PXGVersion>03</PXGVersion>
+    </PGVersion>
+    <PGGenInfo isSessionFree="false">
+      <Author />
+      <VersionString />
+      <VersionNumber>1</VersionNumber>
+      <Package />
+      <Service>pgRecebimentoAutomatico</Service>
+      <WorkDir>C:\renato\DSC\Produtos\Produtos\RA\V07_R00_00\dsc\ra\NET\</WorkDir>
+      <VerboseLogging>true</VerboseLogging>
+      <SaveBeforeGen>true</SaveBeforeGen>
+      <DotNetClient>true</DotNetClient>
+      <JavaClient>false</JavaClient>
+      <WebServicesClient>false</WebServicesClient>
+      <UserDefinedAppService>false</UserDefinedAppService>
+      <JavaCompilerType>1</JavaCompilerType>
+      <JavaCompiler>&lt;Install Dir&gt;\jdk\bin\javac</JavaCompiler>
+      <JavaSwitches />
+      <JavaClasspathSwitch>-classpath</JavaClasspathSwitch>
+      <JavaClasspath>&lt;Proxy Dir&gt;;&lt;Install Dir&gt;\java\progress.jar;&lt;Install Dir&gt;\java\messages.jar;;&lt;Default classes.zip&gt;</JavaClasspath>
+      <DotNetCompilerType>4</DotNetCompilerType>
+      <DotNetCompiler>csc</DotNetCompiler>
+      <DotNetSwitches />
+      <DotNetXSDGenerator>xsd</DotNetXSDGenerator>
+      <DotNetNamespace>nsRecebimentoAutomatico</DotNetNamespace>
+      <DotNetTitle />
+      <DotNetVersion />
+      <DotNetDesc />
+      <DotNetCompany />
+      <DotNetProduct />
+      <DotNetPublicKey />
+      <DotNetDelaySign>false</DotNetDelaySign>
+      <DotNetStrongNamedRuntime>false</DotNetStrongNamedRuntime>
+    </PGGenInfo>
+    <DeploymentWizard>
+      <CurrentEncoding>1</CurrentEncoding>
+      <SoapEndpointURL>http://www.tempuri.org/wsa/wsa1</SoapEndpointURL>
+      <WebServiceNamespace userDefined="true">urn:tempuri-org</WebServiceNamespace>
+      <SoapAction appendToSoapAction="false" />
+      <TestWSDL RPCEncoded="false" RPCLiteral="false" DocLiteral="false" />
+    </DeploymentWizard>
+    <Name>pgRecebimentoAutomatico</Name>
+    <ProPath>C:\renato\DSC\Produtos\Produtos\RA\V07_R00_00\dsc\ra\DLL\</ProPath>
+    <HelpString />
+    <ODLHelpString />
+    <ObjectType>false</ObjectType>
+    <AllowUnknown>false</AllowUnknown>
+    <IsTTResultSet>false</IsTTResultSet>
+    <Procedure isPersistent="false" useFullName="false">
+      <Name>carregaCTE</Name>
+      <ProcPath />
+      <ProPath>C:\renato\DSC\Produtos\Produtos\RA\V07_R00_00\dsc\ra\DLL\</ProPath>
+    </Procedure>
+    <Procedure isPersistent="false" useFullName="false">
+      <Name>carregaCTEconsulta</Name>
+      <ProcPath />
+      <ProPath>C:\renato\DSC\Produtos\Produtos\RA\V07_R00_00\dsc\ra\DLL\</ProPath>
+    </Procedure>
+    <Procedure isPersistent="false" useFullName="false">
+      <Name>carregaManifesto</Name>
+      <ProcPath />
+      <ProPath>C:\renato\DSC\Produtos\Produtos\RA\V07_R00_00\dsc\ra\DLL\</ProPath>
+    </Procedure>
+    <Procedure isPersistent="false" useFullName="false">
+      <Name>carregaNFE</Name>
+      <ProcPath />
+      <ProPath>C:\renato\DSC\Produtos\Produtos\RA\V07_R00_00\dsc\ra\DLL\</ProPath>
+    </Procedure>
+    <Procedure isPersistent="false" useFullName="false">
+      <Name>carregaNFEconsulta</Name>
+      <ProcPath />
+      <ProPath>C:\renato\DSC\Produtos\Produtos\RA\V07_R00_00\dsc\ra\DLL\</ProPath>
+    </Procedure>
+  </AppObject>
+</WSAD>

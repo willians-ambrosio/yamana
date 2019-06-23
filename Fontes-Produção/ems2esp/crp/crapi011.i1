@@ -1,0 +1,32 @@
+/*******************************************************************************
+**
+**  CRAPI011.I1 - C lculo da estatistica do cliente
+**
+*******************************************************************************/
+
+find first estatist
+     where estatist.cod-emitente = emitente.cod-emitente no-lock no-error.
+
+if  avail estatist then do:
+    assign tt-estatistica-a.vl-maior-tit = estatist.vl-maior-tit
+           tt-estatistica-a.dt-maior-tit = estatist.dt-maior-tit
+           tt-estatistica-a.vl-ult-tit   = estatist.vl-ult-tit
+           tt-estatistica-a.dt-ult-tit   = estatist.dt-ult-tit.
+end.
+else do:
+    assign tt-estatistica-a.vl-maior-tit = 0
+           tt-estatistica-a.dt-maior-tit = ?
+           tt-estatistica-a.vl-ult-tit   = 0
+           tt-estatistica-a.dt-ult-tit   = ?.
+end.
+
+if  tt-estatistica-a.vl-maior-tit = ? then
+    assign tt-estatistica-a.vl-maior-tit = 0.
+    
+if  tt-estatistica-a.vl-ult-tit = ? then
+    assign tt-estatistica-a.vl-ult-tit = 0.
+    
+{crp/crapi011.i4 emitente}
+
+/* Fim de Include */
+

@@ -1,0 +1,185 @@
+/******************************************************************************
+**
+**    CE0340.I1 - geracao das ordens de compra por ressuprimento por ponto de 
+**                encomenda.
+**
+******************************************************************************/
+procedure pi-pto-encomenda:
+    def input parameter rw-item-uni-estab as rowid no-undo.
+    def input parameter i-param           as integer no-undo.
+    
+    def var de-qt-req-aux  as decimal   no-undo.
+    def var de-qt-sol-aux  as decimal   no-undo.
+    def var de-qt-saldo    as decimal   no-undo.
+    def var de-consumo     as decimal   no-undo.
+    def var de-pto-enc     as decimal   no-undo.
+    def var de-nr-lotes    as decimal   no-undo.
+    if i-param = 1 then do:
+        find item-uni-estab where
+             rowid(item-uni-estab) = rw-item-uni-estab exclusive-lock no-error.
+        find ext-item-uni-estab01 of item-uni-estab exclusive-lock no-error.
+
+    end.        
+    else do:
+        find item-mat where
+             rowid(item-mat) = rw-item-uni-estab exclusive-lock no-error.
+        find ext-item-uni-estab01 of item-mat exclusive-lock no-error.
+        
+    end.
+    
+    {utp/ut-field.i mgind item-uni-estab it-codigo 1}
+    assign c-acompanha = return-value + ": " + c-it-codigo-aux.
+    {utp/ut-field.i mgadm estabelec cod-estabel 1} 
+    assign c-acompanha = c-acompanha  + " " + return-value + ": " + c-cod-estabel-aux.
+    run pi-acompanhar in h-acomp (input c-acompanha). 
+    
+     
+    
+    /*PE =  ES + (TRT * CPD )       sendo:
+      PE = Ponto de Encomenda
+      ES = Quantidade Seguranáa Xtivity ( CE0330 )
+      TRT = Tempo de Ressuprimento Total Xtivity ( CD0140 )
+      CPD = Consumo previsto mÇdio = Consumo previsto mensal / 30 ( Datasul )*/
+
+        
+    assign de-consumo = de-consumo-prev-aux
+           de-pto-enc = if avail ext-item-uni-estab01 then ext-item-uni-estab01.estoque-seguranca + (ext-item-uni-estab01.tempo-ressuprimento * (de-consumo-prev-aux / 30)) else 0
+           de-qt-saldo   = 0
+           de-qt-sol-aux = 0
+           de-qt-req-aux = 0.
+
+      
+    /*assign de-consumo  = de-consumo-prev-aux
+           de-pto-enc  = (if i-tipo-est-seg-aux = 1 then de-quant-segur-aux
+                                                    else i-tempo-segur-aux * de-consumo-prev-aux / 30)
+                         + ((i-res-int-comp-aux + i-res-for-comp-aux + i-res-cq-comp-aux)
+                            * de-consumo-prev-aux / 30)*/
+         
+   if avail ext-item-uni-estab01 then
+        assign ext-item-uni-estab01.ponto-encomenda = de-pto-enc.
+        
+    
+   /* CHAMADA EPC */
+  ............................................................................
+        for each tt-epc
+            where tt-epc.cod-event = "Point-table":
+            delete tt-epc.
+        end.
+        
+        create tt-epc.
+        assign tt-epc.cod-event     = "Point-table"
+               tt-epc.cod-parameter =  if i-param = 1 then "item-uni-estab"
+                                                      else "item-mat"
+               tt-epc.val-parameter = string(rw-item-uni-estab).
+        
+        /* Inicio EPC Grendene */
+        create tt-epc.
+        assign tt-epc.cod-event     = "Point-table"
+               tt-epc.cod-parameter = "VALUE"
+               tt-epc.val-parameter = STRING(de-qt-estoque) + "*" + STRING(de-qt-cc).
+        /* Fim EPC Grendene */
+
+        {include/i-epc201.i "Point-table"}
+        if  return-value = "NOK":u then
+            return.
+  ............................................................................
+
+    if  tt-param.l-solcomp then
+        assign de-qt-sol-aux = de-qt-sol.
+    else
+        assign de-qt-sol-aux = 0.
+    if  tt-param.l-reqest then
+        assign de-qt-req-aux = de-qt-req.
+    else
+        assign de-qt-req-aux = 0.
+
+    /* Considera para Saldo Requisicoes e Solicitacoes de Compras Aprovadas */
+    assign de-qt-saldo = (de-qt-estoque + de-qt-cc + de-qt-sol-aux - de-qt-req-aux).
+    if  de-qt-saldo > de-pto-enc then return.
+    
+    assign de-qt-saldo = (de-pto-enc - de-qt-saldo / (1 - (de-fator-refugo-aux / 100)))
+                       + de-quant-perda-aux. 
+    if de-lote-economi-aux <> 0 then do:    
+        assign de-nr-lotes = (de-qt-saldo / de-lote-economi-aux).
+        if de-nr-lotes - truncate(de-nr-lotes,0) <> 0 then
+            assign de-nr-lotes = truncate(de-nr-lotes,0) + 1.
+        assign de-qt-saldo = de-nr-lotes * de-lote-economi-aux.
+        if de-qt-saldo = 0 then
+            assign de-qt-saldo = de-lote-economi-aux.
+    end.
+    if de-lote-minimo-aux > de-qt-saldo then
+        assign de-qt-saldo = de-lote-minimo-aux.            
+                
+    repeat:     
+        if de-lote-multipl-aux <> 0 then do:
+            if de-qt-saldo = 0 then
+                assign de-qt-saldo = de-lote-multipl-aux.
+            assign de-nr-lotes = (de-qt-saldo / de-lote-multipl-aux).
+            if de-nr-lotes - truncate(de-nr-lotes,0) <> 0 then
+                assign de-nr-lotes = truncate(de-nr-lotes,0) + 1.
+            assign de-qt-saldo = de-nr-lotes * de-lote-multipl-aux.
+        end.
+ 
+        /*
+          Se quantidade a comprar + saldo for igual ao ponto de encomenda,
+          compra mais um lote economico e verifica novamente o lote multiplo.
+        */
+        if de-qt-saldo + (de-qt-estoque + de-qt-cc + de-qt-sol-aux - de-qt-req-aux) = de-pto-enc then do: 
+            if de-lote-economi-aux <> 0 then         
+                assign de-qt-saldo = de-qt-saldo + de-lote-economi-aux.                                
+            else 
+                leave. 
+        end.                               
+        else
+            leave.
+    end.
+    
+    /* Tendo consumo previsto > 0, ressuprimentos zerados, ES (dias ou qtd) zerado,    **
+    ** e lotes minimo multiplo e economico tambem zerados, n∆o ira gerar qtd a comprar */
+    if  de-qt-saldo <= 0 then return.
+    
+    create esp-necessidade-oc.
+    assign esp-necessidade-oc.cod-estabel   = c-cod-estabel-aux
+           esp-necessidade-oc.it-codigo     = c-it-codigo-aux
+           esp-necessidade-oc.dec-1         = de-consumo-prev-aux
+           esp-necessidade-oc.data-geracao  = today
+           esp-necessidade-oc.data-entrega  = (today              +
+                                           i-res-int-comp-aux +
+                                           i-res-for-comp-aux)
+           esp-necessidade-oc.estoque-dispo = de-qt-estoque
+           esp-necessidade-oc.qt-orig       = de-qt-saldo
+           esp-necessidade-oc.qt-ordem      = de-qt-saldo
+           esp-necessidade-oc.qt-pendente   = de-qt-saldo
+           esp-necessidade-oc.qt-compras    = de-qt-cc
+           esp-necessidade-oc.tp-geracao    = 1
+           l-gerou-necessidade          = yes.
+
+    /* CHAMADA EPC */
+  ............................................................................
+        for each tt-epc
+            where tt-epc.cod-event = "Purchase-generation":
+            delete tt-epc.
+        end.
+        
+        create tt-epc.
+        assign tt-epc.cod-event     = "Purchase-generation"
+               tt-epc.cod-parameter = "TABLE-ROWID"
+               tt-epc.val-parameter = string(rowid(necessidade-oc)).
+        
+        /* Inicio EPC Grendene */
+        create tt-epc.
+        assign tt-epc.cod-event     = "Purchase-generation"
+               tt-epc.cod-parameter = "VALUE"
+               tt-epc.val-parameter = STRING(de-qt-estoque) + "*" + STRING(de-qt-cc).
+        /* Fim EPC Grendene */
+
+        {include/i-epc201.i "Purchase-generation"}
+        if  return-value = "NOK":u then
+            return.
+
+  ............................................................................
+
+    return "OK":u.
+end.
+
+/* Fim Include */ 

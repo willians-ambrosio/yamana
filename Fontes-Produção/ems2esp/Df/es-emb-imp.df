@@ -1,0 +1,62 @@
+ADD TABLE "es-emb-imp"
+  AREA "Schema Area"
+  DUMP-NAME "es-emb-imp"
+
+ADD FIELD "cod-estabel" OF "es-emb-imp" AS character 
+  FORMAT "x(5)"
+  INITIAL ""
+  LABEL "Estabelecimento"
+  POSITION 2
+  MAX-WIDTH 10
+  COLUMN-LABEL "Estabelecimento"
+  ORDER 10
+
+ADD FIELD "embarque" OF "es-emb-imp" AS character 
+  FORMAT "X(12)"
+  INITIAL ""
+  LABEL "Embarque"
+  POSITION 3
+  MAX-WIDTH 24
+  COLUMN-LABEL "Embarque"
+  ORDER 20
+
+ADD FIELD "ep-codigo" OF "es-emb-imp" AS character 
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Empresa"
+  POSITION 4
+  MAX-WIDTH 6
+  COLUMN-LABEL "Empresa"
+  ORDER 30
+
+ADD FIELD "cod-fornec-ii" OF "es-emb-imp" AS integer 
+  FORMAT ">>>>>>>>9"
+  INITIAL "0"
+  LABEL "Fornecedor"
+  POSITION 5
+  MAX-WIDTH 4
+  COLUMN-LABEL "Fornecedor"
+  ORDER 40
+
+ADD FIELD "cod-estabel-ii" OF "es-emb-imp" AS character 
+  FORMAT "x(5)"
+  INITIAL ""
+  LABEL "Estabel II"
+  POSITION 6
+  MAX-WIDTH 10
+  COLUMN-LABEL "Estabel II"
+  ORDER 50
+
+ADD INDEX "idx-01" ON "es-emb-imp" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "cod-estabel" ASCENDING 
+  INDEX-FIELD "embarque" ASCENDING 
+  INDEX-FIELD "ep-codigo" ASCENDING 
+
+.
+PSC
+cpstream=ibm850
+.
+0000001182

@@ -1,0 +1,38 @@
+
+
+ADD FIELD "doc-datasul" OF "nfe-cte-rateio" AS logical 
+  DESCRIPTION "Doc. ja recebido Datasul, se nao nao consegue entrar com a CTE tipo Rateio"
+  FORMAT "yes/no"
+  INITIAL "no"
+  LABEL "Doc. Datasul"
+  POSITION 8
+  MAX-WIDTH 1
+  COLUMN-LABEL "Doc. Datasul"
+  ORDER 70
+
+ADD FIELD "chave-rateio" OF "nfe-cte-rateio" AS character 
+  DESCRIPTION "Chave da Nota Rateio"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave da Nota Rateio"
+  POSITION 9
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave"
+  HELP "Chave da Nota Rateio"
+  ORDER 60
+
+
+ADD FIELD "sit-triagem" OF "nfe-dfe" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Sit Triagem"
+  POSITION 13
+  MAX-WIDTH 4
+  COLUMN-LABEL "Sit Triagem"
+  ORDER 120
+
+.
+PSC
+cpstream=ibm850
+.
+0000002056

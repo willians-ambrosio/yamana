@@ -1,0 +1,103 @@
+/********************************************************************************
+** Copyright DATASUL S.A. (1997)
+** Todos os Direitos Reservados.
+**
+** Este fonte e de propriedade exclusiva da DATASUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+*******************************************************************************/
+
+{cdp/cd9600.i "tt-param-filtro.i-moeda"
+              "tt-param-filtro.da-conversao"
+              "de-calc-cotacao"
+              "return error."}
+            
+{app/ap9999.i1 "tit-ap"
+               "tt-param-filtro.i-moeda"}
+
+if  tt-param-filtro.l-acompanha = yes then do:
+    {utp/ut-liter.i Docto/P:}
+    run pi-acompanhar in h-acomp (input trim(return-value)
+                                  + "  "
+                                  + tit-ap.nr-docto 
+                                  + "/" 
+                                  + tit-ap.parcela
+                                  + " - "
+                                  + string(tit-ap.dt-transacao, "99/99/9999")).             
+end.
+        
+if  tit-ap.tipo <> 1 and
+    tit-ap.tipo <> 2 and 
+    tit-ap.tipo <> 8 then
+    next.
+
+assign de-tot-anterior = 0.
+
+if  tit-ap.dt-transacao <= tt-param-filtro.dt-trans-ini then do:
+            
+    if  tit-ap.tipo = 1 
+    or  tit-ap.tipo = 8 then do:
+        
+        assign de-tot-anterior = de-tot-anterior + de-calc-valor-saldo.
+
+        for each  mov-ap use-index codigo
+            where mov-ap.ep-codigo     = tit-ap.ep-codigo
+            and   mov-ap.cod-est       = tit-ap.cod-est
+            and   mov-ap.cod-esp       = tit-ap.cod-esp
+            and   mov-ap.nr-docto      = tit-ap.nr-docto
+            and   mov-ap.serie         = tit-ap.serie
+            and   mov-ap.parcela       = tit-ap.parcela
+            and   mov-ap.cod-fornec    = tit-ap.cod-fornec
+            and   mov-ap.dt-transacao >= tt-param-filtro.dt-trans-ini
+            and  (mov-ap.transacao     = 2
+            or    mov-ap.transacao     = 5
+            or    mov-ap.transacao     = 3
+            or   (mov-ap.transacao     = 6 
+            and   mov-ap.lancamento    = 1)) no-lock:
+           
+            {app/ap9999.i2 "mov-ap"
+                           "tt-param-filtro.i-moeda"
+                           "tit-ap"}
+                    
+            if  mov-ap.transacao  = 5 
+            and mov-ap.lancamento = 1 then 
+                assign de-tot-anterior = de-tot-anterior - de-calc-valor-mov.
+            else
+                assign de-tot-anterior = de-tot-anterior + de-calc-valor-mov.
+                
+        end.
+    end.    
+    
+    if  tit-ap.tipo = 2 then do:
+            
+        assign de-tot-anterior = de-tot-anterior - de-calc-valor-saldo.
+
+        for each  mov-ap use-index ch-antecip
+            where mov-ap.ep-codigo     = tit-ap.ep-codigo
+            and   mov-ap.cod-est       = tit-ap.cod-est
+            and   mov-ap.esp-ant       = tit-ap.cod-esp
+            and   mov-ap.serie-ant     = tit-ap.serie
+            and   mov-ap.docto-ant     = tit-ap.nr-docto
+            and   mov-ap.parc-ant      = tit-ap.parcela
+            and   mov-ap.cod-fornec    = tit-ap.cod-fornec
+            and   mov-ap.dt-transacao >= tt-param-filtro.dt-trans-ini
+            and  (mov-ap.transacao     = 2 
+            or    mov-ap.transacao     = 3)
+            no-lock:
+
+            {app/ap9999.i2 "mov-ap"
+                           "tt-param-filtro.i-moeda"
+                           "tit-ap"}
+            
+            assign de-tot-anterior = de-tot-anterior - de-calc-vl-antecip.
+            
+        end.
+    end.
+end.
+
+if  tit-ap.dt-transacao >= tt-param-filtro.dt-trans-ini
+and tit-ap.dt-transacao <= tt-param-filtro.dt-trans-fim
+and tit-ap.tipo          = 3 then do:
+    assign de-tot-aberto = de-tot-aberto + de-calc-valor-saldo.
+end.
+    

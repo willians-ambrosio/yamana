@@ -1,0 +1,116 @@
+/******************************************************************************
+**
+**  escc0407.i2 - Put de campos das linhas de detalhe
+**
+*****************************************************************************/
+
+if  l-preco-bruto = no then
+    assign de-valor-ipi = (de-preco-conv * ordem-compra.aliquota-ipi)
+                        / (100 + ordem-compra.aliquota-ipi).
+else do:
+    if  ordem-compra.perc-descto > 0 then
+        assign de-val-orig = (de-preco-conv * 100)
+                           / (100 - ordem-compra.perc-descto).
+    else
+        assign de-val-orig = de-preco-conv.
+    assign de-valor-ipi = (de-val-orig * ordem-compra.aliquota-ipi)
+                        / (100 + ordem-compra.aliquota-ipi).
+end.
+
+assign de-preco-unit  = de-preco-conv - de-valor-ipi.
+
+/*** fn_ajust_dec => funá∆o definida no include cd1234.i, 
+     utilizada para validaá∆o de decimais ***/
+
+assign de-preco-merc   = fn_ajust_dec((prazo-compra.quant-saldo * de-preco-unit), 
+                         tt-param.i-tipo-moeda).                                        
+assign de-valor-ipi    = fn_ajust_dec((prazo-compra.quant-saldo * de-valor-ipi), 
+                         tt-param.i-tipo-moeda).                   
+
+
+assign de-preco-total = de-preco-merc + de-valor-ipi
+       i-atraso       = today - prazo-compra.data-entrega.
+
+/*incluido essa linha para tratar item vinculado a um contrato e contralado 
+por medicao, pois a data-entraga da parcela por default sempre e carregada 
+como 01/01/0001, favor nao retirar - frank*/       
+if prazo-compra.data-entrega = &IF "{&ems_dbtype}":U = "MSS":U &THEN 01/01/1800 &ELSE 01/01/0001 &ENDIF  then
+   assign i-atraso = 0.
+
+CREATE tt-ordem.
+ASSIGN tt-ordem.data-entrega  = prazo-compra.data-entrega
+       tt-ordem.num-pedido    = pedido-compr.num-pedido  
+       tt-ordem.natur         = c-natureza               
+       tt-ordem.grupo         = emitente.cod-gr-forn     
+       tt-ordem.nome-abrev    = emitente.nome-abrev      
+       tt-ordem.num-ordem     = ordem-compra.numero-ordem
+       tt-ordem.parcela       = prazo-compra.parcela     
+       tt-ordem.cod-estabel   = ordem-compra.cod-estabel 
+       tt-ordem.it-codigo     = ordem-compra.it-codigo   
+       tt-ordem.un            = prazo-compra.un          
+       tt-ordem.descr         = c-descricao
+       tt-ordem.narrativa     = ordem-compra.narrativa
+       tt-ordem.comentarios   = pedido-compr.comentarios
+       tt-ordem.tipo          = if available(item-contrat) then entry(item-contrat.ind-tipo-control,{ininc/i04in582.i 03}) else ""
+       i-seq                  = i-seq + 1
+       tt-ordem.seq           = i-seq
+       tt-ordem.nr-contrato   = ordem-compra.nr-contrato  
+       tt-ordem.num-seq-item  = ordem-compra.num-seq-item 
+       tt-ordem.nome-estab    = IF AVAIL estabelec THEN estabelec.nome ELSE ""
+       tt-ordem.desc-item     = IF AVAIL ITEM THEN ITEM.desc-item ELSE "".              
+
+if  avail grupo-fornec then
+    assign tt-ordem.gr-forn-desc = grupo-fornec.descricao.
+else do:
+    {utp/ut-liter.i Grupo_Fornecedor_Desconhecido * r}
+    assign tt-ordem.gr-forn-desc = trim(return-value).
+end.
+
+if  avail proc-compra then
+    assign tt-ordem.proc-desc = proc-compra.descricao.
+else do:
+    {utp/ut-liter.i Processo_Compra_Desconhecido * r}
+    assign tt-ordem.proc-desc = trim(return-value).
+end.
+
+IF  AVAIL emitente THEN
+    ASSIGN tt-ordem.telefone  = emitente.telefone[1]  
+           tt-ordem.ramal     = emitente.ramal[1]     
+           tt-ordem.telefax   = emitente.telefax      
+           tt-ordem.ramal-fax = emitente.ramal-fax
+           tt-ordem.nome-emit = emitente.nome-emit.
+
+if  NOT avail item THEN DO:
+    {utp/ut-liter.i Item_n∆o_Cadastrado * r}
+    assign tt-ordem.descr = trim(return-value).
+end.
+
+/* Integracao Modulo Importacao */
+if avail param-global and param-global.modulo-07 then
+    if tt-param.l-despesas-imp then do:
+        run imp/im9035.p (input ordem-compra.num-pedido,
+                          input ordem-compra.numero-ordem,
+                          input prazo-compra.parcela,
+                          input tt-param.i-tipo-moeda,
+                          input tt-param.i-despesas-pag,
+                          input tt-param.l-despesas-inc,
+                          output de-val-desp).
+        if tt-param.l-despesas-inc then
+            assign de-preco-total = de-preco-total + de-val-desp.                          
+    end.
+
+ASSIGN tt-ordem.comprado      = IF AVAIL comprador THEN comprador.cod-comprado ELSE ""
+       tt-ordem.cod-emitente  = IF AVAIL emitente THEN emitente.cod-emitente ELSE 0
+       tt-ordem.nome-comp     = IF AVAIL comprador THEN comprador.nome ELSE ""
+       tt-ordem.nr-processo   = ordem-compra.nr-processo
+       tt-ordem.ordem-servic  = ordem-compra.ordem-servic
+       tt-ordem.quant-saldo   = prazo-compra.quant-saldo 
+       tt-ordem.preco-unit    = de-preco-unit            
+       tt-ordem.preco-merc    = de-preco-merc            
+       tt-ordem.valor-ipi     = de-valor-ipi             
+       tt-ordem.preco-total   = de-preco-total           
+       tt-ordem.desc-moeda    = tt-param.c-descri-moeda  
+       tt-ordem.atraso        = i-atraso                 
+       tt-ordem.r-rowid        = ROWID(ordem-compra).
+
+/* fim do include */

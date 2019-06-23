@@ -1,0 +1,274 @@
+/*******************************************************************************
+* YG0001.I2 - Defini‡Æo / Tradu‡Æo
+********************************************************************************/
+
+def new shared temp-table t-controle no-undo
+    field ep-codigo    like controle-verba.ep-codigo
+    field cod-est-exec like controle-verba.cod-est-exec
+    field num-projeto  like controle-verba.num-projeto
+    field num-ordem    like controle-verba.num-ordem    
+    field dt-trans     as   date format "99/99/9999"
+    field it-codigo    like item.it-codigo
+    field num-ord-magnus like plano-aprov.num-ord-magnus
+    field seq          as   integer
+    field tipo-doc     as   char format "x(30)"
+    field solicitacao  like plano-aprov.num-solicitacao
+    field num-ord-comp like ordem-compra.numero-ordem
+    field seq-comp     like plano-aprov.seq-comp
+    field num-pedido   like pedido-compr.num-pedido
+    field esp-docto    as   char
+    field num-docto    as   char format "x(40)"
+    field ent-comp     as   dec  format "->>>>,>>>,>>9.99"
+    field sai-comp     as   dec  format "->>>>,>>>,>>9.99"
+    field ent-real     as   dec  format "->>>>,>>>,>>9.99"
+    field sai-real     as   dec  format "->>>>,>>>,>>9.99"
+    field acum-comp    as   dec  format "->>>>>,>>>,>>9.99"
+    field acum-real    as   dec  format "->>>>>,>>>,>>9.99"
+    field r-rowid      as   rowid
+    field cod-divisao                 like proj-inv.cod-divisao
+    field num-secao                   like sub-div-ordem.num-secao
+    field cod-especialidade           like sub-div-ordem.cod-especialidade
+    field descricao-subespecialidade  like especialidade.descricao
+    field cod-sub-espec               like sub-div-ordem.cod-sub-esp
+    field descricao-sub-espec         like sub-espec.descricao
+  
+    index t-controle ep-codigo
+                     cod-est-exec
+                     num-projeto
+                     num-ordem.
+
+
+form t-controle.dt-trans     format "99/99/9999"
+     t-controle.it-codigo    format "x(16)"
+     t-controle.num-ord-magnus format ">>>,>>>" space(5)
+     t-controle.tipo-doc     format "x(10)" 
+     t-controle.solicitacao  format ">>>,>>>,>>>"
+     t-controle.num-ord-comp format ">>>>>>,>>"
+     t-controle.num-pedido   format ">>>>>,>>>"
+     t-controle.esp-docto    format "x(3)"     
+     t-controle.num-docto    format "x(25)"
+     t-controle.ent-comp     format "->>>>,>>>,>>9.99"     
+     t-controle.sai-comp     format "->>>>,>>>,>>9.99"
+     t-controle.ent-real     format "->>>>,>>>,>>9.99"
+     t-controle.sai-real     format "->>>>,>>>,>>9.99"
+     t-controle.acum-comp    format "->>>>>,>>>,>>9.99"
+     t-controle.acum-real    format "->>>>>,>>>,>>9.99" 
+     with width 233 no-label stream-io down no-box frame f-controle.
+
+
+{utp/ut-liter.i Num_Ord_EMS * r}  
+assign c-lb-num-ord-magnus = trim(return-value).
+{utp/ut-liter.i Data * r } 
+assign c-lb-dt-trans = trim(return-value).       
+{utp/ut-liter.i Tipo * r } 
+assign c-lb-tipo-doc = Trim(return-value).
+{utp/ut-liter.i S‚rie * r } 
+assign c-lb-serie = trim(return-value).  
+{utp/ut-liter.i Solicit * r } 
+assign c-lb-solicitacao = trim(return-value).       
+{utp/ut-liter.i Ordem * r } 
+assign c-lb-ordem = trim(return-value).
+{utp/ut-liter.i Pedido * r } 
+assign c-lb-pedido = trim(return-value).
+{utp/ut-liter.i Esp * r } 
+assign c-lb-especie = trim(return-value).
+{utp/ut-liter.i Documento r } 
+assign c-lb-docto = trim(return-value).       
+{utp/ut-liter.i Item * r } 
+assign c-lb-item = trim(return-value).
+{utp/ut-liter.i Ent_Comp * r } 
+assign c-lb-ent-comp = fill(" ", 16 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Sai_Comp * r } 
+assign c-lb-sai-comp = fill(" ", 16 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Ent_Realiz * r } 
+assign c-lb-ent-real = fill(" ", 16 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Sai_Realiz * r } 
+assign c-lb-sai-real = fill(" ", 16 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Saldo_Comp * r } 
+assign c-lb-acum-comp = fill(" ", 17 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Saldo_Real * r } 
+assign c-lb-acum-real = fill(" ", 17 - length(trim(return-value))) + trim(return-value).
+
+{utp/ut-liter.i Proj * r } 
+assign c-lb-proj = trim(return-value) + ": ".
+{utp/ut-liter.i Ativa * r } 
+assign c-situacao-1 = trim(return-value).
+{utp/ut-liter.i Cancelada * r } 
+assign c-situacao-2 = trim(return-value).
+{utp/ut-liter.i Imprimindo... * r } 
+assign c-imprimindo = trim(return-value).
+{utp/ut-liter.i Processando... * r } 
+assign c-processando = trim(return-value).
+{utp/ut-liter.i IMPRESSÇO * r }
+assign c-titulo-i = return-value.                       
+{utp/ut-liter.i PAR¶METRO * r}
+assign c-titulo-p = return-value.
+{utp/ut-liter.i CLASSIFICA€ÇO * r}
+assign c-titulo-c = return-value.
+{utp/ut-liter.i SELE€ÇO * r }
+assign c-titulo-s = return-value.
+{utp/ut-liter.i Destino * r}
+assign c-lb-dest = return-value.
+{utp/ut-liter.i Usu rio * r}
+assign c-lb-usuar = return-value.
+{utp/ut-liter.i Classifica‡Æo * r }
+assign c-geral = trim(return-value).
+{utp/ut-liter.i Verba * r }
+assign c-verba  = trim(return-value).
+if tt-param.i-moeda-par = 1 then do:
+{utp/ut-liter.i Principal * r }
+end.
+if tt-param.i-moeda-par = 2 then do:
+{utp/ut-liter.i Alternativa_1 * r }
+end.
+if tt-param.i-moeda-par = 3 then do:
+{utp/ut-liter.i Alternativa_2 * r }
+end.
+assign c-exib-moeda = trim(return-value).
+{utp/ut-liter.i Exibir_Valores_na_Moeda * r }
+assign c-lb-exib-moeda = trim(return-value).
+{utp/ut-liter.i Empresa * r }
+assign c-emp-sel = trim(return-value).
+{utp/ut-liter.i Estabelec * r }
+assign c-est-sel = trim(return-value).
+{utp/ut-liter.i Projeto * r }
+assign c-proj-sel = trim(return-value).
+{utp/ut-liter.i Ordem * r }
+assign c-ord-sel = trim(return-value).
+{utp/ut-liter.i Data * r }
+assign c-data-sel = trim(return-value).
+{utp/ut-liter.i Atualiza * r }
+assign c-lb-atualiza = return-value.
+{utp/ut-liter.i Total * r }
+assign c-lb-total = return-value.
+if tt-param.atualiza then do:
+   {utp/ut-liter.i Sim * r }
+end.   
+else do:
+   {utp/ut-liter.i NÆo * r }
+end.
+assign c-atualiza = return-value.
+
+{utp/ut-liter.i Empresa: * r }
+assign c-lbl-ep-codigo = return-value.
+{utp/ut-liter.i Estab_Exec: * r }
+assign c-lbl-estab-exec = return-value.
+{utp/ut-liter.i Num_Projeto: * r }
+assign c-lbl-num-projeto = return-value.
+{utp/ut-liter.i N£mero_Ordem: * r }
+assign c-lbl-num-ordem = return-value.
+{utp/ut-liter.i Situa‡Æo: * r } 
+assign c-lbl-situacao = return-value.
+{utp/ut-liter.i Moeda_Controle: * r } 
+assign c-lbl-moeda = return-value.
+{utp/ut-liter.i Valor_Verba: * r } 
+assign c-lbl-vl-verba = return-value.
+{utp/ut-liter.i Valor_Verba_Orig: * r } 
+assign c-lbl-vl-verba-orig = return-value.
+{utp/ut-liter.i Valor_Compromis: * r } 
+assign c-lbl-vl-compromis = return-value.
+{utp/ut-liter.i Valor_Realizado: * r } 
+assign c-lbl-vl-realizado = return-value.
+{utp/ut-liter.i Total: * r } 
+assign c-lbl-total = return-value.
+{utp/ut-liter.i Unid_Negoc:}
+assign c-lbl-unid-negoc = return-value.
+
+form    
+   c-lbl-ep-codigo                              at 18  no-label
+   controle-verba.ep-codigo                     at 27  no-label
+   " - "                                        at 34  
+   empresa.nome                                 at 37  no-label
+   c-txt-unid-negoc[01]                no-label at 115 skip
+   
+   c-lbl-estab-exec                             at 15  no-label
+   controle-verba.cod-est-exec                  at 27  no-label
+   " - "                                        at 34  
+   estabelec.nome                               at 37  no-label
+   c-txt-unid-negoc[02]                no-label at 115
+   c-txt-unid-negoc[10]                no-label at 145
+   c-txt-unid-negoc[18]                no-label at 175
+   c-txt-unid-negoc[26]                no-label at 205 skip
+   
+   c-lbl-num-projeto                            at 14  no-label
+   controle-verba.num-projeto                   at 27  no-label
+   " - "                                        at 34  
+   proj-inv.descricao                           at 37  no-label
+   c-txt-unid-negoc[03]                no-label at 115
+   c-txt-unid-negoc[11]                no-label at 145
+   c-txt-unid-negoc[19]                no-label at 175
+   c-txt-unid-negoc[27]                no-label at 205 skip
+   
+   c-lbl-num-ordem                              at 13  no-label
+   controle-verba.num-ordem                     at 27  no-label 
+   " - "                                        at 34  
+   ordem-inv.descricao                          at 37  no-label
+   c-txt-unid-negoc[04]                no-label at 115
+   c-txt-unid-negoc[12]                no-label at 145
+   c-txt-unid-negoc[20]                no-label at 175
+   c-txt-unid-negoc[28]                no-label at 205 skip
+   
+   c-lbl-situacao                               at 17  no-label
+   c-situacao                                   at 27  no-label
+   c-lbl-moeda                                  at 66  no-label
+   c-moeda-controle                             at 82  no-label
+   c-txt-unid-negoc[05]                no-label at 115
+   c-txt-unid-negoc[13]                no-label at 145
+   c-txt-unid-negoc[21]                no-label at 175
+   c-txt-unid-negoc[29]                no-label at 205 skip
+   
+   c-lbl-vl-verba                               at 14  no-label
+   controle-verba.vl-verba[i-moeda-par]         at 27  no-label
+   c-lbl-vl-verba-orig                          at 64  no-label
+   controle-verba.vl-verba-orig[i-moeda-par]    at 82  no-label
+   c-txt-unid-negoc[06]                no-label at 115
+   c-txt-unid-negoc[14]                no-label at 145
+   c-txt-unid-negoc[22]                no-label at 175
+   c-txt-unid-negoc[30]                no-label at 205 skip
+   
+   c-lbl-vl-compromis                           at 10  no-label
+   controle-verba.vl-comp[i-moeda-par]          at 27  no-label
+   c-txt-unid-negoc[07]                no-label at 115
+   c-txt-unid-negoc[15]                no-label at 145
+   c-txt-unid-negoc[23]                no-label at 175
+   c-txt-unid-negoc[31]                no-label at 205 skip
+   
+   c-lbl-vl-realizado                           at 10  no-label
+   controle-verba.vl-real[i-moeda-par]          at 27  no-label
+   c-txt-unid-negoc[08]                no-label at 115
+   c-txt-unid-negoc[16]                no-label at 145
+   c-txt-unid-negoc[24]                no-label at 175
+   c-txt-unid-negoc[32]                no-label at 205 skip
+   
+   c-lbl-total                                  at 20  no-label
+   de-total                                     at 27  no-label format "->>>,>>>,>>>,>>9.99"
+   c-txt-unid-negoc[09]                  no-label at 115
+   c-txt-unid-negoc[17]                  no-label at 145
+   c-txt-unid-negoc[25]                  no-label at 175
+   c-txt-unid-negoc[33]                  no-label at 205 skip(2)
+   
+   c-lb-dt-trans        format "x(10)" no-label
+   c-lb-item            format "x(16)" no-label
+   c-lb-num-ord-magnus  format "x(11)" no-label
+   c-lb-tipo-doc        format "x(10)" no-label
+   c-lb-solicitacao     format "x(11)" no-label
+   c-lb-ordem           format "x(9)"  no-label
+   c-lb-pedido          format "x(9)"  no-label
+   c-lb-especie         format "x(03)" no-label
+   c-lb-docto           format "x(25)" no-label
+   c-lb-ent-comp        format "x(16)" no-label     
+   c-lb-sai-comp        format "x(16)" no-label
+   c-lb-ent-real        format "x(16)" no-label
+   c-lb-sai-real        format "x(16)" no-label
+   c-lb-acum-comp       format "x(17)" no-label
+   c-lb-acum-real       format "x(17)" no-label skip
+   "---------- ---------------- ----------- ---------- ----------- --------- --------- --- -------------------------"
+   "---------------- ---------------- ---------------- ----------------"
+   "-----------------" "-----------------" 
+   with stream-io down width 233 no-box side-labels frame f-cab-controle.
+
+form   
+   "---------------------------------" at 180 skip
+   c-lb-total at 182
+   de-acum-tot at 198  format "->>>>>>>,>>9.99" 
+   with stream-io width 233 no-labels no-box frame f-total.

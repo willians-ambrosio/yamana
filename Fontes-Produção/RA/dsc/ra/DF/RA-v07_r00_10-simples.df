@@ -1,0 +1,47 @@
+
+ADD FIELD "imp-CSOSN" OF "nfe-it-nota-fisc-rec" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "CSOSN"
+  POSITION 121
+  MAX-WIDTH 4
+  COLUMN-LABEL "CSOSN"
+  ORDER 1220
+
+ADD FIELD "imp-vCredICMSSN" OF "nfe-it-nota-fisc-rec" AS decimal 
+  FORMAT "->>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "vCredICMSSN"
+  POSITION 122
+  MAX-WIDTH 17
+  COLUMN-LABEL "vCredICMSSN"
+  DECIMALS 2
+  ORDER 1240
+
+ADD FIELD "imp-pCredSN" OF "nfe-it-nota-fisc-rec" AS decimal 
+  FORMAT "->>,>>9.99"
+  INITIAL "0"
+  LABEL "pCredSN"
+  POSITION 123
+  MAX-WIDTH 17
+  COLUMN-LABEL "pCredSN"
+  DECIMALS 2
+  ORDER 1230
+
+
+
+ADD FIELD "emit-crt" OF "nfe-nota-fiscal-rec" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "CRT Emitente"
+  POSITION 113
+  MAX-WIDTH 4
+  COLUMN-LABEL "CRT Emitente"
+  ORDER 1211
+
+
+.
+PSC
+cpstream=ibm850
+.
+0000071002

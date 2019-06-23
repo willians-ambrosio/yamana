@@ -1,0 +1,181 @@
+/*******************************************************************************
+* IN0518.I - ImpressÆo do cabe‡alho
+********************************************************************************/
+assign de-total = controle-verba.vl-comp[i-moeda-par] +
+                  controle-verba.vl-real[i-moeda-par].
+
+&if '{&bf_mat_versao_ems}' >= '2.062' &THEN
+   if l-unidade-negocio and l-mat-unid-negoc then do:
+        disp
+           c-lbl-ep-codigo
+           controle-verba.ep-codigo
+           empresa.nome when avail empresa
+           c-txt-unid-negoc[01]
+           c-lbl-estab-exec
+           controle-verba.cod-est-exec
+           estabelec.nome when avail estabelec
+           c-txt-unid-negoc[02]
+           c-txt-unid-negoc[10]
+           c-txt-unid-negoc[18]
+           c-txt-unid-negoc[26]
+           c-lbl-num-projeto
+           controle-verba.num-projeto
+           proj-inv.descricao when avail proj-inv
+           c-txt-unid-negoc[03]
+           c-txt-unid-negoc[11]
+           c-txt-unid-negoc[19]
+           c-txt-unid-negoc[27]
+           c-lbl-num-ordem
+           controle-verba.num-ordem
+           ordem-inv.descricao when avail ordem-inv
+           c-txt-unid-negoc[04]
+           c-txt-unid-negoc[12]
+           c-txt-unid-negoc[20]
+           c-txt-unid-negoc[28]
+           c-lbl-situacao
+           c-situacao
+           c-lbl-moeda
+           c-moeda-controle
+           c-txt-unid-negoc[05]
+           c-txt-unid-negoc[13]
+           c-txt-unid-negoc[21]
+           c-txt-unid-negoc[29]
+           c-lbl-vl-verba
+           controle-verba.vl-verba[i-moeda-par]
+           c-lbl-vl-verba-orig
+           controle-verba.vl-verba-orig[i-moeda-par]
+           c-txt-unid-negoc[06]
+           c-txt-unid-negoc[14]
+           c-txt-unid-negoc[22]
+           c-txt-unid-negoc[30]
+           c-lbl-vl-compromis
+           controle-verba.vl-comp[i-moeda-par]
+           c-txt-unid-negoc[07]
+           c-txt-unid-negoc[15]
+           c-txt-unid-negoc[23]
+           c-txt-unid-negoc[31]
+           c-lbl-vl-realizado
+           controle-verba.vl-real[i-moeda-par]
+           c-txt-unid-negoc[08]
+           c-txt-unid-negoc[16]
+           c-txt-unid-negoc[24]
+           c-txt-unid-negoc[32]
+           c-lbl-total
+           de-total
+           c-txt-unid-negoc[09]
+           c-txt-unid-negoc[17]
+           c-txt-unid-negoc[25]
+           c-txt-unid-negoc[33]
+
+           c-lb-dt-trans
+           c-lb-item
+           c-lb-num-ord-magnus
+           c-lb-tipo-doc
+           c-lb-solicitacao
+           c-lb-ordem
+           c-lb-pedido
+           c-lb-especie
+           c-lb-docto
+           c-lb-ent-comp
+           c-lb-sai-comp
+           c-lb-ent-real
+           c-lb-sai-real
+           c-lb-acum-comp
+           c-lb-acum-real
+           with frame f-cab-controle.
+           down with frame f-cab-controle.
+   end.
+   else do:
+        disp
+           c-lbl-ep-codigo
+           controle-verba.ep-codigo
+           empresa.nome when avail empresa
+           c-lbl-estab-exec
+           controle-verba.cod-est-exec
+           estabelec.nome when avail estabelec
+           c-lbl-num-projeto
+           controle-verba.num-projeto
+           proj-inv.descricao when avail proj-inv
+           c-lbl-num-ordem
+           controle-verba.num-ordem
+           ordem-inv.descricao when avail ordem-inv
+           c-lbl-situacao
+           c-situacao
+           c-lbl-moeda
+           c-moeda-controle
+           c-lbl-vl-verba
+           controle-verba.vl-verba[i-moeda-par]
+           c-lbl-vl-verba-orig
+           controle-verba.vl-verba-orig[i-moeda-par]
+           c-lbl-vl-compromis
+           controle-verba.vl-comp[i-moeda-par]
+           c-lbl-vl-realizado
+           controle-verba.vl-real[i-moeda-par]
+           c-lbl-total
+           de-total
+        
+           c-lb-dt-trans
+           c-lb-item
+           c-lb-num-ord-magnus
+           c-lb-tipo-doc
+           c-lb-solicitacao
+           c-lb-ordem
+           c-lb-pedido
+           c-lb-especie
+           c-lb-docto
+           c-lb-ent-comp
+           c-lb-sai-comp
+           c-lb-ent-real
+           c-lb-sai-real
+           c-lb-acum-comp
+           c-lb-acum-real
+           with frame f-cab-controle.
+           down with frame f-cab-controle.
+   end.
+&else
+   disp
+      c-lbl-ep-codigo
+      controle-verba.ep-codigo
+      empresa.nome when avail empresa
+      c-lbl-estab-exec
+      controle-verba.cod-est-exec
+      estabelec.nome when avail estabelec
+      c-lbl-num-projeto
+      controle-verba.num-projeto
+      proj-inv.descricao when avail proj-inv
+      c-lbl-num-ordem
+      controle-verba.num-ordem
+      ordem-inv.descricao when avail ordem-inv
+      c-lbl-situacao
+      c-situacao
+      c-lbl-moeda
+      c-moeda-controle
+      c-lbl-vl-verba
+      controle-verba.vl-verba[i-moeda-par]
+      c-lbl-vl-verba-orig
+      controle-verba.vl-verba-orig[i-moeda-par]
+      c-lbl-vl-compromis
+      controle-verba.vl-comp[i-moeda-par]
+      c-lbl-vl-realizado
+      controle-verba.vl-real[i-moeda-par]
+      c-lbl-total
+      de-total
+
+      c-lb-dt-trans
+      c-lb-item
+      c-lb-num-ord-magnus
+      c-lb-tipo-doc
+      c-lb-solicitacao
+      c-lb-ordem
+      c-lb-pedido
+      c-lb-especie
+      c-lb-docto
+      c-lb-ent-comp
+      c-lb-sai-comp
+      c-lb-ent-real
+      c-lb-sai-real
+      c-lb-acum-comp
+      c-lb-acum-real
+      with frame f-cab-controle.
+      down with frame f-cab-controle.
+&endif

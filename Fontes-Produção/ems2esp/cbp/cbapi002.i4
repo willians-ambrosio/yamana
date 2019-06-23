@@ -1,0 +1,9 @@
+/*************************************************************************
+* Include : cbp/cbapi002.i4 tt_versao_efetiv_edi
+*  Autor  : DATASUL S.A.
+**************************************************************************/
+
+define temp-table tt_versao_efetiv_edi
+       field tta_cdn_versao-integracao    as int format ">>9".
+
+/* cbapi002.i43 */

@@ -1,0 +1,17 @@
+UPDATE FIELD  "ide-nct"  OF "nfe-cte-inf"
+  FORMAT "x(16)"
+
+
+UPDATE FIELD  "nr-docto"  OF "nfe-dfe"
+  FORMAT "x(16)"
+
+
+.
+
+PSC
+
+cpstream=ibm850
+
+.
+
+0001234567

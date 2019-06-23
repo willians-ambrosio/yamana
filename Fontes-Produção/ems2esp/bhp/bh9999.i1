@@ -1,0 +1,19 @@
+/*******************************************************************************
+**
+**  BH9999.I1 - Defini‡Æo Temp-Table TT-TABELA
+**
+*******************************************************************************/
+Define Temp-Table tt-tabela no-undo
+    field nome-tabela   as char
+    field campo-chave   as char
+    field campo-chave1  as char
+    field campo-chave2  as char
+    field campo-chave3  as char
+    field campo-chave4  as char
+    field campo-chave5  as char
+    field aplicativo    as integer. /*  1-Administrativo,
+                                        2-Manuten‡Æo Industrial,
+                                        3-Manufatura,
+                                        4-Industrial,
+                                        5-Distribui‡Æo
+                                    */

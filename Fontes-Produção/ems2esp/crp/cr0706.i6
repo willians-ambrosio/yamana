@@ -1,0 +1,83 @@
+/********************************************************************************
+**
+**  CR0706.I6
+**  
+**  Cria TT-DOCUMENTO para CR0706 e CR0716
+**
+********************************************************************************/  
+
+create tt-documento.
+assign tt-documento.ep-codigo        = titulo.ep-codigo
+       tt-documento.cod-estabel      = titulo.cod-estabel
+       tt-documento.cod-esp          = titulo.cod-esp
+       tt-documento.serie            = titulo.serie
+       tt-documento.nr-docto         = titulo.nr-docto
+       tt-documento.parcela          = titulo.parcela
+       tt-documento.cod-port         = titulo.cod-port
+       tt-documento.modalidade       = titulo.modalidade
+       tt-documento.dt-emissao       = titulo.dt-emissao
+       tt-documento.dt-vencimen      = titulo.dt-vencimen
+       tt-documento.num-id-titulo-cr = titulo.num-id-titulo-cr
+       tt-documento.tipo             = titulo.tipo                        
+       tt-documento.vl-saldo         = titulo.vl-saldo
+       tt-documento.vl-saldo-me      = titulo.vl-saldo-me
+       tt-documento.vl-original-me   = titulo.vl-original-me
+       tt-documento.vl-original      = titulo.vl-original
+       tt-documento.perc-juros       = titulo.perc-juros
+       tt-documento.dt-ult-pagto     = titulo.dt-ult-pagto
+       tt-documento.mo-codigo        = titulo.mo-codigo
+       tt-documento.row-documento    = rowid(titulo)
+       tt-documento.cod-emitente     = titulo.cod-emitente
+       tt-documento.nome-abrev       = titulo.nome-abrev
+       tt-documento.de-saldo         = de-saldo-tit 
+       tt-documento.de-saldo-me      = de-saldo-tit-me
+       tt-documento.de-juros         = de-juros-calc
+       &if "{&mgadm_version}" >= "2.04" &then                       
+               tt-documento.nr-proc-exp = titulo.nr-proc-exp
+       &endif      
+       tt-documento.de-total-juros   = tt-documento.de-saldo + tt-documento.de-juros.
+
+if tt-documento.tipo = 5
+or tt-documento.tipo = 7 then do:
+   if tt-documento.vl-original-me > 0 then
+      assign tt-documento.vl-original-me = tt-documento.vl-original-me * (-1).
+   if tt-documento.vl-original > 0 then
+      assign tt-documento.vl-original = tt-documento.vl-original * (-1).
+   if tt-documento.de-total-juros > 0 then
+      assign tt-documento.de-total-juros = tt-documento.de-total-juros * (-1).
+   if tt-documento.de-saldo > 0 then
+      assign tt-documento.de-saldo = tt-documento.de-saldo * (-1).
+   if tt-documento.de-saldo-me > 0 then
+      assign tt-documento.de-saldo-me = tt-documento.de-saldo-me * (-1).
+end.
+
+if  tt-documento.modalidade = 0 then
+    assign tt-documento.modalidade = 1.
+    
+assign fi-total-titulos = fi-total-titulos 
+                          + 
+                          if tt-documento.tipo = 2 then
+                              tt-documento.de-total-juros * (-1)
+                          else
+                              tt-documento.de-total-juros .
+                          
+assign fi-total-original = fi-total-original
+                          + 
+                          if tt-documento.tipo = 2 then
+                            tt-documento.vl-original * (-1)
+                          else
+                            tt-documento.vl-original.
+                        
+if  tt-documento.tipo = 3 then
+    assign tt-documento.i-dias = da-data-base - tt-documento.dt-vencimen.
+else    
+    if  tt-documento.vl-saldo = 0 then
+        if  tt-documento.dt-ult-pagto = tt-documento.dt-vencimen then 
+            assign tt-documento.i-dias = 0.
+        else 
+            assign tt-documento.i-dias = tt-documento.dt-ult-pagto - tt-documento.dt-vencimen.
+    else 
+        assign tt-documento.i-dias = da-data-base - tt-documento.dt-vencimen.
+
+if  tt-documento.i-dias = ? then 
+    assign tt-documento.i-dias = 0.      

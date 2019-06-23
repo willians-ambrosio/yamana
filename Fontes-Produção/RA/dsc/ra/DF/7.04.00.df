@@ -1,0 +1,13 @@
+ADD FIELD "ipi-tribut" OF "nfe-it-imposto-alt" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Tributacao IPI"
+  POSITION 19
+  MAX-WIDTH 4
+  ORDER 210
+
+.
+PSC
+cpstream=ibm850
+.
+0000004334

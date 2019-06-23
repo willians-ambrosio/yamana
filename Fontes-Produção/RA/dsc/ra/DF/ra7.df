@@ -1,0 +1,6473 @@
+ADD TABLE "nfe-cte-inf"
+  AREA "Schema Area"
+  LABEL "Informaá‰es do CT-e"
+  DESCRIPTION "Tabela Principal das Informaá‰es do CT-e"
+  DUMP-NAME "nfe-030"
+
+ADD FIELD "chave-acesso" OF "nfe-cte-inf" AS character 
+  DESCRIPTION "Identificador da tag a ser assinada"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave de Acesso"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave"
+  HELP "Informar a chave de acesso do CT-e e precedida do literal ""CTe"""
+  ORDER 10
+
+ADD FIELD "versao" OF "nfe-cte-inf" AS character 
+  DESCRIPTION "Vers∆o do leiaute"
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "Vers∆o"
+  POSITION 3
+  MAX-WIDTH 16
+  COLUMN-LABEL "Ver"
+  ORDER 190
+
+ADD FIELD "ide-cUF" OF "nfe-cte-inf" AS integer 
+  FORMAT ">9"
+  INITIAL "0"
+  LABEL "UF Emitente"
+  POSITION 4
+  MAX-WIDTH 4
+  ORDER 200
+
+ADD FIELD "ide-cCT" OF "nfe-cte-inf" AS integer 
+  FORMAT ">>>>>>>>9"
+  INITIAL "0"
+  LABEL "Nr Aleat¢rio da Chave"
+  POSITION 5
+  MAX-WIDTH 4
+  ORDER 210
+
+ADD FIELD "ide-CFOP" OF "nfe-cte-inf" AS character 
+  FORMAT "X(4)"
+  INITIAL ""
+  LABEL "CFOP"
+  POSITION 6
+  MAX-WIDTH 8
+  ORDER 220
+
+ADD FIELD "ide-natOp" OF "nfe-cte-inf" AS character 
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Natureza da Operaá∆o"
+  POSITION 7
+  MAX-WIDTH 120
+  ORDER 230
+
+ADD FIELD "ide-forPag" OF "nfe-cte-inf" AS integer 
+  DESCRIPTION "0 - Pago;1 - A pagar;2 - outros"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Forma Pagto"
+  POSITION 8
+  MAX-WIDTH 4
+  HELP "0 - Pago;1 - A pagar;2 - outros"
+  ORDER 240
+
+ADD FIELD "ide-mod" OF "nfe-cte-inf" AS character 
+  FORMAT "XX"
+  INITIAL ""
+  LABEL "Modelo do documento fiscal"
+  POSITION 9
+  MAX-WIDTH 4
+  ORDER 250
+
+ADD FIELD "ide-serie" OF "nfe-cte-inf" AS character 
+  FORMAT "X(3)"
+  INITIAL ""
+  LABEL "SÇrie do CT-e"
+  POSITION 10
+  MAX-WIDTH 6
+  ORDER 260
+
+ADD FIELD "ide-tpImp" OF "nfe-cte-inf" AS integer 
+  DESCRIPTION "1 - Retrato; 2 - Paisagem"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Formato Impress∆o"
+  POSITION 12
+  MAX-WIDTH 4
+  HELP "1 - Retrato; 2 - Paisagem"
+  ORDER 290
+
+ADD FIELD "ide-tpEmis" OF "nfe-cte-inf" AS integer 
+  DESCRIPTION "1 - Normal; 2 - Contingància"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Forma Emiss∆o"
+  POSITION 13
+  MAX-WIDTH 4
+  HELP "1 - Normal; 2 - Contingància"
+  ORDER 300
+
+ADD FIELD "ide-cDV" OF "nfe-cte-inf" AS integer 
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "D°gito Verificador da Chave"
+  POSITION 14
+  MAX-WIDTH 4
+  ORDER 310
+
+ADD FIELD "ide-tpAmb" OF "nfe-cte-inf" AS integer 
+  DESCRIPTION "1 - Produá∆o; 2 - Homologaá∆o"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Tipo do Ambiente"
+  POSITION 15
+  MAX-WIDTH 4
+  HELP "1 - Produá∆o; 2 - Homologaá∆o"
+  ORDER 320
+
+ADD FIELD "ide-tpCTe" OF "nfe-cte-inf" AS integer 
+  DESCRIPTION "0 - CT-e Normal; 
+1 - CT-e de Complemento de Valores;
+2 - CT-e de Anulaá∆o de Valores; 
+3 - CT-e Substituto "
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Tipo do CT-e"
+  POSITION 16
+  MAX-WIDTH 4
+  ORDER 330
+
+ADD FIELD "ide-procEmi" OF "nfe-cte-inf" AS integer 
+  DESCRIPTION "0 - emiss∆o de CT-e com aplicativo do contribuinte;
+1 - emiss∆o de CT-e avulsa pelo Fisco;
+2 - emiss∆o de CT-e avulsa, pelo contribuinte com seu certificado digital, atravÇs do site do Fisco;
+3- emiss∆o CT-e pelo contribuinte com aplicativo fornecido pelo Fisco."
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Identific Proc Emis"
+  POSITION 17
+  MAX-WIDTH 4
+  ORDER 340
+
+ADD FIELD "ide-verProc" OF "nfe-cte-inf" AS character 
+  FORMAT "X(20)"
+  INITIAL ""
+  LABEL "Vers∆o do Proc Emis"
+  POSITION 18
+  MAX-WIDTH 40
+  ORDER 350
+
+ADD FIELD "ide-refCTE" OF "nfe-cte-inf" AS character 
+  FORMAT "X(44)"
+  INITIAL ""
+  LABEL "CTe Ref"
+  POSITION 19
+  MAX-WIDTH 88
+  ORDER 360
+
+ADD FIELD "ide-cMunEmi" OF "nfe-cte-inf" AS integer 
+  FORMAT "9999999"
+  INITIAL "0"
+  LABEL "C¢d Munic°pio Emiss∆o"
+  POSITION 20
+  MAX-WIDTH 4
+  ORDER 370
+
+ADD FIELD "ide-xMunEmi" OF "nfe-cte-inf" AS character 
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Nome Munic°pio Emiss∆o"
+  POSITION 21
+  MAX-WIDTH 120
+  ORDER 380
+
+ADD FIELD "ide-UFEmi" OF "nfe-cte-inf" AS character 
+  FORMAT "XX"
+  INITIAL ""
+  LABEL "UF Emiss∆o"
+  POSITION 22
+  MAX-WIDTH 4
+  ORDER 390
+
+ADD FIELD "ide-modal" OF "nfe-cte-inf" AS integer 
+  DESCRIPTION "01-Rodovi†rio;
+02-AÇreo;
+03-Aquavi†rio;
+04-Ferrovi†rio;
+05-Dutovi†rio"
+  FORMAT "99"
+  INITIAL "0"
+  LABEL "Modal"
+  POSITION 23
+  MAX-WIDTH 4
+  ORDER 400
+
+ADD FIELD "ide-tpServ" OF "nfe-cte-inf" AS integer 
+  DESCRIPTION "0 - Normal;
+1 - Subcontrataá∆o;
+2 - Redespacho;
+3 - Redespacho Intermedi†rio"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Tipo do Serviáo"
+  POSITION 24
+  MAX-WIDTH 4
+  ORDER 410
+
+ADD FIELD "ide-cMunIni" OF "nfe-cte-inf" AS integer 
+  FORMAT "9999999"
+  INITIAL "0"
+  LABEL "C¢d Munic°pio Ini Prestaá∆o"
+  POSITION 25
+  MAX-WIDTH 4
+  ORDER 420
+
+ADD FIELD "ide-xMunIni" OF "nfe-cte-inf" AS character 
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Nome Munic°pio Ini Prestaá∆o"
+  POSITION 26
+  MAX-WIDTH 120
+  ORDER 430
+
+ADD FIELD "ide-UFIni" OF "nfe-cte-inf" AS character 
+  FORMAT "XX"
+  INITIAL ""
+  LABEL "UF Ini Prestaá∆o"
+  POSITION 27
+  MAX-WIDTH 4
+  ORDER 440
+
+ADD FIELD "ide-cMunFim" OF "nfe-cte-inf" AS integer 
+  FORMAT "9999999"
+  INITIAL "0"
+  LABEL "C¢d Munic°pio Fim Prestaá∆o"
+  POSITION 28
+  MAX-WIDTH 4
+  ORDER 450
+
+ADD FIELD "ide-xMunFim" OF "nfe-cte-inf" AS character 
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Nome Munic°pio Fim Prestaá∆o"
+  POSITION 29
+  MAX-WIDTH 120
+  ORDER 460
+
+ADD FIELD "ide-UFFim" OF "nfe-cte-inf" AS character 
+  FORMAT "XX"
+  INITIAL ""
+  LABEL "UF Fim Prestaá∆o"
+  POSITION 30
+  MAX-WIDTH 4
+  ORDER 470
+
+ADD FIELD "ide-retira" OF "nfe-cte-inf" AS integer 
+  DESCRIPTION "Indicador se o Recebedor retira no Aeroporto, Filial, Porto ou Estaá∆o de Destino?
+0 - sim; 1 - n∆o"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Retira"
+  POSITION 31
+  MAX-WIDTH 4
+  HELP "0 - sim; 1 - n∆o"
+  ORDER 480
+
+ADD FIELD "ide-xDetRetira" OF "nfe-cte-inf" AS character 
+  FORMAT "X(160)"
+  INITIAL ""
+  LABEL "Detalhes do retira"
+  POSITION 32
+  MAX-WIDTH 320
+  ORDER 490
+
+ADD FIELD "ide-toma" OF "nfe-cte-inf" AS integer 
+  DESCRIPTION "Tomador do Serviáo:
+0-Remetente;1-Expedidor;2-Recebedor;3-Destinat†rio;4-Outros"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Tomador do Serviáo"
+  POSITION 33
+  MAX-WIDTH 4
+  HELP "0-Remetente;1-Expedidor;2-Recebedor;3-Destinat†rio;4-Outros"
+  ORDER 500
+
+ADD FIELD "compl-xCaracAd" OF "nfe-cte-inf" AS character 
+  FORMAT "X(15)"
+  INITIAL ""
+  LABEL "Caract Adic Transporte"
+  POSITION 34
+  MAX-WIDTH 30
+  ORDER 530
+
+ADD FIELD "compl-xCaracSer" OF "nfe-cte-inf" AS character 
+  FORMAT "X(30)"
+  INITIAL ""
+  LABEL "Caract Adic Serviáo"
+  POSITION 35
+  MAX-WIDTH 60
+  ORDER 540
+
+ADD FIELD "compl-xEmi" OF "nfe-cte-inf" AS character 
+  FORMAT "X(20)"
+  INITIAL ""
+  LABEL "Funcion†rio emissor do CTe"
+  POSITION 36
+  MAX-WIDTH 40
+  ORDER 550
+
+ADD FIELD "compl-fluxo-xOrig" OF "nfe-cte-inf" AS character 
+  FORMAT "X(15)"
+  INITIAL ""
+  LABEL "Origem"
+  POSITION 37
+  MAX-WIDTH 30
+  ORDER 560
+
+ADD FIELD "compl-fluxo-xDest" OF "nfe-cte-inf" AS character 
+  FORMAT "X(15)"
+  INITIAL ""
+  LABEL "Destino"
+  POSITION 38
+  MAX-WIDTH 30
+  ORDER 570
+
+ADD FIELD "compl-fluxo-xRota" OF "nfe-cte-inf" AS character 
+  FORMAT "X(15)"
+  INITIAL ""
+  LABEL "Rota"
+  POSITION 39
+  MAX-WIDTH 30
+  ORDER 580
+
+ADD FIELD "compl-origCalc" OF "nfe-cte-inf" AS character 
+  FORMAT "X(40)"
+  INITIAL ""
+  LABEL "Origem C†lc Frete"
+  POSITION 40
+  MAX-WIDTH 80
+  ORDER 670
+
+ADD FIELD "compl-destCalc" OF "nfe-cte-inf" AS character 
+  FORMAT "X(40)"
+  INITIAL ""
+  LABEL "Destino C†lc Frete"
+  POSITION 41
+  MAX-WIDTH 80
+  ORDER 680
+
+ADD FIELD "compl-xObs" OF "nfe-cte-inf" AS character 
+  FORMAT "X(2000)"
+  INITIAL ""
+  LABEL "Observaá‰es Gerais"
+  POSITION 42
+  MAX-WIDTH 4000
+  ORDER 690
+
+ADD FIELD "vPrest-vTPrest" OF "nfe-cte-inf" AS decimal 
+  FORMAT ">,>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total da Prestaá∆o do Serviáo"
+  POSITION 64
+  MAX-WIDTH 15
+  ORDER 820
+
+ADD FIELD "vPrest-vRec" OF "nfe-cte-inf" AS decimal 
+  FORMAT ">,>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor a Receber"
+  POSITION 65
+  MAX-WIDTH 15
+  ORDER 830
+
+ADD FIELD "vPrest-Comp-xNome" OF "nfe-cte-inf" AS character 
+  FORMAT "X(15)"
+  INITIAL ""
+  LABEL "Nome do componente da Prest Serv"
+  POSITION 66
+  MAX-WIDTH 30
+  ORDER 840
+
+ADD FIELD "vPrest-Comp-vComp" OF "nfe-cte-inf" AS decimal 
+  FORMAT ">,>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor do componente da Prest Serv"
+  POSITION 67
+  MAX-WIDTH 15
+  ORDER 850
+
+ADD FIELD "imp-ICMS-CST" OF "nfe-cte-inf" AS integer 
+  DESCRIPTION "Classificaá∆o tribut†ria do serviáo:
+00 - tributaá∆o normal ICMS;
+20 - tributaá∆o com BC reduzida do ICMS;
+40 - ICMS isená∆o;
+41 - ICMS n∆o tributada;
+51 - ICMS diferido;
+80 - ICMS pagto atribu°do ao tomador ou ao terceiro previsto para substituiá∆o tribut†ria;
+81 - ICMS devido para outras UF;
+90 - ICMS outras situaá‰es"
+  FORMAT "99"
+  INITIAL "0"
+  LABEL "CST"
+  POSITION 68
+  MAX-WIDTH 4
+  ORDER 860
+
+ADD FIELD "imp-ICMS-pRedBC" OF "nfe-cte-inf" AS decimal 
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Percentual de reduá∆o da BC"
+  POSITION 69
+  MAX-WIDTH 15
+  ORDER 870
+
+ADD FIELD "imp-ICMS-vBC" OF "nfe-cte-inf" AS decimal 
+  FORMAT ">,>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor da BC do ICMS"
+  POSITION 70
+  MAX-WIDTH 15
+  ORDER 880
+
+ADD FIELD "imp-ICMS-pICMS" OF "nfe-cte-inf" AS decimal 
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Al°quota do ICMS"
+  POSITION 71
+  MAX-WIDTH 15
+  ORDER 890
+
+ADD FIELD "imp-ICMS-vICMS" OF "nfe-cte-inf" AS decimal 
+  FORMAT ">,>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor do ICMS"
+  POSITION 72
+  MAX-WIDTH 15
+  ORDER 900
+
+ADD FIELD "imp-ICMS-vCred" OF "nfe-cte-inf" AS decimal 
+  FORMAT ">,>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor do CrÇdito Outorgado/Presumido"
+  POSITION 73
+  MAX-WIDTH 15
+  ORDER 910
+
+ADD FIELD "imp-infAdFisco" OF "nfe-cte-inf" AS character 
+  FORMAT "X(2000)"
+  INITIAL ""
+  LABEL "Informaá‰es adicionais de interesse do Fisco"
+  POSITION 74
+  MAX-WIDTH 4000
+  ORDER 920
+
+ADD FIELD "ide-dhEmi" OF "nfe-cte-inf" AS datetime 
+  FORMAT "99/99/9999 HH:MM:SS"
+  INITIAL ?
+  LABEL "Data e Hora de Emiss∆o do CT-e"
+  POSITION 75
+  MAX-WIDTH 8
+  ORDER 280
+
+ADD FIELD "compl-Entrega-tpPer" OF "nfe-cte-inf" AS integer 
+  DESCRIPTION "0-Sem data definida; 
+1-Na data;
+2-AtÇ a data;
+3-A partir da data;
+4-no per°odo"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Previs∆o de Entrega"
+  POSITION 77
+  MAX-WIDTH 4
+  ORDER 590
+
+ADD FIELD "compl-Entrega-tpHor" OF "nfe-cte-inf" AS integer 
+  DESCRIPTION "0-Sem hora definida;
+1-No hor†rio;
+2-AtÇ o hor†rio;
+3-A partir do hor†rio;
+4-No intervalo de tempo"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Previs∆o de Hor†rio de Entrega"
+  POSITION 78
+  MAX-WIDTH 4
+  ORDER 630
+
+ADD FIELD "arq-xml" OF "nfe-cte-inf" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Arquivo XML"
+  POSITION 79
+  MAX-WIDTH 120
+  COLUMN-LABEL "Arq XML"
+  ORDER 40
+
+ADD FIELD "cod-situacao" OF "nfe-cte-inf" AS integer 
+  FORMAT ">>>,>>9"
+  INITIAL "0"
+  LABEL "Situaá∆o"
+  POSITION 80
+  MAX-WIDTH 4
+  COLUMN-LABEL "C¢d. Situaá∆o"
+  ORDER 50
+
+ADD FIELD "cod-observa" OF "nfe-cte-inf" AS integer 
+  DESCRIPTION "Observacao da Nota Fiscal"
+  FORMAT ">9"
+  INITIAL "0"
+  LABEL "Observacao NFE"
+  POSITION 81
+  MAX-WIDTH 4
+  COLUMN-LABEL "Obs NFE"
+  HELP "Observacao da Nota Fiscal"
+  ORDER 60
+
+ADD FIELD "tipo-entrada" OF "nfe-cte-inf" AS integer 
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Tipo Entrada"
+  POSITION 82
+  MAX-WIDTH 4
+  COLUMN-LABEL "Tp Entr"
+  ORDER 70
+
+ADD FIELD "compl-Entrega-comData-dProg" OF "nfe-cte-inf" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Data Programada"
+  POSITION 83
+  MAX-WIDTH 4
+  ORDER 600
+
+ADD FIELD "compl-Entrega-noPeriodo-dIni" OF "nfe-cte-inf" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Data Inicial"
+  POSITION 84
+  MAX-WIDTH 4
+  ORDER 610
+
+ADD FIELD "compl-Entrega-noPeriodo-dFim" OF "nfe-cte-inf" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Data Final"
+  POSITION 85
+  MAX-WIDTH 4
+  ORDER 620
+
+ADD FIELD "compl-Entrega-comHora-hProg" OF "nfe-cte-inf" AS character 
+  FORMAT "X(8)"
+  INITIAL ""
+  LABEL "Hora Programada"
+  POSITION 86
+  MAX-WIDTH 16
+  ORDER 640
+
+ADD FIELD "compl-Entrega-noInter-hIni" OF "nfe-cte-inf" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "Hora Inicial"
+  POSITION 87
+  MAX-WIDTH 16
+  ORDER 650
+
+ADD FIELD "compl-Entrega-noInter-hFim" OF "nfe-cte-inf" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "Hora Final"
+  POSITION 88
+  MAX-WIDTH 16
+  ORDER 660
+
+ADD FIELD "ide-toma4-id" OF "nfe-cte-inf" AS character 
+  FORMAT "X(14)"
+  INITIAL ""
+  LABEL "CNPJ/CPF Tomador Outros"
+  POSITION 89
+  MAX-WIDTH 28
+  ORDER 510
+
+ADD FIELD "emit-id" OF "nfe-cte-inf" AS character 
+  FORMAT "X(14)"
+  INITIAL ""
+  LABEL "CNPJ Emitente do CT-e"
+  POSITION 90
+  MAX-WIDTH 28
+  ORDER 700
+
+ADD FIELD "rem-id" OF "nfe-cte-inf" AS character 
+  FORMAT "X(14)"
+  INITIAL ""
+  LABEL "CNPJ / CPF Remetente"
+  POSITION 91
+  MAX-WIDTH 28
+  HELP "Remetente das mercadorias transportadas pelo CT-e"
+  ORDER 720
+
+ADD FIELD "desp-quantidade" OF "nfe-cte-inf" AS decimal 
+  FORMAT ">>>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Quantidade"
+  POSITION 92
+  MAX-WIDTH 17
+  COLUMN-LABEL "Qtd"
+  DECIMALS 2
+  ORDER 170
+
+ADD FIELD "exped-id" OF "nfe-cte-inf" AS character 
+  FORMAT "x(14)"
+  INITIAL ""
+  LABEL "CNPJ / CPF Expedidor da Carga"
+  POSITION 93
+  MAX-WIDTH 28
+  ORDER 740
+
+ADD FIELD "receb-id" OF "nfe-cte-inf" AS character 
+  FORMAT "x(14)"
+  INITIAL ""
+  LABEL "CNPJ / CPF Recebedor da Carga"
+  POSITION 94
+  MAX-WIDTH 28
+  ORDER 760
+
+ADD FIELD "dest-id" OF "nfe-cte-inf" AS character 
+  FORMAT "x(14)"
+  INITIAL ""
+  LABEL "CNPJ / CPF do Destinat†rio do CT-e"
+  POSITION 95
+  MAX-WIDTH 28
+  ORDER 780
+
+ADD FIELD "dest-locEnt-id" OF "nfe-cte-inf" AS character 
+  FORMAT "x(14)"
+  INITIAL ""
+  LABEL "CNPJ / CPF do Local de Entrega constante na NF"
+  POSITION 96
+  MAX-WIDTH 28
+  ORDER 800
+
+ADD FIELD "ide-toma4-xNome" OF "nfe-cte-inf" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Raz∆o Social ou Nome"
+  POSITION 97
+  MAX-WIDTH 120
+  ORDER 520
+
+ADD FIELD "emit-xNome" OF "nfe-cte-inf" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Raz∆o Social ou Nome"
+  POSITION 98
+  MAX-WIDTH 120
+  ORDER 710
+
+ADD FIELD "rem-xNome" OF "nfe-cte-inf" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Raz∆o Social ou Nome"
+  POSITION 99
+  MAX-WIDTH 120
+  ORDER 730
+
+ADD FIELD "exped-xNome" OF "nfe-cte-inf" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Raz∆o Social ou Nome"
+  POSITION 101
+  MAX-WIDTH 120
+  ORDER 750
+
+ADD FIELD "receb-xNome" OF "nfe-cte-inf" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Raz∆o Social ou Nome"
+  POSITION 102
+  MAX-WIDTH 120
+  ORDER 770
+
+ADD FIELD "dest-xNome" OF "nfe-cte-inf" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Raz∆o Social ou Nome"
+  POSITION 103
+  MAX-WIDTH 120
+  ORDER 790
+
+ADD FIELD "dest-locEnt-xNome" OF "nfe-cte-inf" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Raz∆o Social ou Nome"
+  POSITION 104
+  MAX-WIDTH 120
+  ORDER 810
+
+ADD FIELD "cod-estabel" OF "nfe-cte-inf" AS character 
+  FORMAT "X(3)"
+  INITIAL ""
+  LABEL "Estabelecimento"
+  POSITION 105
+  MAX-WIDTH 6
+  COLUMN-LABEL "Est"
+  ORDER 20
+
+ADD FIELD "dt-trans" OF "nfe-cte-inf" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Data de Transaá∆o"
+  POSITION 106
+  MAX-WIDTH 4
+  COLUMN-LABEL "Dt Trans"
+  ORDER 30
+
+ADD FIELD "nat-operacao" OF "nfe-cte-inf" AS character 
+  FORMAT "x(6)"
+  INITIAL ""
+  LABEL "Nat Operaá∆o"
+  POSITION 107
+  MAX-WIDTH 12
+  COLUMN-LABEL "Nat Oper"
+  ORDER 80
+
+ADD FIELD "desp-conta-contabil" OF "nfe-cte-inf" AS character 
+  FORMAT "x(17)"
+  INITIAL ""
+  LABEL "Conta Cont†bil Despesa"
+  POSITION 108
+  MAX-WIDTH 34
+  COLUMN-LABEL "Cta Contab Desp"
+  ORDER 100
+
+ADD FIELD "desp-narrativa" OF "nfe-cte-inf" AS character 
+  FORMAT "x(2000)"
+  INITIAL ""
+  LABEL "Narrativa Despesa"
+  POSITION 109
+  MAX-WIDTH 4000
+  ORDER 110
+
+ADD FIELD "desp-it-codigo" OF "nfe-cte-inf" AS character 
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Item Despesa"
+  POSITION 110
+  MAX-WIDTH 32
+  COLUMN-LABEL "It Desp"
+  ORDER 90
+
+ADD FIELD "desp-cod-depos" OF "nfe-cte-inf" AS character 
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Dep¢sito"
+  POSITION 111
+  MAX-WIDTH 6
+  COLUMN-LABEL "Dep"
+  ORDER 120
+
+ADD FIELD "desp-cod-localiz" OF "nfe-cte-inf" AS character 
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Localizaá∆o"
+  POSITION 112
+  MAX-WIDTH 20
+  COLUMN-LABEL "Localiz"
+  HELP "C¢digo da localizaá∆o do material"
+  ORDER 130
+
+ADD FIELD "desp-num-pedido" OF "nfe-cte-inf" AS integer 
+  FORMAT ">>>>>,>>9"
+  INITIAL "0"
+  LABEL "Pedido"
+  POSITION 113
+  MAX-WIDTH 4
+  COLUMN-LABEL "Pedido"
+  HELP "N£mero do Pedido de Compra"
+  ORDER 140
+
+ADD FIELD "desp-numero-ordem" OF "nfe-cte-inf" AS integer 
+  FORMAT "zzzzz9,99"
+  INITIAL "0"
+  LABEL "Ordem"
+  POSITION 114
+  MAX-WIDTH 4
+  ORDER 150
+
+ADD FIELD "desp-parcela" OF "nfe-cte-inf" AS integer 
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Parcela"
+  POSITION 115
+  MAX-WIDTH 4
+  COLUMN-LABEL "Parc"
+  HELP "Parcela da Ordem de Compra"
+  ORDER 160
+
+ADD FIELD "desp-nr-ord-produ" OF "nfe-cte-inf" AS integer 
+  FORMAT ">>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Ordem Produá∆o"
+  POSITION 116
+  MAX-WIDTH 4
+  COLUMN-LABEL "Ord Prod"
+  HELP "Informe o numero da ordem de produá∆o"
+  ORDER 180
+
+ADD FIELD "ide-nCT" OF "nfe-cte-inf" AS character 
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Numero CTe"
+  POSITION 117
+  MAX-WIDTH 20
+  COLUMN-LABEL "N. CTe"
+  ORDER 270
+
+ADD FIELD "ct-codigo" OF "nfe-cte-inf" AS character 
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Conta Contabil"
+  POSITION 118
+  MAX-WIDTH 40
+  COLUMN-LABEL "Conta Contabil"
+  ORDER 930
+
+ADD FIELD "sc-codigo" OF "nfe-cte-inf" AS character 
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Centro Custo"
+  POSITION 119
+  MAX-WIDTH 40
+  COLUMN-LABEL "Centro Custo"
+  ORDER 940
+
+ADD FIELD "cod-unid-negoc" OF "nfe-cte-inf" AS character 
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Unid Negoc"
+  POSITION 120
+  MAX-WIDTH 6
+  COLUMN-LABEL "Unid Negoc"
+  ORDER 950
+
+ADD INDEX "pk-inf" ON "nfe-cte-inf" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "chave-acesso" ASCENDING 
+
+ADD TABLE "nfe-cte-inf-nf"
+  AREA "Schema Area"
+  LABEL "Informaá‰es das NF"
+  DESCRIPTION "Este grupo deve ser informado quando o
+documento origin†rio for NF"
+  DUMP-NAME "nfe-032"
+
+ADD FIELD "chave-acesso" OF "nfe-cte-inf-nf" AS character 
+  DESCRIPTION "Identificador da tag a ser assinada"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave de Acesso"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave"
+  HELP "Informar a chave de acesso do CT-e e precedida do literal ""CTe"""
+  ORDER 10
+
+ADD FIELD "rem-id" OF "nfe-cte-inf-nf" AS character 
+  FORMAT "X(14)"
+  INITIAL ""
+  LABEL "CNPJ / CPF Remetente"
+  POSITION 17
+  MAX-WIDTH 28
+  HELP "Remetente das mercadorias transportadas pelo CT-e"
+  ORDER 20
+
+ADD FIELD "locRet-id" OF "nfe-cte-inf-nf" AS character 
+  FORMAT "x(14)"
+  INITIAL ""
+  LABEL "CNPJ / CPF Local de retirada constante na NF"
+  POSITION 18
+  MAX-WIDTH 28
+  ORDER 180
+
+ADD FIELD "locRet-xNome" OF "nfe-cte-inf-nf" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Raz∆o Social ou Nome"
+  POSITION 19
+  MAX-WIDTH 120
+  ORDER 190
+
+ADD FIELD "rem-xNome" OF "nfe-cte-inf-nf" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Raz∆o Social ou Nome"
+  POSITION 20
+  MAX-WIDTH 120
+  ORDER 30
+
+ADD FIELD "nRoma" OF "nfe-cte-inf-nf" AS character 
+  FORMAT "X(20)"
+  INITIAL ""
+  LABEL "N£mero do Romaneio da NF"
+  POSITION 43
+  MAX-WIDTH 40
+  ORDER 40
+
+ADD FIELD "nPed" OF "nfe-cte-inf-nf" AS character 
+  FORMAT "X(20)"
+  INITIAL ""
+  LABEL "N£mero do Pedido da NF"
+  POSITION 44
+  MAX-WIDTH 40
+  ORDER 50
+
+ADD FIELD "serie" OF "nfe-cte-inf-nf" AS character 
+  FORMAT "X(3)"
+  INITIAL ""
+  LABEL "SÇrie"
+  POSITION 45
+  MAX-WIDTH 6
+  ORDER 60
+
+ADD FIELD "nDoc" OF "nfe-cte-inf-nf" AS character 
+  FORMAT "X(20)"
+  INITIAL ""
+  LABEL "N£mero"
+  POSITION 46
+  MAX-WIDTH 40
+  ORDER 70
+
+ADD FIELD "dEmi" OF "nfe-cte-inf-nf" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Data de Emiss∆o"
+  POSITION 47
+  MAX-WIDTH 4
+  ORDER 80
+
+ADD FIELD "vBC" OF "nfe-cte-inf-nf" AS decimal 
+  FORMAT ">,>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor da Base de C†lculo do ICMS"
+  POSITION 48
+  MAX-WIDTH 15
+  ORDER 90
+
+ADD FIELD "vICMS" OF "nfe-cte-inf-nf" AS decimal 
+  FORMAT ">,>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total do ICMS"
+  POSITION 49
+  MAX-WIDTH 15
+  ORDER 100
+
+ADD FIELD "vBCST" OF "nfe-cte-inf-nf" AS decimal 
+  FORMAT ">,>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor da Base de C†lculo do ICMS ST"
+  POSITION 50
+  MAX-WIDTH 15
+  ORDER 110
+
+ADD FIELD "vST" OF "nfe-cte-inf-nf" AS decimal 
+  FORMAT ">,>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total do ICMS ST"
+  POSITION 51
+  MAX-WIDTH 15
+  ORDER 120
+
+ADD FIELD "vProd" OF "nfe-cte-inf-nf" AS decimal 
+  FORMAT ">,>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total dos Produtos"
+  POSITION 52
+  MAX-WIDTH 15
+  ORDER 130
+
+ADD FIELD "vNF" OF "nfe-cte-inf-nf" AS decimal 
+  FORMAT ">,>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total da NF"
+  POSITION 53
+  MAX-WIDTH 15
+  ORDER 140
+
+ADD FIELD "nCFOP" OF "nfe-cte-inf-nf" AS integer 
+  FORMAT "9999"
+  INITIAL "0"
+  LABEL "CFOP Predominante"
+  POSITION 54
+  MAX-WIDTH 4
+  ORDER 150
+
+ADD FIELD "nPeso" OF "nfe-cte-inf-nf" AS decimal 
+  FORMAT ">>>,>>>,>>>,>>9.999"
+  INITIAL "0"
+  LABEL "Peso total em Kg"
+  POSITION 55
+  MAX-WIDTH 15
+  ORDER 160
+
+ADD FIELD "PIN" OF "nfe-cte-inf-nf" AS integer 
+  FORMAT ">>>>>>>99"
+  INITIAL "0"
+  LABEL "PIN SUFRAMA"
+  POSITION 56
+  MAX-WIDTH 4
+  ORDER 170
+
+ADD INDEX "pk-inf-nf" ON "nfe-cte-inf-nf" 
+  AREA "Schema Area"
+  PRIMARY
+  INDEX-FIELD "chave-acesso" ASCENDING 
+
+ADD TABLE "nfe-cte-inf-nfe"
+  AREA "Schema Area"
+  LABEL "Informaá‰es das NF-e"
+  DUMP-NAME "nfe-033"
+
+ADD FIELD "chave-acesso" OF "nfe-cte-inf-nfe" AS character 
+  DESCRIPTION "Identificador da tag a ser assinada"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave de Acesso"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave"
+  HELP "Informar a chave de acesso do CT-e e precedida do literal ""CTe"""
+  ORDER 10
+
+ADD FIELD "rem-id" OF "nfe-cte-inf-nfe" AS character 
+  FORMAT "X(14)"
+  INITIAL ""
+  LABEL "CNPJ / CPF Remetente"
+  POSITION 3
+  MAX-WIDTH 28
+  HELP "Remetente das mercadorias transportadas pelo CT-e"
+  ORDER 20
+
+ADD FIELD "rem-xNome" OF "nfe-cte-inf-nfe" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Raz∆o Social ou Nome"
+  POSITION 4
+  MAX-WIDTH 120
+  ORDER 30
+
+ADD FIELD "chave-nfe" OF "nfe-cte-inf-nfe" AS character 
+  FORMAT "X(44)"
+  INITIAL ""
+  LABEL "Chave de acesso da NF-e"
+  POSITION 57
+  MAX-WIDTH 88
+  ORDER 40
+
+ADD FIELD "PIN" OF "nfe-cte-inf-nfe" AS integer 
+  FORMAT ">>>>>>>99"
+  INITIAL "0"
+  LABEL "PIN SUFRAMA"
+  POSITION 58
+  MAX-WIDTH 4
+  ORDER 50
+
+ADD INDEX "pk-inf-nfe" ON "nfe-cte-inf-nfe" 
+  AREA "Schema Area"
+  PRIMARY
+  INDEX-FIELD "chave-acesso" ASCENDING 
+  INDEX-FIELD "chave-nfe" ASCENDING 
+
+ADD TABLE "nfe-cte-inf-outros"
+  AREA "Schema Area"
+  LABEL "Informaá‰es de outros doctos"
+  DESCRIPTION "Informaá‰es dos demais documentos"
+  DUMP-NAME "nfe-034"
+
+ADD FIELD "chave-acesso" OF "nfe-cte-inf-outros" AS character 
+  DESCRIPTION "Identificador da tag a ser assinada"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave de Acesso"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave"
+  HELP "Informar a chave de acesso do CT-e e precedida do literal ""CTe"""
+  ORDER 10
+
+ADD FIELD "rem-id" OF "nfe-cte-inf-outros" AS character 
+  FORMAT "X(14)"
+  INITIAL ""
+  LABEL "CNPJ / CPF Remetente"
+  POSITION 3
+  MAX-WIDTH 28
+  HELP "Remetente das mercadorias transportadas pelo CT-e"
+  ORDER 20
+
+ADD FIELD "rem-xNome" OF "nfe-cte-inf-outros" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Raz∆o Social ou Nome"
+  POSITION 4
+  MAX-WIDTH 120
+  ORDER 30
+
+ADD FIELD "tpDoc" OF "nfe-cte-inf-outros" AS integer 
+  DESCRIPTION "Tipo de documento origin†rio: 
+00 - Declaraá∆o
+99 - Outros"
+  FORMAT "99"
+  INITIAL "0"
+  LABEL "Tipo de Documento"
+  POSITION 59
+  MAX-WIDTH 4
+  ORDER 40
+
+ADD FIELD "descOutros" OF "nfe-cte-inf-outros" AS character 
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Descriá∆o Outros"
+  POSITION 60
+  MAX-WIDTH 120
+  ORDER 50
+
+ADD FIELD "nDoc" OF "nfe-cte-inf-outros" AS character 
+  FORMAT "X(20)"
+  INITIAL ""
+  LABEL "N£mero"
+  POSITION 61
+  MAX-WIDTH 40
+  ORDER 60
+
+ADD FIELD "dEmi" OF "nfe-cte-inf-outros" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Data de Emiss∆o"
+  POSITION 62
+  MAX-WIDTH 4
+  ORDER 70
+
+ADD FIELD "vDocFisc" OF "nfe-cte-inf-outros" AS decimal 
+  FORMAT ">,>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor do documento"
+  POSITION 63
+  MAX-WIDTH 15
+  ORDER 80
+
+ADD INDEX "pk-inf-outros" ON "nfe-cte-inf-outros" 
+  AREA "Schema Area"
+  PRIMARY
+  INDEX-FIELD "chave-acesso" ASCENDING 
+
+ADD TABLE "nfe-cte-padrao"
+  AREA "Schema Area"
+  LABEL "Padroes CTe"
+  DESCRIPTION "Arquivo com os padroes de Tipo de Entrada, Natureza e Item conforme o Estabelecimento, Emitente e Tipo de Frete"
+  DUMP-NAME "nfe-036"
+
+ADD FIELD "cod-estabel" OF "nfe-cte-padrao" AS character 
+  FORMAT "X(3)"
+  INITIAL ""
+  LABEL "Estabelecimento"
+  POSITION 2
+  MAX-WIDTH 6
+  COLUMN-LABEL "Est"
+  ORDER 10
+
+ADD FIELD "tipo-entrada" OF "nfe-cte-padrao" AS integer 
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Tipo Entrada"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "Tp Entr"
+  ORDER 40
+
+ADD FIELD "nat-operacao" OF "nfe-cte-padrao" AS character 
+  FORMAT "x(6)"
+  INITIAL ""
+  LABEL "Nat Operaá∆o"
+  POSITION 5
+  MAX-WIDTH 12
+  COLUMN-LABEL "Nat Oper"
+  ORDER 50
+
+ADD FIELD "it-codigo" OF "nfe-cte-padrao" AS character 
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Item Despesa"
+  POSITION 6
+  MAX-WIDTH 32
+  COLUMN-LABEL "It Desp"
+  ORDER 60
+
+ADD FIELD "tipo-frete" OF "nfe-cte-padrao" AS integer 
+  DESCRIPTION "Tomador do Serviáo (ide-toma):
+0-CIF(Remetente);1-Expedidor;2-Recebedor;3-FOB(Destinat†rio);4-Outros"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Tipo de Frete"
+  POSITION 7
+  MAX-WIDTH 4
+  HELP "0-CIF;1-Expedidor;2-Recebedor;3-FOB;4-Outros"
+  ORDER 30
+
+ADD FIELD "cod-emitente" OF "nfe-cte-padrao" AS integer 
+  FORMAT ">>>>>>>>9"
+  INITIAL "0"
+  LABEL "Emitente"
+  POSITION 8
+  MAX-WIDTH 4
+  COLUMN-LABEL "Emit"
+  ORDER 20
+
+ADD INDEX "pk-padrao" ON "nfe-cte-padrao" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "cod-estabel" ASCENDING 
+  INDEX-FIELD "cod-emitente" ASCENDING 
+  INDEX-FIELD "tipo-frete" ASCENDING 
+
+ADD TABLE "nfe-cte-pessoa"
+  AREA "Schema Area"
+  LABEL "Pessoas Relacionadas ao CTe"
+  DESCRIPTION "Informaá‰es das Pessoas (F°sica ou Jur°dica) relacionadas ao CTe"
+  DUMP-NAME "nfe-031"
+
+ADD FIELD "id" OF "nfe-cte-pessoa" AS character 
+  FORMAT "x(14)"
+  INITIAL ""
+  LABEL "CNPJ / CPF Pessoa"
+  POSITION 2
+  MAX-WIDTH 28
+  ORDER 10
+
+ADD FIELD "IE" OF "nfe-cte-pessoa" AS character 
+  FORMAT "x(14)"
+  INITIAL ""
+  LABEL "Inscriá∆o Estadual"
+  POSITION 3
+  MAX-WIDTH 28
+  ORDER 40
+
+ADD FIELD "xNome" OF "nfe-cte-pessoa" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Raz∆o Social ou Nome"
+  POSITION 4
+  MAX-WIDTH 120
+  ORDER 20
+
+ADD FIELD "xFant" OF "nfe-cte-pessoa" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Nome Fantasia"
+  POSITION 5
+  MAX-WIDTH 120
+  ORDER 70
+
+ADD FIELD "xLgr" OF "nfe-cte-pessoa" AS character 
+  FORMAT "x(255)"
+  INITIAL ""
+  LABEL "Logradouro"
+  POSITION 6
+  MAX-WIDTH 510
+  ORDER 80
+
+ADD FIELD "nro" OF "nfe-cte-pessoa" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "N£mero"
+  POSITION 7
+  MAX-WIDTH 120
+  ORDER 90
+
+ADD FIELD "xCpl" OF "nfe-cte-pessoa" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Complemento"
+  POSITION 8
+  MAX-WIDTH 120
+  ORDER 100
+
+ADD FIELD "xBairro" OF "nfe-cte-pessoa" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Bairro"
+  POSITION 9
+  MAX-WIDTH 120
+  ORDER 110
+
+ADD FIELD "cMun" OF "nfe-cte-pessoa" AS integer 
+  DESCRIPTION "C¢digo do munic°pio (utilizar a tabela do IBGE)"
+  FORMAT "9999999"
+  INITIAL "0"
+  LABEL "C¢digo do Munic°pio"
+  POSITION 10
+  MAX-WIDTH 4
+  HELP "Informar 9999999 para operaá‰es com o exterior"
+  ORDER 120
+
+ADD FIELD "xMun" OF "nfe-cte-pessoa" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Nome do Munic°pio"
+  POSITION 11
+  MAX-WIDTH 120
+  HELP "Informar EXTERIOR para operaá‰es com o exterior"
+  ORDER 130
+
+ADD FIELD "CEP" OF "nfe-cte-pessoa" AS integer 
+  FORMAT "99999999"
+  INITIAL "0"
+  LABEL "CEP"
+  POSITION 12
+  MAX-WIDTH 4
+  ORDER 140
+
+ADD FIELD "UF" OF "nfe-cte-pessoa" AS character 
+  FORMAT "!!"
+  INITIAL ""
+  LABEL "UF"
+  POSITION 13
+  MAX-WIDTH 4
+  HELP "Informar EX para operaá‰es com o exterior"
+  ORDER 150
+
+ADD FIELD "cPais" OF "nfe-cte-pessoa" AS integer 
+  FORMAT ">>>9"
+  INITIAL "0"
+  LABEL "C¢digo do Pa°s"
+  POSITION 14
+  MAX-WIDTH 4
+  ORDER 160
+
+ADD FIELD "xPais" OF "nfe-cte-pessoa" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Nome do Pa°s"
+  POSITION 15
+  MAX-WIDTH 120
+  ORDER 170
+
+ADD FIELD "tpPes" OF "nfe-cte-pessoa" AS integer 
+  DESCRIPTION "0-Jur°dica;1-F°sica"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Tipo de Pessoa"
+  POSITION 16
+  MAX-WIDTH 4
+  HELP "0-Jur°dica;1-F°sica"
+  ORDER 30
+
+ADD FIELD "fone" OF "nfe-cte-pessoa" AS character 
+  FORMAT "x(12)"
+  INITIAL ""
+  LABEL "Telefone"
+  POSITION 17
+  MAX-WIDTH 24
+  ORDER 50
+
+ADD FIELD "ISUF" OF "nfe-cte-pessoa" AS character 
+  DESCRIPTION "Obrigat¢rio nas operaá‰es com as †reas com benef°cios de incentivos fiscais sob controle da SUFRAMA"
+  FORMAT "x(9)"
+  INITIAL ""
+  LABEL "Inscriá∆o na SUFRAMA"
+  POSITION 18
+  MAX-WIDTH 18
+  ORDER 60
+
+ADD FIELD "dAtu" OF "nfe-cte-pessoa" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Data de Atualizaá∆o"
+  POSITION 19
+  MAX-WIDTH 4
+  COLUMN-LABEL "Dt Atual"
+  ORDER 180
+
+ADD INDEX "pk-pessoa" ON "nfe-cte-pessoa" 
+  AREA "Schema Area"
+  PRIMARY
+  INDEX-FIELD "id" ASCENDING 
+  INDEX-FIELD "xNome" ASCENDING 
+
+ADD TABLE "nfe-cte-rateio"
+  AREA "Schema Area"
+  LABEL "Notas Rateio do Frete"
+  DESCRIPTION "Arquivo de Notas para Rateio do Frete"
+  DUMP-NAME "nfe-035"
+
+ADD FIELD "chave-acesso" OF "nfe-cte-rateio" AS character 
+  DESCRIPTION "Identificador da tag a ser assinada"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave de Acesso"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave"
+  HELP "Informar a chave de acesso do CT-e e precedida do literal ""CTe"""
+  ORDER 10
+
+ADD FIELD "serie-docto" OF "nfe-cte-rateio" AS character 
+  FORMAT "x(5)"
+  INITIAL ""
+  LABEL "SÇrie"
+  POSITION 4
+  MAX-WIDTH 10
+  COLUMN-LABEL "Ser"
+  ORDER 20
+
+ADD FIELD "nro-docto" OF "nfe-cte-rateio" AS character 
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Documento"
+  POSITION 5
+  MAX-WIDTH 32
+  ORDER 30
+
+ADD FIELD "cod-emitente" OF "nfe-cte-rateio" AS integer 
+  FORMAT ">>>>>>>>9"
+  INITIAL "0"
+  LABEL "Emitente"
+  POSITION 6
+  MAX-WIDTH 4
+  COLUMN-LABEL "Emit"
+  ORDER 40
+
+ADD FIELD "nat-operacao" OF "nfe-cte-rateio" AS character 
+  FORMAT "x(6)"
+  INITIAL ""
+  LABEL "Nat Operaá∆o"
+  POSITION 7
+  MAX-WIDTH 12
+  COLUMN-LABEL "Nat Oper"
+  ORDER 50
+
+ADD INDEX "pk-rateio" ON "nfe-cte-rateio" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "chave-acesso" ASCENDING 
+  INDEX-FIELD "serie-docto" ASCENDING 
+  INDEX-FIELD "nro-docto" ASCENDING 
+  INDEX-FIELD "cod-emitente" ASCENDING 
+  INDEX-FIELD "nat-operacao" ASCENDING 
+
+ADD TABLE "nfe-dfe"
+  AREA "Schema Area"
+  LABEL "Documento Fiscal Eletronico"
+  DESCRIPTION "Tabela para armazenar os documentos Fiscais Eletronicos "
+  DUMP-NAME "nfe-040"
+
+ADD FIELD "chave-acesso" OF "nfe-dfe" AS character 
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave Acesso"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave Acesso"
+  ORDER 10
+
+ADD FIELD "tipo" OF "nfe-dfe" AS character 
+  DESCRIPTION "CTE ou NFE"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Tipo"
+  POSITION 3
+  MAX-WIDTH 6
+  COLUMN-LABEL "Tipo"
+  ORDER 20
+
+ADD FIELD "sit-sefaz" OF "nfe-dfe" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Sit Sefaz"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "Sit Sefaz"
+  ORDER 30
+
+ADD FIELD "sit-erp" OF "nfe-dfe" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Sit ERP"
+  POSITION 5
+  MAX-WIDTH 4
+  COLUMN-LABEL "Sit ERP"
+  ORDER 40
+
+ADD FIELD "serie" OF "nfe-dfe" AS character 
+  FORMAT "x(5)"
+  INITIAL ""
+  LABEL "Serie"
+  POSITION 6
+  MAX-WIDTH 10
+  COLUMN-LABEL "Serie"
+  ORDER 50
+
+ADD FIELD "nr-docto" OF "nfe-dfe" AS character 
+  FORMAT "x(7)"
+  INITIAL ""
+  LABEL "Nr Docto"
+  POSITION 7
+  MAX-WIDTH 14
+  COLUMN-LABEL "Nr Docto"
+  ORDER 60
+
+ADD FIELD "dt-emissao" OF "nfe-dfe" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Dt Emissao"
+  POSITION 8
+  MAX-WIDTH 4
+  COLUMN-LABEL "Dt Emissao"
+  ORDER 70
+
+ADD FIELD "nome-abrev" OF "nfe-dfe" AS character 
+  FORMAT "x(12)"
+  INITIAL ""
+  LABEL "Nome Abrev"
+  POSITION 9
+  MAX-WIDTH 24
+  COLUMN-LABEL "Nome Abrev"
+  ORDER 80
+
+ADD FIELD "dt-ult-cons" OF "nfe-dfe" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Dt Ult Consul"
+  POSITION 10
+  MAX-WIDTH 4
+  COLUMN-LABEL "Dt Ult Consul"
+  ORDER 90
+
+ADD FIELD "xml" OF "nfe-dfe" AS clob 
+  FORMAT "x(8)"
+  INITIAL ?
+  POSITION 11
+  LOB-AREA "Schema Area"
+  LOB-BYTES 104857600
+  LOB-SIZE 100M
+  CLOB-CODEPAGE "UTF-8"
+  CLOB-COLLATION "BASIC"
+  CLOB-TYPE 2
+  ORDER 100
+
+ADD FIELD "cod-estabel" OF "nfe-dfe" AS character 
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Estab"
+  POSITION 12
+  MAX-WIDTH 6
+  COLUMN-LABEL "Estab"
+  ORDER 110
+
+ADD INDEX "idx-dfe" ON "nfe-dfe" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "chave-acesso" ASCENDING 
+
+ADD TABLE "nfe-emit-cfop-nat"
+  AREA "Schema Area"
+  LABEL "Relacionamento para CFOP"
+  DESCRIPTION "Relacionamento para CFOP"
+  DUMP-NAME "nfe001"
+
+ADD FIELD "cod-emitente" OF "nfe-emit-cfop-nat" AS integer 
+  DESCRIPTION "Codigo do Emitente"
+  FORMAT ">>>>>>>>9"
+  INITIAL "0"
+  LABEL "Codigo"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Codigo"
+  HELP "Codigo do Emitente"
+  ORDER 10
+  MANDATORY
+
+ADD FIELD "cod-cfop" OF "nfe-emit-cfop-nat" AS character 
+  DESCRIPTION "CFOP"
+  FORMAT "x(4)"
+  INITIAL ""
+  LABEL "CFOP"
+  POSITION 3
+  MAX-WIDTH 8
+  COLUMN-LABEL "CFOP"
+  HELP "CFOP"
+  ORDER 20
+  MANDATORY
+
+ADD FIELD "nat-operacao" OF "nfe-emit-cfop-nat" AS character 
+  DESCRIPTION "Nat Oper"
+  FORMAT "x(06)"
+  INITIAL ""
+  LABEL "Nat Oper"
+  POSITION 4
+  MAX-WIDTH 12
+  COLUMN-LABEL "Nat Oper"
+  HELP "Nat Oper"
+  ORDER 30
+  MANDATORY
+
+ADD FIELD "cod-estabel" OF "nfe-emit-cfop-nat" AS character 
+  DESCRIPTION "Estabelecimento"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Estabelecimento"
+  POSITION 6
+  MAX-WIDTH 6
+  COLUMN-LABEL "Estab"
+  HELP "Estabelecimento"
+  ORDER 40
+
+ADD FIELD "it-codigo" OF "nfe-emit-cfop-nat" AS character 
+  DESCRIPTION "Codigo Nosso Item"
+  FORMAT "x(16)"
+  INITIAL "*"
+  LABEL "Item"
+  POSITION 8
+  MAX-WIDTH 32
+  COLUMN-LABEL "Item"
+  HELP "Codigo Nosso Item"
+  ORDER 50
+
+ADD FIELD "ind-orig-aliq-icms" OF "nfe-emit-cfop-nat" AS integer 
+  DESCRIPTION "Origem Aliquota do ICMS (1 - XML / 2 - Natureza)"
+  FORMAT ">9"
+  INITIAL "1"
+  LABEL "Origem Aliquota ICMS"
+  POSITION 9
+  MAX-WIDTH 4
+  COLUMN-LABEL "Orig Aliq ICMS"
+  HELP "Origem Aliquota do ICMS (1 - XML / 2 - Natureza)"
+  ORDER 60
+
+ADD INDEX "ix_codigo" ON "nfe-emit-cfop-nat" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "cod-estabel" ASCENDING 
+  INDEX-FIELD "cod-emitente" ASCENDING 
+  INDEX-FIELD "cod-cfop" ASCENDING 
+  INDEX-FIELD "it-codigo" ASCENDING 
+
+ADD TABLE "nfe-his-it-nota-fis-rec"
+  AREA "Schema Area"
+  LABEL "Historico de Seq Gerada no MRE"
+  DESCRIPTION "Historico de Seq Gerada no MRE"
+  DUMP-NAME "nfe015"
+
+ADD FIELD "chave-acesso-nfe" OF "nfe-his-it-nota-fis-rec" AS character 
+  DESCRIPTION "Chave Acesso do SEFAZ"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave Acesso Sefaz"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave Acesso"
+  HELP "Chave Acesso do SEFAZ"
+  ORDER 40
+
+ADD FIELD "seq-item" OF "nfe-his-it-nota-fis-rec" AS integer 
+  DESCRIPTION "Sequencia Original do Item na NF-e"
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Seq Orig"
+  POSITION 3
+  MAX-WIDTH 4
+  COLUMN-LABEL "Seq Orig"
+  HELP "Sequencia Original do Item na NF-e"
+  ORDER 50
+
+ADD FIELD "sequencia" OF "nfe-his-it-nota-fis-rec" AS integer 
+  DESCRIPTION "Sequencia gerada no Recebimento"
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Sequencia"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "Seq"
+  HELP "Sequencia gerada no Recebimento"
+  ORDER 60
+
+ADD FIELD "nat-operacao" OF "nfe-his-it-nota-fis-rec" AS character 
+  DESCRIPTION "Natureza de Operacao"
+  FORMAT "x(06)"
+  INITIAL ""
+  LABEL "Nat Operacao"
+  POSITION 5
+  MAX-WIDTH 12
+  COLUMN-LABEL "Nat Oper"
+  HELP "Natureza de Operacao"
+  ORDER 70
+
+ADD INDEX "ix_codigo" ON "nfe-his-it-nota-fis-rec" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+  INDEX-FIELD "seq-item" ASCENDING 
+  INDEX-FIELD "sequencia" ASCENDING 
+  INDEX-FIELD "nat-operacao" ASCENDING 
+
+ADD INDEX "ix_item" ON "nfe-his-it-nota-fis-rec" 
+  AREA "Schema Area"
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+  INDEX-FIELD "sequencia" ASCENDING 
+  INDEX-FIELD "nat-operacao" ASCENDING 
+
+ADD INDEX "ix_item_orig" ON "nfe-his-it-nota-fis-rec" 
+  AREA "Schema Area"
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+  INDEX-FIELD "seq-item" ASCENDING 
+
+ADD TABLE "nfe-his-nota-fis-rec"
+  AREA "Schema Area"
+  LABEL "Historico NF Rec."
+  DESCRIPTION "Historia Situaá∆o da NF. Recebimento
+"
+  DUMP-NAME "nfe002"
+
+ADD FIELD "chave-acesso-nfe" OF "nfe-his-nota-fis-rec" AS character 
+  DESCRIPTION "Chave Acesso do SEFAZ"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave Acesso Sefaz"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave Acesso"
+  HELP "Chave Acesso do SEFAZ"
+  ORDER 5
+
+ADD FIELD "codigo" OF "nfe-his-nota-fis-rec" AS integer 
+  DESCRIPTION "C¢digo da Situaá∆o"
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Situacao"
+  POSITION 6
+  MAX-WIDTH 4
+  COLUMN-LABEL "Situacao"
+  HELP "C¢digo da Situaá∆o"
+  ORDER 40
+
+ADD FIELD "desc-situacao" OF "nfe-his-nota-fis-rec" AS character 
+  DESCRIPTION "Descriá∆o da Situaá∆o"
+  FORMAT "X(20)"
+  INITIAL ""
+  LABEL "Descriá∆o"
+  POSITION 7
+  MAX-WIDTH 40
+  COLUMN-LABEL "Descriá∆o"
+  HELP "Descriá∆o da Situaá∆o"
+  ORDER 50
+
+ADD FIELD "cod-status" OF "nfe-his-nota-fis-rec" AS character 
+  DESCRIPTION "C¢digo do Status"
+  FORMAT "X(10)"
+  INITIAL ""
+  LABEL "C¢digo Status"
+  POSITION 8
+  MAX-WIDTH 12
+  COLUMN-LABEL "C¢digo Status"
+  HELP "C¢digo do Status"
+  ORDER 60
+
+ADD FIELD "desc-status" OF "nfe-his-nota-fis-rec" AS character 
+  DESCRIPTION "Descriá∆o do Status"
+  FORMAT "X(400)"
+  INITIAL ""
+  LABEL "Descriá∆o"
+  POSITION 9
+  MAX-WIDTH 200
+  COLUMN-LABEL "Descriá∆o"
+  HELP "Descriá∆o do Status"
+  ORDER 70
+
+ADD FIELD "dt-retorno" OF "nfe-his-nota-fis-rec" AS date 
+  DESCRIPTION "Data do Retorno"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Dt Retorno"
+  POSITION 10
+  MAX-WIDTH 4
+  COLUMN-LABEL "Dt Retorno"
+  HELP "Data do Retorno"
+  ORDER 80
+
+ADD FIELD "hr-retorno" OF "nfe-his-nota-fis-rec" AS character 
+  DESCRIPTION "Hora do Retorno"
+  FORMAT "X(8)"
+  INITIAL ""
+  LABEL "Hr Retorno"
+  POSITION 11
+  MAX-WIDTH 16
+  COLUMN-LABEL "Hr Retorno"
+  HELP "Hora do Retorno"
+  ORDER 90
+
+ADD FIELD "nr-protocolo" OF "nfe-his-nota-fis-rec" AS character 
+  DESCRIPTION "N£mero do Protocolo"
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Protocolo"
+  POSITION 12
+  MAX-WIDTH 40
+  COLUMN-LABEL "Protocolo"
+  HELP "N£mero do Protocolo"
+  ORDER 100
+
+ADD FIELD "dt-Recbto" OF "nfe-his-nota-fis-rec" AS date 
+  DESCRIPTION "Data do Retorno"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Dt Retorno"
+  POSITION 13
+  MAX-WIDTH 4
+  COLUMN-LABEL "Dt Retorno"
+  HELP "Data do Retorno"
+  ORDER 110
+
+ADD FIELD "hr-Recbto" OF "nfe-his-nota-fis-rec" AS character 
+  DESCRIPTION "Hora do Retorno"
+  FORMAT "X(8)"
+  INITIAL ""
+  LABEL "Hr Retorno"
+  POSITION 14
+  MAX-WIDTH 16
+  COLUMN-LABEL "Hr Retorno"
+  HELP "Hora do Retorno"
+  ORDER 120
+
+ADD FIELD "ind-origem" OF "nfe-his-nota-fis-rec" AS integer 
+  DESCRIPTION "Indica Origem do Historico (1 - Retorna Fornecedor / 2 - Consulta Sefaz)"
+  FORMAT ">9"
+  INITIAL "0"
+  LABEL "Indica Origem"
+  POSITION 15
+  MAX-WIDTH 4
+  COLUMN-LABEL "Ind Orig"
+  HELP "Indica Origem do Historico (1 - Ret Forn / 2 - Consulta Sefaz)"
+  ORDER 130
+
+ADD INDEX "ix_codigo" ON "nfe-his-nota-fis-rec" 
+  AREA "Schema Area"
+  PRIMARY
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+  INDEX-FIELD "dt-retorno" ASCENDING 
+  INDEX-FIELD "hr-retorno" ASCENDING 
+
+ADD INDEX "ix_retorno" ON "nfe-his-nota-fis-rec" 
+  AREA "Schema Area"
+  INDEX-FIELD "dt-retorno" DESCENDING 
+  INDEX-FIELD "hr-retorno" DESCENDING 
+
+ADD TABLE "nfe-inconsist-rec"
+  AREA "Schema Area"
+  LABEL "Inconsistàncias NFe"
+  DUMP-NAME "nfe016"
+
+ADD FIELD "chave-acesso-nfe" OF "nfe-inconsist-rec" AS character 
+  DESCRIPTION "Chave Acesso do SEFAZ"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave Acesso Sefaz"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave Acesso"
+  HELP "Chave Acesso do SEFAZ"
+  ORDER 10
+
+ADD FIELD "cod-inconsist" OF "nfe-inconsist-rec" AS integer 
+  DESCRIPTION "1 = Inscriá∆o Estadual ; 2 = UF do Emitente ; 3 = Fornecedor Emite NF-e ; 4 = Classificaá∆o Fiscal
+"
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "C¢d. Inconsistància"
+  POSITION 3
+  MAX-WIDTH 4
+  COLUMN-LABEL "C¢d Inconsist"
+  ORDER 20
+
+ADD FIELD "dt-situacao" OF "nfe-inconsist-rec" AS date 
+  DESCRIPTION "Data da Situaá∆o da Inconsistància"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Dt Situaá∆o"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "Dt Sit"
+  HELP "Data da Situaá∆o da Inconsistància"
+  ORDER 40
+
+ADD FIELD "cod-situacao" OF "nfe-inconsist-rec" AS integer 
+  DESCRIPTION "0 = Pendente ; 1 = Corrigida"
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Situaá∆o da Inconsistància"
+  POSITION 5
+  MAX-WIDTH 4
+  COLUMN-LABEL "Sit Inconsist"
+  HELP "Situaá∆o da Inconsistància"
+  ORDER 30
+
+ADD FIELD "info-xml" OF "nfe-inconsist-rec" AS character 
+  FORMAT "x(40)"
+  INITIAL ""
+  LABEL "Informaá∆o XML"
+  POSITION 6
+  MAX-WIDTH 200
+  COLUMN-LABEL "XML"
+  ORDER 50
+
+ADD FIELD "info-cad" OF "nfe-inconsist-rec" AS character 
+  FORMAT "x(40)"
+  INITIAL ""
+  LABEL "Informaá∆o Cadastro"
+  POSITION 7
+  MAX-WIDTH 80
+  COLUMN-LABEL "Cadastro"
+  ORDER 60
+
+ADD FIELD "it-codigo" OF "nfe-inconsist-rec" AS character 
+  DESCRIPTION "Esse campo deve ser preenchido somente para as inconsistàncias relacionadas ao item, caso contr†rio, deicar em branco."
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Item"
+  POSITION 8
+  MAX-WIDTH 32
+  COLUMN-LABEL "Item"
+  HELP "Codigo Nosso Item"
+  ORDER 15
+
+ADD INDEX "ix_codigo" ON "nfe-inconsist-rec" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+  INDEX-FIELD "it-codigo" ASCENDING 
+  INDEX-FIELD "cod-inconsist" ASCENDING 
+
+ADD TABLE "nfe-it-nota-fisc-rec"
+  AREA "Schema Area"
+  LABEL "Item da Nota Fiscal Rec"
+  DESCRIPTION "Item da Nota Fiscal Recebimento"
+  DUMP-NAME "nfe003"
+
+ADD FIELD "chave-acesso-nfe" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Chave Acesso do SEFAZ"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave Acesso Sefaz"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave Acesso"
+  HELP "Chave Acesso do SEFAZ"
+  ORDER 40
+
+ADD FIELD "seq-item" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "Sequencia do Item na NF-e"
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Sequencia"
+  POSITION 3
+  MAX-WIDTH 4
+  COLUMN-LABEL "Seq"
+  HELP "Sequencia do Item na NF-e"
+  ORDER 50
+
+ADD FIELD "it-codigo" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Codigo Nosso Item"
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Item"
+  POSITION 4
+  MAX-WIDTH 32
+  COLUMN-LABEL "Item"
+  HELP "Codigo Nosso Item"
+  ORDER 60
+
+ADD FIELD "item-cprod" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "C¢digo do produto ou serviáo - (101-I02)"
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Codigo do Produto"
+  POSITION 5
+  MAX-WIDTH 120
+  COLUMN-LABEL "Cod. Prod"
+  HELP "C¢digo do produto ou serviáo - (101-I02)"
+  ORDER 70
+
+ADD FIELD "item-cEAN" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "GTIN (Global Trade Item Number) do produto, antigo c¢digo EAN ou c¢digo de barras - (102-I03)"
+  FORMAT "x(14)"
+  INITIAL ""
+  LABEL "Codigo EAN"
+  POSITION 6
+  MAX-WIDTH 28
+  COLUMN-LABEL "EAN"
+  HELP "GTIN (Global Trade Item Number) do produto, EAN ou c¢d barras"
+  ORDER 80
+
+ADD FIELD "item-xProd" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Descriá∆o do produto ou serviáo - (103-I04)"
+  FORMAT "x(120)"
+  INITIAL ""
+  LABEL "Descriá∆o Produto"
+  POSITION 7
+  MAX-WIDTH 240
+  COLUMN-LABEL "Desc. Prod."
+  HELP "Descriá∆o do produto ou serviáo - (103-I04)"
+  ORDER 90
+
+ADD FIELD "item-NCM" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "C¢digo NCM - (104-I05)"
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "Codigo NCM"
+  POSITION 8
+  MAX-WIDTH 16
+  COLUMN-LABEL "NCM"
+  HELP "C¢digo NCM - (104-I05)"
+  ORDER 100
+
+ADD FIELD "item-EXTIPI" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "EX_TIPI - (105-I06)"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "EXTIPI"
+  POSITION 9
+  MAX-WIDTH 6
+  COLUMN-LABEL "EXTIPI"
+  HELP "EX_TIPI - (105-I06)"
+  ORDER 110
+
+ADD FIELD "item-genero" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "Gànero do Produto ou Serviáo - (106-I07)"
+  FORMAT ">9"
+  INITIAL "0"
+  LABEL "Genero do Produto"
+  POSITION 10
+  MAX-WIDTH 4
+  COLUMN-LABEL "Gen. Prod."
+  HELP "Gànero do Produto ou Serviáo - (106-I07)"
+  ORDER 120
+
+ADD FIELD "item-CFOP" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "C¢digo Fiscal de Operaá‰es e Prestaá‰es - (107-I08)"
+  FORMAT ">>>9"
+  INITIAL "0"
+  LABEL "CFOP"
+  POSITION 11
+  MAX-WIDTH 4
+  COLUMN-LABEL "CFOP"
+  HELP "C¢digo Fiscal de Operaá‰es e Prestaá‰es - (107-I08)"
+  ORDER 130
+
+ADD FIELD "item-uCom" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Unidade Comercial - (108-I09)"
+  FORMAT "x(6)"
+  INITIAL ""
+  LABEL "Unidade Comercial"
+  POSITION 12
+  MAX-WIDTH 12
+  COLUMN-LABEL "Un Com"
+  HELP "Unidade Comercial - (108-I09)"
+  ORDER 140
+
+ADD FIELD "item-qCom" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Quantidade Comercial - (109-I10)"
+  FORMAT ">>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Qtda Comercial"
+  POSITION 13
+  MAX-WIDTH 19
+  COLUMN-LABEL "Qtd Com"
+  HELP "Quantidade Comercial - (109-I10)"
+  DECIMALS 4
+  ORDER 150
+
+ADD FIELD "item-vUnCom" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor Unit†rio de comercializaá∆o - (109a-I10a)"
+  FORMAT ">>>,>>>,>>>,>>9.99999"
+  INITIAL "0"
+  LABEL "Vl Unit Comercial."
+  POSITION 14
+  MAX-WIDTH 19
+  COLUMN-LABEL "Vl Unit Com"
+  HELP "Valor Unit†rio de comercializaá∆o - (109a-I10a)"
+  DECIMALS 5
+  ORDER 160
+
+ADD FIELD "item-vProd" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor Bruto do Produto ou Serviáos - (110-I11)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Bruto Produto"
+  POSITION 15
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Brt. Prod."
+  HELP "Valor Bruto do Produto ou Serviáos - (110-I11)"
+  DECIMALS 2
+  ORDER 170
+
+ADD FIELD "item-cEANTrib" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "GTIN (Global Trade Item Number) da unidade tribut†vel, antigo c¢digo EAN ou c¢digo de barras - (111-I12)"
+  FORMAT "x(14)"
+  INITIAL ""
+  LABEL "EAN Tributavel"
+  POSITION 16
+  MAX-WIDTH 28
+  COLUMN-LABEL "EAN Trib"
+  HELP "GTIN (Global Trade Item Number) da unidade tribut†vel."
+  ORDER 180
+
+ADD FIELD "item-uTrib" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Unidade Tribut†vel - (112-I13)"
+  FORMAT "x(6)"
+  INITIAL ""
+  LABEL "Unidade Trib."
+  POSITION 17
+  MAX-WIDTH 12
+  COLUMN-LABEL "Un. Trib"
+  HELP "Unidade Tribut†vel - (112-I13)"
+  ORDER 190
+
+ADD FIELD "item-qTrib" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Quantidade Tribut†vel - (113-I14)"
+  FORMAT ">>,>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Quantidade Trib."
+  POSITION 18
+  MAX-WIDTH 19
+  COLUMN-LABEL "Qtd. Trib"
+  HELP "Quantidade Tribut†vel - (113-I14)"
+  DECIMALS 4
+  ORDER 200
+
+ADD FIELD "item-vUnTrib" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor Unit†rio de tributaá∆o - (113a-I14a)"
+  FORMAT ">>>,>>>,>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Valor Unitario. Trib."
+  POSITION 19
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Unit. Trib."
+  HELP "Valor Unit†rio de tributaá∆o - (113a-I14a)"
+  DECIMALS 2
+  ORDER 210
+
+ADD FIELD "item-vFrete" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor Total do Frete - (114-I15)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor do Frete"
+  POSITION 20
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Frete"
+  HELP "Valor Total do Frete - (114-I15)"
+  DECIMALS 2
+  ORDER 220
+
+ADD FIELD "item-vSeg" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor Total do Seguro - (115-I16)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Seguro"
+  POSITION 21
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Seg."
+  HELP "Valor Total do Seguro - (115-I16)"
+  DECIMALS 2
+  ORDER 230
+
+ADD FIELD "item-vDesc" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor do Desconto - (116-I17)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Desconto"
+  POSITION 22
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Desc."
+  HELP "Valor do Desconto - (116-I17)"
+  DECIMALS 2
+  ORDER 240
+
+ADD FIELD "di-nDI" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "N£mero do Documento de Importaá∆o DI/DSI/DA (DI/DSI/DA) - (118-I19)"
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Numero da DI"
+  POSITION 23
+  MAX-WIDTH 20
+  COLUMN-LABEL "Nr DI"
+  HELP "N£mero do Documento de Importaá∆o DI/DSI/DA (DI/DSI/DA)"
+  ORDER 250
+
+ADD FIELD "di-dDi" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Data de Registro da DI/DSI/DA - (119-I20)"
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Data da DI"
+  POSITION 24
+  MAX-WIDTH 20
+  COLUMN-LABEL "Dt DI"
+  HELP "Data de Registro da DI/DSI/DA - (119-I20)"
+  ORDER 260
+
+ADD FIELD "di-xLocDesemb" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Local de desembaraáo - (120-I21)"
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Local de Desembaraáo"
+  POSITION 25
+  MAX-WIDTH 120
+  COLUMN-LABEL "Local"
+  HELP "Local de desembaraáo - (120-I21)"
+  ORDER 270
+
+ADD FIELD "di-UFDesemb" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Sigla da UF onde ocorreu o Desembaraáo Aduaneiro - (121-I22)"
+  FORMAT "x(2)"
+  INITIAL ""
+  LABEL "UF Desembaraáo"
+  POSITION 26
+  MAX-WIDTH 4
+  COLUMN-LABEL "UF"
+  HELP "Sigla da UF onde ocorreu o Desembaraáo Aduaneiro - (121-I22)"
+  ORDER 280
+
+ADD FIELD "di-dDesemb" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Data do Desembaraáo Aduaneiro - (122-I23)"
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Data Desembaraáo"
+  POSITION 27
+  MAX-WIDTH 20
+  COLUMN-LABEL "Dt Desemb"
+  HELP "Data do Desembaraáo Aduaneiro - (122-I23)"
+  ORDER 290
+
+ADD FIELD "di-cExmportador" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "C¢digo do exportador - (123-I24)"
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Codigo do Exportador"
+  POSITION 28
+  MAX-WIDTH 120
+  COLUMN-LABEL "Cod. Exp."
+  HELP "C¢digo do exportador - (123-I24)"
+  ORDER 300
+
+ADD FIELD "imp-orig" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "Origem da mercadoria - (166-N11)"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Origem Mercadoria"
+  POSITION 29
+  MAX-WIDTH 4
+  COLUMN-LABEL "Origem"
+  HELP "Origem da mercadoria - (166-N11)"
+  ORDER 310
+
+ADD FIELD "imp-CST" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "Tributaá∆o do ICMS - (167-N12)"
+  FORMAT ">9"
+  INITIAL "0"
+  LABEL "Tributaá∆o do ICMS"
+  POSITION 30
+  MAX-WIDTH 4
+  COLUMN-LABEL "Trib. ICMS"
+  HELP "Tributaá∆o do ICMS - (167-N12)"
+  ORDER 320
+
+ADD FIELD "imp-modBC" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "Modalidade de determinaá∆o da Base de C†lculo do ICMS - (168-N13)"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Modalidade BC"
+  POSITION 31
+  MAX-WIDTH 4
+  COLUMN-LABEL "Mod. BC"
+  HELP "Modalidade de determinaá∆o da Base de C†lculo do ICMS"
+  ORDER 330
+
+ADD FIELD "imp-vBC" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor da Base de C†lculo do ICMS - (169-N15)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Base Calculo"
+  POSITION 32
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL BC"
+  HELP "Valor da Base de C†lculo do ICMS - (169-N15)"
+  DECIMALS 2
+  ORDER 340
+
+ADD FIELD "imp-pICMS" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Al°quota do imposto - (170-N16)"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Aliquota ICMS"
+  POSITION 33
+  MAX-WIDTH 17
+  COLUMN-LABEL "% ICMS"
+  HELP "Al°quota do imposto - (170-N16)"
+  DECIMALS 2
+  ORDER 350
+
+ADD FIELD "imp-vICMS" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor do ICMS - (171-N17)"
+  FORMAT "->>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor do ICMS"
+  POSITION 34
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL ICMS"
+  HELP "Valor do ICMS - (171-N17)"
+  DECIMALS 2
+  ORDER 360
+
+ADD FIELD "imp-modBCST" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "Modalidade de determinaá∆o da Base de C†lculo do ICMS Substituiá∆o Tribut†ria - (179-N18)"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Modalidade ICMS ST"
+  POSITION 35
+  MAX-WIDTH 4
+  COLUMN-LABEL "Mod ICMS ST"
+  HELP "Modalidade de determinaá∆o da Base de C†lculo do ICMS ST"
+  ORDER 370
+
+ADD FIELD "imp-pMVAST" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Percentual da margem de valor Adicionado do ICMS Substituiá∆o Tribut†ria - (180-N19)"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Percetual Margem Adic."
+  POSITION 36
+  MAX-WIDTH 17
+  COLUMN-LABEL "% Marg. Adic"
+  HELP "Percentual da margem de valor Adicionado do ICMS ST"
+  DECIMALS 2
+  ORDER 380
+
+ADD FIELD "imp-pRedBCST" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Percentual da Reduá∆o de Base de C†lculo do ICMS Substituiá∆o Tribut†ria - (181-N20)"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Percentual Red. BC ST"
+  POSITION 37
+  MAX-WIDTH 17
+  COLUMN-LABEL "% Red BC ST"
+  HELP "Percentual da Reduá∆o de Base de C†lculo do ICMS ST"
+  DECIMALS 2
+  ORDER 390
+
+ADD FIELD "imp-vBCST" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor da Base de C†lculo do ICMS Substituiá∆o Tribut†ria - (182-N21)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Base ICMS ST"
+  POSITION 38
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL ICMS ST"
+  HELP "Valor da Base de C†lculo do ICMS Substituiá∆o Tribut†ria"
+  DECIMALS 2
+  ORDER 400
+
+ADD FIELD "imp-pICMSST" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Al°quota do imposto do ICMS Substituiá∆o Tribut†ria - (183-N22)"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Aliquota ICMS ST"
+  POSITION 39
+  MAX-WIDTH 17
+  COLUMN-LABEL "% ICMS ST"
+  HELP "Al°quota do imposto do ICMS Substituiá∆o Tribut†ria - (183-N22)"
+  DECIMALS 2
+  ORDER 410
+
+ADD FIELD "imp-vICMSST" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor do ICMS Substituiá∆o Tribut†ria - (184-N23)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor do ICMS ST"
+  POSITION 40
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL ICMS ST"
+  HELP "Valor do ICMS Substituiá∆o Tribut†ria - (184-N23)"
+  DECIMALS 2
+  ORDER 420
+
+ADD FIELD "imp-pRedBC" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Percentual da Reduá∆o de Base de C†lculo - (189-N14)"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Percentual Reduá∆o BC"
+  POSITION 41
+  MAX-WIDTH 17
+  COLUMN-LABEL "% Rec. BC"
+  HELP "Percentual da Reduá∆o de Base de C†lculo - (189-N14)"
+  DECIMALS 2
+  ORDER 430
+
+ADD FIELD "imp-ipi-CST" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "C¢digo da situaá∆o tribut†ria do IPI - (253 - O09)"
+  FORMAT "x(2)"
+  INITIAL ""
+  LABEL "Cod. Situaá∆o Trib IPI"
+  POSITION 42
+  MAX-WIDTH 4
+  COLUMN-LABEL "Cod. Sit IPI"
+  HELP "C¢digo da situaá∆o tribut†ria do IPI - (253 - O09)"
+  ORDER 440
+
+ADD FIELD "imp-ipi-vBC" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor da Base de C†lculo do IPI - (254-O10)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor BC do IPI"
+  POSITION 43
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl BC IPI"
+  HELP "Valor da Base de C†lculo do IPI - (254-O10)"
+  DECIMALS 2
+  ORDER 450
+
+ADD FIELD "imp-ipi-pIPI" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Al°quota do IPI - (257-O13)"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Aliquota do IPI"
+  POSITION 44
+  MAX-WIDTH 17
+  COLUMN-LABEL "% IPI"
+  HELP "Al°quota do IPI - (257-O13)"
+  DECIMALS 2
+  ORDER 460
+
+ADD FIELD "imp-ipi-qUnid" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Quantidade total na unidade padr∆o para tributaá∆o (somente para os produtos tributados por unidade) - (255-O11)"
+  FORMAT ">>>>,>>>,>>>,>>9.999"
+  INITIAL "0"
+  LABEL "Quantidade Trib. IPI"
+  POSITION 45
+  MAX-WIDTH 17
+  COLUMN-LABEL "Qtd. Trib IPI"
+  HELP "Quantidade total na unidade padr∆o para tributaá∆o"
+  DECIMALS 2
+  ORDER 470
+
+ADD FIELD "imp-ipi-vUnid" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor por Unidade Tribut†vel - (256-O12)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Unid. Tributavel"
+  POSITION 46
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Unid. Trib"
+  HELP "Valor por Unidade Tribut†vel - (256-O12)"
+  DECIMALS 2
+  ORDER 480
+
+ADD FIELD "imp-ipi-vIPI" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor do IPI - (259-O14)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor do IPI"
+  POSITION 47
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL IPI"
+  HELP "Valor do IPI - (259-O14)"
+  DECIMALS 2
+  ORDER 490
+
+ADD FIELD "imp-ii-vBC" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor da Base de C†lculo do Imposto de Importaá∆o - (263-P02)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Base do II"
+  POSITION 48
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL BC II"
+  HELP "Valor da Base de C†lculo do Imposto de Importaá∆o - (263-P02)"
+  DECIMALS 2
+  ORDER 500
+
+ADD FIELD "imp-ii-vDespAdu" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor das despesas aduaneiras - (264-P03)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Desp. Aduaneiras"
+  POSITION 49
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Desp Ad."
+  HELP "Valor das despesas aduaneiras - (264-P03)"
+  DECIMALS 2
+  ORDER 510
+
+ADD FIELD "imp-ii-vII" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor do Imposto de Importaá∆o - (265-P04)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor do II"
+  POSITION 50
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL II"
+  HELP "Valor do Imposto de Importaá∆o - (265-P04)"
+  DECIMALS 2
+  ORDER 520
+
+ADD FIELD "imp-ii-vIOF" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor do Imposto sobre Operaá‰es Financeiras - (266-P05)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor de Oper. Fin."
+  POSITION 51
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Oper Fin."
+  HELP "Valor do Imposto sobre Operaá‰es Financeiras - (266-P05)"
+  DECIMALS 2
+  ORDER 530
+
+ADD FIELD "imp-pis-CST" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "C¢digo de Situaá∆o Tribut†ria do PIS - (269-Q06)"
+  FORMAT ">9"
+  INITIAL "0"
+  LABEL "Cod. Situaá∆o Trib. PIS"
+  POSITION 52
+  MAX-WIDTH 4
+  COLUMN-LABEL "CST PIS"
+  HELP "C¢digo de Situaá∆o Tribut†ria do PIS - (269-Q06)"
+  ORDER 540
+
+ADD FIELD "imp-pis-vBC" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor da Base de C†lculo do PIS - (270-Q07)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Base de Calculos PIS"
+  POSITION 53
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl BC PIS"
+  HELP "Valor da Base de C†lculo do PIS - (270-Q07)"
+  DECIMALS 2
+  ORDER 550
+
+ADD FIELD "imp-pis-pPIS" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Al°quota do PIS (em percentual) - (271-Q08)"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Aliquota do PIS"
+  POSITION 54
+  MAX-WIDTH 17
+  COLUMN-LABEL "% PIS"
+  HELP "Al°quota do PIS (em percentual) - (271-Q08)"
+  DECIMALS 2
+  ORDER 560
+
+ADD FIELD "imp-pis-vPIS" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor do PIS - (272-Q09)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor do PIS"
+  POSITION 55
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl PIS"
+  HELP "Valor do PIS - (272-Q09)"
+  DECIMALS 2
+  ORDER 570
+
+ADD FIELD "imp-pis-qBCProd" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Quantidade Vendida - (275-Q10)"
+  FORMAT ">>>,>>>,>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Quantidade Vendida"
+  POSITION 56
+  MAX-WIDTH 19
+  COLUMN-LABEL "Qtde Vend."
+  HELP "Quantidade Vendida - (275-Q10)"
+  DECIMALS 4
+  ORDER 580
+
+ADD FIELD "imp-pis-vAliqProd" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Al°quota do PIS (em reais) - (276-Q11)"
+  FORMAT ">>>,>>>,>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Aliquito do PIS"
+  POSITION 57
+  MAX-WIDTH 19
+  COLUMN-LABEL "Aliq. PIS"
+  HELP "Al°quota do PIS (em reais) - (276-Q11)"
+  DECIMALS 4
+  ORDER 590
+
+ADD FIELD "imp-pisst-vBC" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor da Base de C†lculo do PIS - (288-R02)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor BC do PIS ST"
+  POSITION 58
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL BC PIS ST"
+  HELP "Valor da Base de C†lculo do PIS - (288-R02)"
+  DECIMALS 2
+  ORDER 600
+
+ADD FIELD "imp-pisst-pPIS" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Al°quota de PIS (em percentual) - (289-R03)"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Aliquota de PIS ST"
+  POSITION 59
+  MAX-WIDTH 17
+  COLUMN-LABEL "% PIS ST"
+  HELP "Al°quota de PIS (em percentual) - (289-R03)"
+  DECIMALS 2
+  ORDER 610
+
+ADD FIELD "imp-pisst-qBCProd" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Quantidade Vendida - (290-R04)"
+  FORMAT ">>>,>>>,>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Quantidade Vendida"
+  POSITION 60
+  MAX-WIDTH 19
+  COLUMN-LABEL "Qtde  Vendida"
+  HELP "Quantidade Vendida - (290-R04)"
+  DECIMALS 4
+  ORDER 620
+
+ADD FIELD "imp-pisst-vAliqProd" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Al°quota do PIS (em reais). Valor definido pelo fisco para a unidade tribut†vel - (291-R05)"
+  FORMAT ">>>,>>>,>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Aliquota do PIS ST"
+  POSITION 61
+  MAX-WIDTH 19
+  COLUMN-LABEL "Aliq. PIS ST"
+  HELP "Al°quota do PIS (em reais)"
+  DECIMALS 4
+  ORDER 630
+
+ADD FIELD "imp-pisst-vPIS" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor do PIS - (292-R06)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor do PIS ST"
+  POSITION 62
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl PIS ST"
+  HELP "Valor do PIS - (292-R06)"
+  DECIMALS 2
+  ORDER 640
+
+ADD FIELD "imp-cofins-CST" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "C¢digo de Situaá∆o Tribut†ria do COFINS - (295-S06)"
+  FORMAT ">9"
+  INITIAL "0"
+  LABEL "Cod. Situaá∆o Trib COFINS"
+  POSITION 63
+  MAX-WIDTH 4
+  COLUMN-LABEL "CST COFINS"
+  HELP "C¢digo de Situaá∆o Tribut†ria do COFINS - (295-S06)"
+  ORDER 650
+
+ADD FIELD "imp-cofins-vBC" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor da Base de C†lculo da COFINS - (296-S07)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor da BC COFINS"
+  POSITION 64
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL BC COFINS"
+  HELP "Valor da Base de C†lculo da COFINS - (296-S07)"
+  DECIMALS 2
+  ORDER 660
+
+ADD FIELD "imp-cofins-pCOFINS" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Al°quota da COFINS (em percentual) - (297-S08)"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Aliquota COFINS"
+  POSITION 65
+  MAX-WIDTH 17
+  COLUMN-LABEL "% COFINS"
+  HELP "Al°quota da COFINS (em percentual) - (297-S08)"
+  DECIMALS 2
+  ORDER 670
+
+ADD FIELD "imp-cofins-vCOFINS" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor da COFINS - (298-S11)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor da COFINS"
+  POSITION 66
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL COFINS"
+  HELP "Valor da COFINS - (298-S11)"
+  DECIMALS 2
+  ORDER 680
+
+ADD FIELD "imp-cofins-qBCProd" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Quantidade Vendida - (301-S09)"
+  FORMAT ">>>,>>>,>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Quantidade Vendida"
+  POSITION 67
+  MAX-WIDTH 19
+  COLUMN-LABEL "Qtde Vend."
+  HELP "Quantidade Vendida - (301-S09)"
+  DECIMALS 4
+  ORDER 690
+
+ADD FIELD "imp-cofins-vAliqProd" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Al°quota da COFINS (em reais) - (302-S10)"
+  FORMAT ">>>,>>>,>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Aliquota COFINS"
+  POSITION 68
+  MAX-WIDTH 19
+  COLUMN-LABEL "Aliq. COFINS"
+  HELP "Al°quota da COFINS (em reais) - (302-S10)"
+  DECIMALS 4
+  ORDER 700
+
+ADD FIELD "imp-cofinsst-vBC" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor da Base de C†lculo da COFINS - (314-T02)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor BC da COFINS"
+  POSITION 69
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL BC COFINS"
+  HELP "Valor da Base de C†lculo da COFINS - (314-T02)"
+  DECIMALS 2
+  ORDER 710
+
+ADD FIELD "imp-cofinsst-pCOFINS" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Al°quota da COFINS (em percentual) - (315-T03)"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Aliquota do COFINS"
+  POSITION 70
+  MAX-WIDTH 17
+  COLUMN-LABEL "% COFINS"
+  HELP "Al°quota da COFINS (em percentual) - (315-T03)"
+  DECIMALS 2
+  ORDER 720
+
+ADD FIELD "imp-cofinsst-qBCProd" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Quantidade Vendida - (316-T04)"
+  FORMAT ">>>,>>>,>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Quantidade Vendida"
+  POSITION 71
+  MAX-WIDTH 19
+  COLUMN-LABEL "Qtde Vend."
+  HELP "Quantidade Vendida - (316-T04)"
+  DECIMALS 4
+  ORDER 730
+
+ADD FIELD "imp-cofinsst-vAliqProd" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Al°quota da COFINS (em reais) - (317-T05)"
+  FORMAT ">>>,>>>,>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Aliquota da COFINS"
+  POSITION 72
+  MAX-WIDTH 19
+  COLUMN-LABEL "Aliq. COFINS"
+  HELP "Al°quota da COFINS (em reais) - (317-T05)"
+  DECIMALS 4
+  ORDER 740
+
+ADD FIELD "imp-cofinsst-vCOFINS" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor da COFINS - (318-T06)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor da COFINS"
+  POSITION 73
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL COFINS"
+  HELP "Valor da COFINS - (318-T06)"
+  DECIMALS 2
+  ORDER 750
+
+ADD FIELD "imp-iss-vBC" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor da Base de C†lculo do ISSQN - (320-U02)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor BC do ISSQN"
+  POSITION 74
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL BC ISSQN"
+  HELP "Valor da Base de C†lculo do ISSQN - (320-U02)"
+  DECIMALS 2
+  ORDER 760
+
+ADD FIELD "imp-iss-vAliq" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Al°quota do ISSQN - (321-U03)"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Aliquota do ISSQN"
+  POSITION 75
+  MAX-WIDTH 17
+  COLUMN-LABEL "% ISSQN"
+  HELP "Al°quota do ISSQN - (321-U03)"
+  DECIMALS 2
+  ORDER 770
+
+ADD FIELD "imp-iss-vISSQN" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Valor do ISSQN - (322-U04)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor do ISSQN"
+  POSITION 76
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL ISSQN"
+  HELP "Valor do ISSQN - (322-U04)"
+  DECIMALS 2
+  ORDER 780
+
+ADD FIELD "imp-iss-cMunFG" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "C¢digo do munic°pio de ocorrància do fato gerador do ISSQN - (323-U05)"
+  FORMAT ">>>>>>9"
+  INITIAL "0"
+  LABEL "Cod. Municipio do ISSQN"
+  POSITION 77
+  MAX-WIDTH 4
+  COLUMN-LABEL "Cod Mun. ISSQN"
+  HELP "C¢digo do munic°pio de ocorrància do fato gerador do ISSQN"
+  ORDER 790
+
+ADD FIELD "imp-iss-cListServ" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "C¢digo da Lista de Serviáos - (324-U06)"
+  FORMAT ">>>9"
+  INITIAL "0"
+  LABEL "Cod. Lista de Serviáos"
+  POSITION 78
+  MAX-WIDTH 4
+  COLUMN-LABEL "Cod. L. Serv."
+  HELP "C¢digo da Lista de Serviáos - (324-U06)"
+  ORDER 800
+
+ADD FIELD "inf-infAdProd" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Informaá‰es Adicionais do Produto - (325-V01)"
+  FORMAT "x(500)"
+  INITIAL ""
+  LABEL "Informaá‰es Adicionais do Prod."
+  POSITION 79
+  MAX-WIDTH 1000
+  COLUMN-LABEL "Inf. Adic. Prod."
+  HELP "Informaá‰es Adicionais do Produto - (325-V01)"
+  ORDER 810
+
+ADD FIELD "imp-ipi-cEnq" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "C¢digo de Enquadramento Legal do IPI - (251-O06)"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Enquadramento Legal"
+  POSITION 80
+  MAX-WIDTH 6
+  COLUMN-LABEL "Enq. IPI"
+  HELP "C¢digo de Enquadramento Legal do IPI - (251-O06)"
+  ORDER 435
+
+ADD FIELD "item-nat-operacao" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Natureza de Operacao"
+  FORMAT "x(06)"
+  INITIAL ""
+  LABEL "Nat Operacao"
+  POSITION 81
+  MAX-WIDTH 12
+  COLUMN-LABEL "Nat Oper"
+  HELP "Natureza de Operacao"
+  ORDER 820
+
+ADD FIELD "item-xPed" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "Numero do Pedido"
+  FORMAT "->,>>>,>>9"
+  INITIAL "0"
+  LABEL "Num Pedido"
+  POSITION 82
+  MAX-WIDTH 4
+  COLUMN-LABEL "Pedido"
+  HELP "Numero do Pedido"
+  ORDER 830
+
+ADD FIELD "item-num-ordem" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "Numero da Ordem"
+  FORMAT "zzzzz9.99"
+  INITIAL "0"
+  LABEL "Num Ordem"
+  POSITION 83
+  MAX-WIDTH 4
+  COLUMN-LABEL "Ordem"
+  HELP "Numero da Ordem"
+  ORDER 840
+
+ADD FIELD "item-un" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Unidade do Item"
+  FORMAT "x(6)"
+  INITIAL ""
+  LABEL "Unidade"
+  POSITION 84
+  MAX-WIDTH 12
+  COLUMN-LABEL "Un"
+  HELP "Unidade do Item"
+  ORDER 850
+
+ADD FIELD "item-qtde" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Quantidade do Item"
+  FORMAT ">>>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Quantidade do Item"
+  POSITION 85
+  MAX-WIDTH 19
+  COLUMN-LABEL "Qtde Item"
+  HELP "Quantidade do Item"
+  DECIMALS 4
+  ORDER 860
+
+ADD FIELD "item-esp-nat" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Especie da Natureza"
+  FORMAT "x(5)"
+  INITIAL ""
+  LABEL "Espec Natureza"
+  POSITION 86
+  MAX-WIDTH 10
+  COLUMN-LABEL "Esp Nat"
+  HELP "Especie da Natureza"
+  ORDER 870
+
+ADD FIELD "item-conta-contabil" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Conta Contabil"
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Conta Contabil"
+  POSITION 88
+  MAX-WIDTH 32
+  COLUMN-LABEL "Conta Contab"
+  HELP "Conta Contabil"
+  ORDER 890
+
+ADD FIELD "item-cod-refer" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Referencia"
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "Referencia"
+  POSITION 89
+  MAX-WIDTH 16
+  COLUMN-LABEL "Referencia"
+  HELP "Referencia"
+  ORDER 900
+
+ADD FIELD "item-cod-depos" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Codigo do Deposito"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Deposito"
+  POSITION 90
+  MAX-WIDTH 6
+  COLUMN-LABEL "Deposito"
+  HELP "Codigo do Deposito"
+  ORDER 910
+
+ADD FIELD "item-cod-localiz" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Codigo da Localizacao"
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Localizacao"
+  POSITION 91
+  MAX-WIDTH 20
+  COLUMN-LABEL "Localiz"
+  HELP "Codigo da Localizacao"
+  ORDER 920
+
+ADD FIELD "item-ser-lote" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Lote/Serie"
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Lote/Serie"
+  POSITION 92
+  MAX-WIDTH 20
+  COLUMN-LABEL "Lote/Serie"
+  HELP "Lote/Serie"
+  ORDER 930
+
+ADD FIELD "item-dt-vali-lote" OF "nfe-it-nota-fisc-rec" AS date 
+  DESCRIPTION "Data de Validade do Lote"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Dt Vali Lote"
+  POSITION 93
+  MAX-WIDTH 4
+  COLUMN-LABEL "Dt VLote"
+  HELP "Data de Validade do Lote"
+  ORDER 940
+
+ADD FIELD "item-nr-ord-produ" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "Ordem de Producao"
+  FORMAT ">>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Ordem de Producao"
+  POSITION 94
+  MAX-WIDTH 4
+  COLUMN-LABEL "Ord Prod"
+  HELP "Ordem de Producao"
+  ORDER 950
+
+ADD FIELD "item-nr-nota-fis" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "N£mero da Nota Fiscal"
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Nr Nota Fiscal"
+  POSITION 95
+  MAX-WIDTH 32
+  COLUMN-LABEL "Nota Fis"
+  HELP "N£mero da Nota Fiscal"
+  ORDER 970
+
+ADD FIELD "item-serie-nf" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "SÇrie da Nota Fiscal"
+  FORMAT "x(5)"
+  INITIAL ""
+  LABEL "SÇrie"
+  POSITION 96
+  MAX-WIDTH 10
+  COLUMN-LABEL "Ser"
+  HELP "SÇrie da Nota Fiscal"
+  ORDER 960
+
+ADD FIELD "item-nro-docto" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Documento"
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Documento"
+  POSITION 97
+  MAX-WIDTH 32
+  COLUMN-LABEL "Documento"
+  HELP "Documento"
+  ORDER 990
+
+ADD FIELD "item-serie-docto" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "SÇrie"
+  FORMAT "x(5)"
+  INITIAL ""
+  LABEL "SÇrie"
+  POSITION 98
+  MAX-WIDTH 10
+  COLUMN-LABEL "Ser"
+  HELP "SÇrie"
+  ORDER 980
+
+ADD FIELD "item-nro-comp" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Numero da Nota de Saida para Retorno Terceiros"
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Nota Saida"
+  POSITION 99
+  MAX-WIDTH 32
+  COLUMN-LABEL "Nota"
+  HELP "Numero da Nota de Saida para Retorno Terceiros"
+  ORDER 1010
+
+ADD FIELD "item-nat-comp" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Natureza da Nota de Saida para Retorno Terceiros"
+  FORMAT "x(06)"
+  INITIAL ""
+  LABEL "Nat Oper"
+  POSITION 100
+  MAX-WIDTH 12
+  COLUMN-LABEL "Nat Oper"
+  HELP "Natureza da Nota de Saida para Retorno Terceiros"
+  ORDER 1020
+
+ADD FIELD "item-seq-comp" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "Sequencia da Nota de Saida para Retorno Terceiros"
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Sequencia"
+  POSITION 101
+  MAX-WIDTH 4
+  COLUMN-LABEL "Seq"
+  HELP "Sequencia da Nota de Saida para Retorno Terceiros"
+  ORDER 1030
+
+ADD FIELD "item-data-comp" OF "nfe-it-nota-fisc-rec" AS date 
+  DESCRIPTION "Data da Nota de Saida para Retorno Terceiros"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Data Saida"
+  POSITION 102
+  MAX-WIDTH 4
+  COLUMN-LABEL "Data"
+  HELP "Data da Nota de Saida para Retorno Terceiros"
+  ORDER 1040
+
+ADD FIELD "item-serie-comp" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Serie da Nota de Saida Original para Retorno Terceiros"
+  FORMAT "x(5)"
+  INITIAL ""
+  LABEL "Serie"
+  POSITION 103
+  MAX-WIDTH 10
+  COLUMN-LABEL "Ser"
+  HELP "Serie da Nota de Saida Original para Retorno Terceiros"
+  ORDER 1000
+
+ADD FIELD "item-xPed-char" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Numero do Pedido Auxiliar"
+  FORMAT "x(30)"
+  INITIAL ""
+  LABEL "Num Pedido"
+  POSITION 104
+  MAX-WIDTH 40
+  COLUMN-LABEL "Pedido"
+  HELP "Numero do Pedido Auxiliar"
+  ORDER 1050
+
+ADD FIELD "item-vOutro" OF "nfe-it-nota-fisc-rec" AS decimal 
+  DESCRIPTION "Outras Despesas acess¢rias - (I17a)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Despesas Acessorias"
+  POSITION 105
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Desp"
+  HELP "Outras Despesas acess¢rias - (I17a)"
+  DECIMALS 2
+  ORDER 1060
+
+ADD FIELD "item-parcela-oc" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "Parcela da Ordem de Compra"
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Parcela"
+  POSITION 106
+  MAX-WIDTH 4
+  COLUMN-LABEL "/P"
+  HELP "Parcela da Ordem de Compra"
+  ORDER 1070
+
+ADD FIELD "veic-chassi" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Chassi do Ve°culo - (J03)"
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Chassi do Ve°culo"
+  POSITION 107
+  MAX-WIDTH 40
+  COLUMN-LABEL "Chassi"
+  HELP "Chassi do Ve°culo - (J03)"
+  ORDER 1080
+
+ADD FIELD "item-fifo-oc" OF "nfe-it-nota-fisc-rec" AS logical 
+  DESCRIPTION "FIFO em Ordens de Compra"
+  FORMAT "yes/no"
+  INITIAL "no"
+  LABEL "FIFO em Ordens de Compra"
+  POSITION 108
+  MAX-WIDTH 1
+  COLUMN-LABEL "FIFO OC"
+  HELP "FIFO em Ordens de Compra"
+  ORDER 1090
+
+ADD FIELD "narrativa" OF "nfe-it-nota-fisc-rec" AS character 
+  FORMAT "x(2000)"
+  INITIAL ""
+  LABEL "Narrativa"
+  POSITION 109
+  MAX-WIDTH 4000
+  COLUMN-LABEL "Narrativa"
+  ORDER 1100
+
+ADD FIELD "nro-docto-terc" OF "nfe-it-nota-fisc-rec" AS character 
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Nota Entrega"
+  POSITION 110
+  MAX-WIDTH 32
+  COLUMN-LABEL "Nota Entrega"
+  ORDER 1120
+
+ADD FIELD "serie-terc" OF "nfe-it-nota-fisc-rec" AS character 
+  FORMAT "x(5)"
+  INITIAL ""
+  LABEL "Serie Entrega"
+  POSITION 111
+  MAX-WIDTH 10
+  COLUMN-LABEL "Serie Entrega"
+  ORDER 1130
+
+ADD FIELD "nat-terc" OF "nfe-it-nota-fisc-rec" AS character 
+  FORMAT "x(6)"
+  INITIAL ""
+  LABEL "Natureza Entrega"
+  POSITION 112
+  MAX-WIDTH 12
+  COLUMN-LABEL "Natureza Entrega"
+  ORDER 1140
+
+ADD FIELD "seq-terc" OF "nfe-it-nota-fisc-rec" AS integer 
+  FORMAT ">>,>>9"
+  INITIAL "0"
+  LABEL "SeqÅància Entrega"
+  POSITION 113
+  MAX-WIDTH 4
+  COLUMN-LABEL "Seq Ent"
+  ORDER 1150
+
+ADD FIELD "cod-emit-terc" OF "nfe-it-nota-fisc-rec" AS integer 
+  FORMAT ">>>>>>>>9"
+  INITIAL "0"
+  LABEL "Emitente Entrega"
+  POSITION 114
+  MAX-WIDTH 4
+  COLUMN-LABEL "Emit Entrega"
+  ORDER 1110
+
+ADD FIELD "preco-unit-xml" OF "nfe-it-nota-fisc-rec" AS decimal 
+  FORMAT "->,>>>,>>9.9999999999"
+  INITIAL "0"
+  POSITION 115
+  MAX-WIDTH 17
+  DECIMALS 10
+  ORDER 1160
+
+ADD FIELD "item-nitemped" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "tag xml nitemped"
+  FORMAT ">>>>>>>>>9"
+  INITIAL "0"
+  POSITION 116
+  MAX-WIDTH 4
+  ORDER 1170
+
+ADD FIELD "sc-codigo" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Centro de Custo Totvs11"
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "C.Custo"
+  POSITION 117
+  MAX-WIDTH 40
+  COLUMN-LABEL "C.Custo"
+  ORDER 1190
+
+ADD FIELD "ct-codigo" OF "nfe-it-nota-fisc-rec" AS character 
+  DESCRIPTION "Conta para Totvs 11 "
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Conta"
+  POSITION 118
+  MAX-WIDTH 40
+  COLUMN-LABEL "Conta"
+  ORDER 1180
+
+ADD FIELD "cod-unid-negoc" OF "nfe-it-nota-fisc-rec" AS character 
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Unid Negoc"
+  POSITION 119
+  MAX-WIDTH 6
+  COLUMN-LABEL "Unid Negoc"
+  ORDER 1200
+
+ADD INDEX "chave-acesso" ON "nfe-it-nota-fisc-rec" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+  INDEX-FIELD "seq-item" ASCENDING 
+
+ADD INDEX "idx-ordem" ON "nfe-it-nota-fisc-rec" 
+  AREA "Schema Area"
+  INDEX-FIELD "item-num-ordem" ASCENDING 
+  INDEX-FIELD "item-parcela-oc" ASCENDING 
+
+ADD TABLE "nfe-it-param-rec"
+  AREA "Schema Area"
+  LABEL "Item Parametro"
+  DESCRIPTION "Item Parametro"
+  DUMP-NAME "nfe004"
+
+ADD FIELD "cod-parametro" OF "nfe-it-param-rec" AS character 
+  DESCRIPTION "C¢digo do Parametro"
+  FORMAT "x(30)"
+  INITIAL ""
+  LABEL "C¢digo do Parametro"
+  POSITION 2
+  MAX-WIDTH 60
+  COLUMN-LABEL "Cod. Parametro"
+  HELP "C¢digo do Parametro"
+  ORDER 10
+  MANDATORY
+
+ADD FIELD "cod-item-parametro" OF "nfe-it-param-rec" AS character 
+  DESCRIPTION "C¢digo do Item do Parametro"
+  FORMAT "x(30)"
+  INITIAL ""
+  LABEL "C¢digo do Item do Parametro"
+  POSITION 3
+  MAX-WIDTH 60
+  COLUMN-LABEL "Cod. Item Parametro"
+  HELP "C¢digo do Item do Parametro"
+  ORDER 20
+  MANDATORY
+
+ADD FIELD "valor-1-item-parametro" OF "nfe-it-param-rec" AS character 
+  DESCRIPTION "Valor 1 Item Parametro"
+  FORMAT "x(250)"
+  INITIAL ""
+  LABEL "Valor 1 Parametro"
+  POSITION 5
+  MAX-WIDTH 500
+  COLUMN-LABEL "Valor 1"
+  HELP "Valor 1 Item Parametro"
+  ORDER 40
+
+ADD FIELD "valor-2-item-parametro" OF "nfe-it-param-rec" AS character 
+  DESCRIPTION "Valor 2 Item Parametro"
+  FORMAT "x(250)"
+  INITIAL ""
+  LABEL "Valor 2 Parametro"
+  POSITION 6
+  MAX-WIDTH 500
+  COLUMN-LABEL "Valor 2"
+  HELP "Valor 2 Item Parametro"
+  ORDER 45
+
+ADD FIELD "valor-3-item-parametro" OF "nfe-it-param-rec" AS character 
+  DESCRIPTION "Valor 3 Item Parametro"
+  FORMAT "x(250)"
+  INITIAL ""
+  LABEL "Valor 3 Parametro"
+  POSITION 7
+  MAX-WIDTH 500
+  COLUMN-LABEL "Valor 3"
+  HELP "Valor 3 Item Parametro"
+  ORDER 60
+
+ADD FIELD "valor-4-item-parametro" OF "nfe-it-param-rec" AS character 
+  DESCRIPTION "Valor 4 Item Parametro"
+  FORMAT "x(250)"
+  INITIAL ""
+  LABEL "Valor 4 Parametro"
+  POSITION 8
+  MAX-WIDTH 500
+  COLUMN-LABEL "Valor 4"
+  HELP "Valor 4 Item Parametro"
+  ORDER 70
+
+ADD FIELD "valor-5-item-parametro" OF "nfe-it-param-rec" AS character 
+  DESCRIPTION "Valor 5 Item Parametro"
+  FORMAT "x(250)"
+  INITIAL ""
+  LABEL "Valor 5 Parametro"
+  POSITION 9
+  MAX-WIDTH 500
+  COLUMN-LABEL "Valor 5"
+  HELP "Valor 5 Item Parametro"
+  ORDER 80
+
+ADD FIELD "desc-item-parametro" OF "nfe-it-param-rec" AS character 
+  DESCRIPTION "Desc. Item Parametro"
+  FORMAT "x(250)"
+  INITIAL ""
+  LABEL "Desc. Item Parametro"
+  POSITION 10
+  MAX-WIDTH 500
+  COLUMN-LABEL "Desc. Param."
+  HELP "Desc. Item Parametro"
+  ORDER 90
+
+ADD INDEX "ix_codigo" ON "nfe-it-param-rec" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "cod-parametro" ASCENDING 
+  INDEX-FIELD "cod-item-parametro" ASCENDING 
+
+ADD TABLE "nfe-item-fornec"
+  AREA "Schema Area"
+  LABEL "Item do Fornecedor"
+  DESCRIPTION "Arquivo de Itens do Fornecedor"
+  DUMP-NAME "in178"
+
+ADD FIELD "cod-emitente" OF "nfe-item-fornec" AS integer 
+  FORMAT ">>>>>>>>9"
+  INITIAL "0"
+  LABEL "Fornecedor"
+  LABEL-SA "R12"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Fornec"
+  COLUMN-LABEL-SA "R9"
+  VALEXP "can-find (emitente where emitente.cod-emitente =                nfe-item-fornec.cod-emitente)"
+  VALMSG "Fornecedor inexistente."
+  ORDER 10
+  MANDATORY
+
+ADD FIELD "it-codigo" OF "nfe-item-fornec" AS character 
+  FORMAT "X(16)"
+  INITIAL ""
+  LABEL "Item"
+  LABEL-SA "R5"
+  POSITION 3
+  MAX-WIDTH 32
+  COLUMN-LABEL "Item"
+  COLUMN-LABEL-SA "L16"
+  VALEXP "can-find (item of nfe-item-fornec) and nfe-item-fornec.it-codigo <> ?"
+  VALMSG "Item n∆o cadastrado ou debito direto"
+  ORDER 20
+  MANDATORY
+
+ADD FIELD "item-do-forn" OF "nfe-item-fornec" AS character 
+  FORMAT "X(20)"
+  INITIAL ""
+  LABEL "Item Fornecedor"
+  LABEL-SA "R18"
+  POSITION 4
+  MAX-WIDTH 40
+  COLUMN-LABEL "Item Fornec"
+  COLUMN-LABEL-SA "L20"
+  VALEXP "item-do-forn <> """""
+  VALMSG "Item do fornecedor deve ser diferente de brancos"
+  ORDER 30
+  MANDATORY
+
+ADD FIELD "unid-med-for" OF "nfe-item-fornec" AS character 
+  FORMAT "xx"
+  INITIAL ""
+  LABEL "Unid Medid"
+  LABEL-SA "R12"
+  POSITION 5
+  MAX-WIDTH 4
+  COLUMN-LABEL "Un"
+  COLUMN-LABEL-SA "L2"
+  ORDER 40
+  MANDATORY
+
+ADD FIELD "fator-conver" OF "nfe-item-fornec" AS decimal 
+  FORMAT ">>>>>>>>>9"
+  INITIAL "1"
+  LABEL "Fator Convers∆o"
+  LABEL-SA "R18"
+  POSITION 6
+  MAX-WIDTH 15
+  COLUMN-LABEL "Ft Conv"
+  COLUMN-LABEL-SA "R10"
+  VALEXP "fator-conver > 0"
+  VALMSG "Fator de convers∆o deve ser diferente de zero"
+  DECIMALS 0
+  ORDER 50
+  MANDATORY
+
+ADD FIELD "num-casa-dec" OF "nfe-item-fornec" AS integer 
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Casas Decimais"
+  LABEL-SA "R17"
+  POSITION 7
+  MAX-WIDTH 4
+  COLUMN-LABEL "De"
+  COLUMN-LABEL-SA "R2"
+  ORDER 60
+  MANDATORY
+
+ADD FIELD "lote-mul-for" OF "nfe-item-fornec" AS decimal 
+  FORMAT ">>>>,>>9.9999"
+  INITIAL "1"
+  LABEL "Lote Multiplo"
+  LABEL-SA "R16"
+  POSITION 8
+  MAX-WIDTH 19
+  COLUMN-LABEL "Lote Mult"
+  COLUMN-LABEL-SA "R13"
+  VALEXP "lote-mul-for > 0"
+  VALMSG "Lote multiplo deve ser diferente de zeros"
+  DECIMALS 4
+  ORDER 70
+  MANDATORY
+
+ADD FIELD "tempo-ressup" OF "nfe-item-fornec" AS integer 
+  FORMAT ">,>>9"
+  INITIAL "0"
+  LABEL "Tempo Ressupr"
+  LABEL-SA "R16"
+  POSITION 9
+  MAX-WIDTH 4
+  COLUMN-LABEL "Ressup"
+  COLUMN-LABEL-SA "R6"
+  ORDER 80
+  MANDATORY
+
+ADD FIELD "classe-repro" OF "nfe-item-fornec" AS integer 
+  FORMAT ">9"
+  INITIAL "1"
+  LABEL "Classe Reprogramaá∆o"
+  LABEL-SA "R24"
+  POSITION 10
+  MAX-WIDTH 4
+  VIEW-AS "view-as radio-set radio-buttons {ininc/i06in122.i 2}"
+  COLUMN-LABEL "Classe Reprog"
+  COLUMN-LABEL-SA "R13"
+  ORDER 90
+  MANDATORY
+
+ADD FIELD "narrativa" OF "nfe-item-fornec" AS character 
+  FORMAT "X(2000)"
+  INITIAL ""
+  LABEL "Narrativa"
+  LABEL-SA "R11"
+  POSITION 11
+  MAX-WIDTH 4000
+  VIEW-AS "view-as editor scrollbar-vertical size 60 by 5"
+  COLUMN-LABEL "Narrativa"
+  COLUMN-LABEL-SA "L60"
+  ORDER 100
+  MANDATORY
+
+ADD FIELD "perc-compra" OF "nfe-item-fornec" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "% Compra"
+  LABEL-SA "R10"
+  POSITION 12
+  MAX-WIDTH 4
+  COLUMN-LABEL "% Compra"
+  COLUMN-LABEL-SA "R8"
+  VALEXP "perc-compra <= 100"
+  VALMSG "Percentual Invalido"
+  ORDER 110
+  MANDATORY
+
+ADD FIELD "lote-minimo" OF "nfe-item-fornec" AS decimal 
+  FORMAT ">>>>,>>9.9999"
+  INITIAL "1"
+  LABEL "Lote Minimo"
+  LABEL-SA "R14"
+  POSITION 13
+  MAX-WIDTH 19
+  COLUMN-LABEL "Lote Minimo"
+  COLUMN-LABEL-SA "R13"
+  HELP "Lote Minimo para compra"
+  DECIMALS 4
+  ORDER 120
+  MANDATORY
+
+ADD FIELD "cod-cond-pag" OF "nfe-item-fornec" AS integer 
+  FORMAT ">>>9"
+  INITIAL "0"
+  LABEL "Condiá∆o Pagamento"
+  LABEL-SA "R22"
+  POSITION 14
+  MAX-WIDTH 4
+  COLUMN-LABEL "Cond Pgto"
+  COLUMN-LABEL-SA "R9"
+  VALEXP "can-find(cond-pagto where
+             cond-pagto.cod-cond-pag = nfe-item-fornec.cod-cond-pag)."
+  VALMSG "Condiá∆o de Pagamento inexistente."
+  ORDER 130
+  MANDATORY
+
+ADD FIELD "cot-aut" OF "nfe-item-fornec" AS logical 
+  FORMAT "Sim/N∆o"
+  INITIAL "no"
+  LABEL "Cotaá∆o Autom†tica"
+  LABEL-SA "L22"
+  POSITION 15
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box"
+  COLUMN-LABEL "Cot Auto"
+  COLUMN-LABEL-SA "L8"
+  ORDER 140
+  MANDATORY
+
+ADD FIELD "ativo" OF "nfe-item-fornec" AS logical 
+  FORMAT "Sim/N∆o"
+  INITIAL "yes"
+  LABEL "Ativo"
+  LABEL-SA "L7"
+  POSITION 16
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box"
+  COLUMN-LABEL "Ativo"
+  COLUMN-LABEL-SA "L5"
+  ORDER 150
+  MANDATORY
+
+ADD FIELD "conceito" OF "nfe-item-fornec" AS integer 
+  FORMAT ">9"
+  INITIAL "0"
+  LABEL "Conceito"
+  LABEL-SA "R10"
+  POSITION 17
+  MAX-WIDTH 4
+  COLUMN-LABEL "Conceito"
+  COLUMN-LABEL-SA "R8"
+  HELP "ê a nota do fornecedor para o item"
+  ORDER 160
+
+ADD FIELD "observacao" OF "nfe-item-fornec" AS character 
+  FORMAT "x(76)"
+  INITIAL ""
+  LABEL "Observaá∆o"
+  LABEL-SA "R12"
+  POSITION 18
+  MAX-WIDTH 152
+  COLUMN-LABEL "Observaá∆o"
+  COLUMN-LABEL-SA "L76"
+  ORDER 170
+
+ADD FIELD "serie-nota" OF "nfe-item-fornec" AS character 
+  FORMAT "X(05)"
+  INITIAL ""
+  LABEL "SÇrie Documento"
+  LABEL-SA "R18"
+  POSITION 19
+  MAX-WIDTH 10
+  COLUMN-LABEL "Ser"
+  COLUMN-LABEL-SA "L5"
+  HELP "Serie da ultima Nota Fiscal recebida"
+  ORDER 180
+  MANDATORY
+
+ADD FIELD "numero-nota" OF "nfe-item-fornec" AS character 
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Ultima Nota Recebida"
+  LABEL-SA "R24"
+  POSITION 20
+  MAX-WIDTH 32
+  COLUMN-LABEL "Ult NF Rec"
+  COLUMN-LABEL-SA "L16"
+  HELP "Numero da ultima Nota Fiscal recebida"
+  ORDER 190
+  MANDATORY
+
+ADD FIELD "horiz-fixo" OF "nfe-item-fornec" AS integer 
+  DESCRIPTION "Nr dias do inicio do Planej em que as ordens nao mudam"
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Horizonte Fixo"
+  LABEL-SA "R17"
+  POSITION 21
+  MAX-WIDTH 4
+  COLUMN-LABEL "Hor Fix"
+  COLUMN-LABEL-SA "R7"
+  HELP "Horizonte Fixo de Planejamento"
+  ORDER 200
+  MANDATORY
+
+ADD FIELD "ped-fornec" OF "nfe-item-fornec" AS integer 
+  DESCRIPTION "Utilizado para contratos de fornecimento"
+  FORMAT ">>>>>,>>9"
+  INITIAL "0"
+  LABEL "Ped Fornecim"
+  LABEL-SA "R15"
+  POSITION 22
+  MAX-WIDTH 4
+  COLUMN-LABEL "Ped Fornec"
+  COLUMN-LABEL-SA "R10"
+  HELP "Pedido de fornecimento"
+  ORDER 210
+  MANDATORY
+
+ADD FIELD "tp-inspecao" OF "nfe-item-fornec" AS integer 
+  FORMAT "9"
+  INITIAL "2"
+  LABEL "Tipo Inspecao"
+  LABEL-SA "R16"
+  POSITION 23
+  MAX-WIDTH 4
+  VIEW-AS "view-as radio-set horizontal radio-buttons {ininc/i03in178.i 2}"
+  COLUMN-LABEL "Tp Ins"
+  COLUMN-LABEL-SA "R6"
+  HELP "Indica o Tipo de Inspeá∆o do Lote"
+  ORDER 220
+  MANDATORY
+
+ADD FIELD "criticidade" OF "nfe-item-fornec" AS integer 
+  FORMAT ">9"
+  INITIAL "1"
+  LABEL "Criticidade"
+  LABEL-SA "R14"
+  POSITION 24
+  MAX-WIDTH 4
+  VIEW-AS "view-as radio-set radio-buttons {ininc/i06in095.i 2}"
+  COLUMN-LABEL "Crit"
+  COLUMN-LABEL-SA "R4"
+  ORDER 230
+  MANDATORY
+
+ADD FIELD "aval-insp" OF "nfe-item-fornec" AS integer 
+  DESCRIPTION "Indica se o lote recebido teve rejeicao ou nao"
+  FORMAT ">9"
+  INITIAL "3"
+  LABEL "Situaá∆o Lote"
+  LABEL-SA "R16"
+  POSITION 25
+  MAX-WIDTH 180
+  VIEW-AS "view-as radio-set horizontal radio-buttons {ininc/i01in178.i 2}"
+  COLUMN-LABEL "Sit Lote"
+  COLUMN-LABEL-SA "R8"
+  HELP "Indica a situaá∆o do lote recebido"
+  EXTENT 30
+  ORDER 240
+
+ADD FIELD "qt-max-ordem" OF "nfe-item-fornec" AS decimal 
+  FORMAT ">>>>,>>9.9999"
+  INITIAL ?
+  LABEL "Qtde Max Ord"
+  LABEL-SA "R15"
+  POSITION 26
+  MAX-WIDTH 19
+  COLUMN-LABEL "Qt Max Ordem"
+  COLUMN-LABEL-SA "R13"
+  DECIMALS 4
+  ORDER 250
+
+ADD FIELD "niv-qua-ac" OF "nfe-item-fornec" AS decimal 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Nivel Qualid Aceitavel"
+  LABEL-SA "R26"
+  POSITION 27
+  MAX-WIDTH 17
+  COLUMN-LABEL "NQA"
+  COLUMN-LABEL-SA "R3"
+  VALEXP "niv-qua-ac < 100"
+  VALMSG "Nivel de Qualidade Aceitavel deve ser menor que 100%"
+  HELP "Percentual maximo de rejeicao aceitavel por lote inspecionado"
+  DECIMALS 2
+  ORDER 260
+  MANDATORY
+
+ADD FIELD "niv-inspecao" OF "nfe-item-fornec" AS integer 
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Nivel Inspecao"
+  LABEL-SA "R17"
+  POSITION 28
+  MAX-WIDTH 4
+  COLUMN-LABEL "Niv"
+  COLUMN-LABEL-SA "R3"
+  HELP "Nivel de Inspecao necessario"
+  ORDER 270
+  MANDATORY
+
+ADD FIELD "cod-mensagem" OF "nfe-item-fornec" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Mensagem"
+  LABEL-SA "R10"
+  POSITION 29
+  MAX-WIDTH 4
+  COLUMN-LABEL "Msg"
+  COLUMN-LABEL-SA "R3"
+  VALEXP "can-find (mensagem of nfe-item-fornec)"
+  VALMSG "Mensagem inexistente."
+  ORDER 310
+  MANDATORY
+
+ADD FIELD "perc-pont-forn" OF "nfe-item-fornec" AS decimal 
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "% Pontualid"
+  LABEL-SA "R14"
+  POSITION 30
+  MAX-WIDTH 17
+  COLUMN-LABEL "% Pontual"
+  COLUMN-LABEL-SA "R9"
+  HELP "Permite informar o percentual de pontualidade de fornecimento"
+  DECIMALS 2
+  ORDER 320
+
+ADD FIELD "ind-pont" OF "nfe-item-fornec" AS integer 
+  DESCRIPTION "Indice de pontualidade do fornecedor"
+  FORMAT ">9"
+  INITIAL "1"
+  LABEL "Ind Pontualidade"
+  LABEL-SA "R20"
+  POSITION 31
+  MAX-WIDTH 4
+  VIEW-AS "view-as radio-set radio-buttons {ininc/i02in178.i 2}"
+  COLUMN-LABEL "Ind Pont"
+  COLUMN-LABEL-SA "R8"
+  HELP "÷ndice de Pontualidade do Fornecedor"
+  ORDER 330
+
+ADD FIELD "perc-dev-forn" OF "nfe-item-fornec" AS decimal 
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "% Devoluá∆o"
+  LABEL-SA "R14"
+  POSITION 32
+  MAX-WIDTH 17
+  COLUMN-LABEL "% Dev"
+  COLUMN-LABEL-SA "R6"
+  HELP "Permite informar o percentual de devoluá∆o do fornecedor"
+  DECIMALS 2
+  ORDER 340
+
+ADD FIELD "concentracao" OF "nfe-item-fornec" AS decimal 
+  FORMAT ">>>9,9999"
+  INITIAL "0"
+  LABEL "Concentraá∆o"
+  LABEL-SA "R15"
+  POSITION 33
+  MAX-WIDTH 19
+  COLUMN-LABEL "Conc"
+  COLUMN-LABEL-SA "R9"
+  VALEXP "concentracao > 0"
+  VALMSG "Concentraá∆o deve ser maior do que zeros."
+  DECIMALS 4
+  ORDER 380
+  MANDATORY
+
+ADD FIELD "rendimento" OF "nfe-item-fornec" AS decimal 
+  FORMAT ">>>9,9999"
+  INITIAL "0"
+  LABEL "Rendimento"
+  LABEL-SA "R12"
+  POSITION 34
+  MAX-WIDTH 19
+  COLUMN-LABEL "Rendimento"
+  COLUMN-LABEL-SA "R10"
+  VALEXP "rendimento > 0"
+  VALMSG "Rendimento deve ser maior que zero."
+  HELP "Digite o rendimento do item"
+  DECIMALS 4
+  ORDER 390
+  MANDATORY
+
+ADD FIELD "contr-forn" OF "nfe-item-fornec" AS logical 
+  FORMAT "Sim/N∆o"
+  INITIAL "no"
+  LABEL "Contrato Fornecimento"
+  LABEL-SA "L25"
+  POSITION 35
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box"
+  COLUMN-LABEL "Contr Forn"
+  COLUMN-LABEL-SA "L10"
+  HELP "Indica se item Ç comprado atravÇs de contrato de fornecimento"
+  ORDER 400
+
+ADD FIELD "hora-ini" OF "nfe-item-fornec" AS integer 
+  FORMAT "99"
+  INITIAL "0"
+  LABEL "Hora Inicial Entrega"
+  LABEL-SA "R24"
+  POSITION 36
+  MAX-WIDTH 4
+  COLUMN-LABEL "Hora Ini"
+  COLUMN-LABEL-SA "R8"
+  ORDER 410
+
+ADD FIELD "hora-fim" OF "nfe-item-fornec" AS integer 
+  FORMAT "99"
+  INITIAL "0"
+  LABEL "Hora Final Entrega"
+  LABEL-SA "R22"
+  POSITION 37
+  MAX-WIDTH 4
+  COLUMN-LABEL "Hora Fim"
+  COLUMN-LABEL-SA "R8"
+  ORDER 420
+
+ADD FIELD "reaj-tabela" OF "nfe-item-fornec" AS logical 
+  FORMAT "Sim/N∆o"
+  INITIAL "no"
+  LABEL "Reajusta Tabela"
+  LABEL-SA "L18"
+  POSITION 38
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box"
+  COLUMN-LABEL "Reaj Tab"
+  COLUMN-LABEL-SA "L8"
+  ORDER 430
+
+ADD FIELD "cd-referencia" OF "nfe-item-fornec" AS character 
+  DESCRIPTION "Referància do item (grade)"
+  FORMAT "x(4)"
+  INITIAL ""
+  LABEL "Referància"
+  LABEL-SA "R12"
+  POSITION 39
+  MAX-WIDTH 8
+  COLUMN-LABEL "Referància"
+  COLUMN-LABEL-SA "L10"
+  HELP "Referància do item grade"
+  ORDER 450
+
+ADD FIELD "usa-contrato" OF "nfe-item-fornec" AS logical 
+  FORMAT "Sim/N∆o"
+  INITIAL "no"
+  LABEL "Entrega Contrato"
+  LABEL-SA "L20"
+  POSITION 40
+  MAX-WIDTH 1
+  COLUMN-LABEL "Entr Contr"
+  COLUMN-LABEL-SA "L10"
+  HELP "Informe se o item Ç entregue por contrato de compras"
+  ORDER 460
+
+ADD FIELD "char-1" OF "nfe-item-fornec" AS character 
+  FORMAT "x(100)"
+  INITIAL ""
+  POSITION 41
+  MAX-WIDTH 200
+  COLUMN-LABEL-SA "L100"
+  ORDER 480
+
+ADD FIELD "char-2" OF "nfe-item-fornec" AS character 
+  FORMAT "x(100)"
+  INITIAL ""
+  POSITION 42
+  MAX-WIDTH 200
+  COLUMN-LABEL-SA "L100"
+  ORDER 490
+
+ADD FIELD "dec-1" OF "nfe-item-fornec" AS decimal 
+  FORMAT "->>>>>>>>>>>9.99999999"
+  INITIAL "0"
+  POSITION 43
+  MAX-WIDTH 23
+  COLUMN-LABEL-SA "R22"
+  DECIMALS 8
+  ORDER 500
+
+ADD FIELD "dec-2" OF "nfe-item-fornec" AS decimal 
+  FORMAT "->>>>>>>>>>>9.99999999"
+  INITIAL "0"
+  POSITION 44
+  MAX-WIDTH 23
+  COLUMN-LABEL-SA "R22"
+  DECIMALS 8
+  ORDER 510
+
+ADD FIELD "int-1" OF "nfe-item-fornec" AS integer 
+  FORMAT "->>>>>>>>>9"
+  INITIAL "0"
+  POSITION 45
+  MAX-WIDTH 4
+  COLUMN-LABEL-SA "R11"
+  ORDER 520
+
+ADD FIELD "int-2" OF "nfe-item-fornec" AS integer 
+  FORMAT "->>>>>>>>>9"
+  INITIAL "0"
+  POSITION 46
+  MAX-WIDTH 4
+  COLUMN-LABEL-SA "R11"
+  ORDER 530
+
+ADD FIELD "log-1" OF "nfe-item-fornec" AS logical 
+  FORMAT "Sim/N∆o"
+  INITIAL "no"
+  POSITION 47
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box"
+  COLUMN-LABEL-SA "L3"
+  ORDER 540
+
+ADD FIELD "log-2" OF "nfe-item-fornec" AS logical 
+  FORMAT "Sim/N∆o"
+  INITIAL "no"
+  POSITION 48
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box"
+  COLUMN-LABEL-SA "L3"
+  ORDER 550
+
+ADD FIELD "data-1" OF "nfe-item-fornec" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  POSITION 49
+  MAX-WIDTH 4
+  COLUMN-LABEL-SA "L10"
+  ORDER 560
+
+ADD FIELD "data-2" OF "nfe-item-fornec" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  POSITION 50
+  MAX-WIDTH 4
+  COLUMN-LABEL-SA "L10"
+  ORDER 570
+
+ADD FIELD "check-sum" OF "nfe-item-fornec" AS character 
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Check-sum"
+  LABEL-SA "R11"
+  POSITION 51
+  MAX-WIDTH 40
+  COLUMN-LABEL-SA "L20"
+  ORDER 580
+
+ADD FIELD "ult-ficha" OF "nfe-item-fornec" AS integer 
+  DESCRIPTION "Roteiro do Lote"
+  FORMAT ">>>>,>>9"
+  INITIAL "0"
+  LABEL "Roteiro do Lote"
+  LABEL-SA "R18"
+  POSITION 52
+  MAX-WIDTH 540
+  COLUMN-LABEL "Roteiro do Lote"
+  COLUMN-LABEL-SA "R15"
+  HELP "Roteiro do Lote"
+  EXTENT 30
+  ORDER 590
+
+ADD FIELD "idi-tributac-cofins" OF "nfe-item-fornec" AS integer 
+  DESCRIPTION "C¢digo de Tributaá∆o COFINS"
+  FORMAT "9"
+  INITIAL "2"
+  LABEL "Cod Tributaá∆o COFINS"
+  LABEL-SA "R25"
+  POSITION 53
+  MAX-WIDTH 4
+  VIEW-AS "view-as radio-set horizontal radio-buttons {ininc/i04in176.i 2}"
+  COLUMN-LABEL "Cod Tributaá∆o COFIN"
+  COLUMN-LABEL-SA "R20"
+  HELP "C¢digo de Tributaá∆o COFINS"
+  ORDER 600
+  MANDATORY
+
+ADD FIELD "val-aliq-cofins" OF "nfe-item-fornec" AS decimal 
+  DESCRIPTION "Al°quota de COFINS"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Al°quota COFINS"
+  LABEL-SA "R18"
+  POSITION 54
+  MAX-WIDTH 17
+  VIEW-AS ""
+  COLUMN-LABEL "% COFINS"
+  COLUMN-LABEL-SA "R8"
+  HELP "Al°quota de COFINS"
+  DECIMALS 2
+  ORDER 610
+  MANDATORY
+
+ADD FIELD "val-aliq-pis" OF "nfe-item-fornec" AS decimal 
+  DESCRIPTION "Al°quota PIS"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "Al°quota PIS"
+  LABEL-SA "R15"
+  POSITION 55
+  MAX-WIDTH 17
+  VIEW-AS ""
+  COLUMN-LABEL "% PIS"
+  COLUMN-LABEL-SA "R6"
+  HELP "Al°quota PIS"
+  DECIMALS 2
+  ORDER 620
+  MANDATORY
+
+ADD FIELD "idi-tributac-pis" OF "nfe-item-fornec" AS integer 
+  DESCRIPTION "C¢digo de Tributaá∆o PIS"
+  FORMAT "9"
+  INITIAL "2"
+  LABEL "Cod Tributaá∆o PIS"
+  LABEL-SA "R22"
+  POSITION 56
+  MAX-WIDTH 4
+  VIEW-AS "view-as radio-set horizontal radio-buttons {ininc/i04in176.i 2}"
+  COLUMN-LABEL "Cod Tributaá∆o PIS"
+  COLUMN-LABEL-SA "R18"
+  HELP "C¢digo de Tributaá∆o PIS"
+  ORDER 630
+  MANDATORY
+
+ADD FIELD "val-unit-pis" OF "nfe-item-fornec" AS decimal 
+  DESCRIPTION "Valor Unit†rio PIS"
+  FORMAT ">,>>9.99999"
+  INITIAL "0"
+  LABEL "Unitario PIS"
+  LABEL-SA "R15"
+  POSITION 57
+  MAX-WIDTH 20
+  VIEW-AS ""
+  COLUMN-LABEL "Unitario PIS"
+  COLUMN-LABEL-SA "R12"
+  HELP "Valor Unitario PIS"
+  DECIMALS 5
+  ORDER 640
+  MANDATORY
+
+ADD FIELD "val-unit-cofins" OF "nfe-item-fornec" AS decimal 
+  DESCRIPTION "Valor Unitario Cofins"
+  FORMAT ">,>>9.99999"
+  INITIAL "0"
+  LABEL "Unitario Cofins"
+  LABEL-SA "R18"
+  POSITION 58
+  MAX-WIDTH 20
+  VIEW-AS ""
+  COLUMN-LABEL "Unitario Cofins"
+  COLUMN-LABEL-SA "R15"
+  HELP "Valor Unitario Cofins"
+  DECIMALS 5
+  ORDER 650
+  MANDATORY
+
+ADD FIELD "val-reduc-pis-normal" OF "nfe-item-fornec" AS decimal 
+  DESCRIPTION "Percentual Reduá∆o PIS"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "% Reduá∆o PIS"
+  LABEL-SA "R16"
+  POSITION 59
+  MAX-WIDTH 17
+  VIEW-AS ""
+  COLUMN-LABEL "% Reduá∆o PIS"
+  COLUMN-LABEL-SA "R13"
+  HELP "Percentual Reduá∆o PIS"
+  DECIMALS 2
+  ORDER 660
+  MANDATORY
+
+ADD FIELD "val-reduc-cofins-normal" OF "nfe-item-fornec" AS decimal 
+  DESCRIPTION "Percentual Reduá∆o COFINS"
+  FORMAT ">>9.99"
+  INITIAL "0"
+  LABEL "% Reduá∆o COFINS"
+  LABEL-SA "R20"
+  POSITION 60
+  MAX-WIDTH 17
+  VIEW-AS ""
+  COLUMN-LABEL "% Reduá∆o COFINS"
+  COLUMN-LABEL-SA "R16"
+  HELP "Percentual Reduá∆o COFINS"
+  DECIMALS 2
+  ORDER 670
+  MANDATORY
+
+ADD FIELD "cod-embal" OF "nfe-item-fornec" AS character 
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Embalagem"
+  LABEL-SA "R11"
+  POSITION 61
+  MAX-WIDTH 20
+  VIEW-AS ""
+  COLUMN-LABEL "Embalagem"
+  COLUMN-LABEL-SA "L10"
+  HELP "C¢digo da embalagem"
+  LENGTH 0
+  ORDER 680
+
+ADD FIELD "cdn-fabrican" OF "nfe-item-fornec" AS integer 
+  FORMAT ">>>>>>>>9"
+  INITIAL "0"
+  LABEL "C¢digo Fabricante"
+  LABEL-SA "R21"
+  POSITION 62
+  MAX-WIDTH 4
+  VIEW-AS ""
+  COLUMN-LABEL "Cod Fabricante"
+  COLUMN-LABEL-SA "R14"
+  HELP "C¢digo Fabricante"
+  ORDER 690
+
+ADD FIELD "cdn-pais-orig" OF "nfe-item-fornec" AS integer 
+  DESCRIPTION "Pa°s de Origem"
+  FORMAT ">>,>>9"
+  INITIAL "0"
+  LABEL "Pa°s de Origem"
+  LABEL-SA "R17"
+  POSITION 63
+  MAX-WIDTH 4
+  VIEW-AS ""
+  COLUMN-LABEL "Pa°s Origem"
+  COLUMN-LABEL-SA "R11"
+  HELP "Pa°s de Origem"
+  ORDER 700
+  MANDATORY
+
+ADD INDEX "onde-compra" ON "nfe-item-fornec" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "it-codigo" ASCENDING 
+  INDEX-FIELD "cod-emitente" ASCENDING 
+
+ADD INDEX "it-forn" ON "nfe-item-fornec" 
+  AREA "Schema Area"
+  INDEX-FIELD "cod-emitente" ASCENDING 
+  INDEX-FIELD "item-do-forn" ASCENDING 
+
+ADD INDEX "quem-vende" ON "nfe-item-fornec" 
+  AREA "Schema Area"
+  INDEX-FIELD "cod-emitente" ASCENDING 
+  INDEX-FIELD "it-codigo" ASCENDING 
+
+ADD TABLE "nfe-log-erros"
+  AREA "Schema Area"
+  DESCRIPTION "Log de arquivos n∆o carregados"
+  DUMP-NAME "nfe-log-"
+
+ADD FIELD "data" OF "nfe-log-erros" AS date 
+  FORMAT "99/99/99"
+  INITIAL ?
+  LABEL "Data"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Data"
+  ORDER 10
+
+ADD FIELD "nome-arq" OF "nfe-log-erros" AS character 
+  FORMAT "x(70)"
+  INITIAL ""
+  LABEL "Arquivo"
+  POSITION 3
+  MAX-WIDTH 140
+  COLUMN-LABEL "Arquivo"
+  ORDER 20
+
+ADD FIELD "motivo" OF "nfe-log-erros" AS character 
+  FORMAT "x(40)"
+  INITIAL ""
+  LABEL "Motivo"
+  POSITION 4
+  MAX-WIDTH 80
+  COLUMN-LABEL "Motivo"
+  ORDER 30
+
+ADD FIELD "tipo" OF "nfe-log-erros" AS integer 
+  DESCRIPTION "Tipo de erro : 1 - Erro, 2 - Alerta"
+  FORMAT "9"
+  INITIAL "0"
+  POSITION 5
+  MAX-WIDTH 4
+  ORDER 40
+
+ADD TABLE "nfe-nota-canc-rec"
+  AREA "Schema Area"
+  LABEL "Notas Fiscais NFE - Cancelada"
+  DESCRIPTION "Notas Fiscais NFE - Cancelada"
+  DUMP-NAME "nfe012"
+
+ADD FIELD "chave-acesso-nfe" OF "nfe-nota-canc-rec" AS character 
+  DESCRIPTION "Chave Acesso do SEFAZ"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave Acesso Sefaz"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave Acesso"
+  HELP "Chave Acesso do SEFAZ"
+  ORDER 40
+
+ADD FIELD "canc-tpAmb" OF "nfe-nota-canc-rec" AS integer 
+  DESCRIPTION "ID Ambiente - XML de Cancelamento"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "ID Ambiente"
+  POSITION 3
+  MAX-WIDTH 4
+  COLUMN-LABEL "ID Ambiente"
+  HELP "ID Ambiente - XML de Cancelamento"
+  ORDER 50
+
+ADD FIELD "canc-xServ" OF "nfe-nota-canc-rec" AS character 
+  DESCRIPTION "Descricao do Servico - XML de Cancelamento"
+  FORMAT "x(255)"
+  INITIAL ""
+  LABEL "Descricao do Servico"
+  POSITION 4
+  MAX-WIDTH 510
+  COLUMN-LABEL "Desc Serv"
+  HELP "Descricao do Servico -  XML de Cancelamento"
+  ORDER 60
+
+ADD FIELD "canc-nProt" OF "nfe-nota-canc-rec" AS character 
+  DESCRIPTION "Protocolo - XML de Cancelamento"
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Protocolo"
+  POSITION 5
+  MAX-WIDTH 40
+  COLUMN-LABEL "Protocolo"
+  HELP "Protocolo - XML de Cancelamento"
+  ORDER 70
+
+ADD FIELD "canc-xJust" OF "nfe-nota-canc-rec" AS character 
+  DESCRIPTION "Justificativa Cancelamento - XML de Cancelamento"
+  FORMAT "x(255)"
+  INITIAL ""
+  LABEL "Justificativa Cancelamento"
+  POSITION 6
+  MAX-WIDTH 510
+  COLUMN-LABEL "Just Cancel"
+  HELP "Justificativa Cancelamento - XML de Cancelamento"
+  ORDER 80
+
+ADD FIELD "canc-dhRecbto" OF "nfe-nota-canc-rec" AS character 
+  DESCRIPTION "Data/Hora Recebimento - XML de Cancelamento"
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Data/Hora Receb"
+  POSITION 8
+  MAX-WIDTH 40
+  COLUMN-LABEL "DH Receb"
+  HELP "Data/Hora Recebimento - XML de Cancelamento"
+  ORDER 100
+
+ADD FIELD "dir-arquivo" OF "nfe-nota-canc-rec" AS character 
+  DESCRIPTION "Diretorio Arquivo - XML de Cancelamento"
+  FORMAT "x(256)"
+  INITIAL ""
+  LABEL "Diretorio Arq XML Canc"
+  POSITION 9
+  MAX-WIDTH 512
+  COLUMN-LABEL "Dir XML Canc"
+  HELP "Diretorio Arquivo - XML de Cancelamento"
+  ORDER 110
+
+ADD FIELD "cod-emitente" OF "nfe-nota-canc-rec" AS integer 
+  DESCRIPTION "Codigo do Emitente"
+  FORMAT ">>>>>>>>9"
+  INITIAL "0"
+  LABEL "Codigo"
+  POSITION 10
+  MAX-WIDTH 4
+  COLUMN-LABEL "Codigo"
+  HELP "Codigo do Emitente"
+  ORDER 120
+
+ADD FIELD "ide-Serie" OF "nfe-nota-canc-rec" AS character 
+  DESCRIPTION "SÇrie do Documento Fiscal"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "SÇrie"
+  POSITION 11
+  MAX-WIDTH 6
+  COLUMN-LABEL "Serie"
+  HELP "SÇrie do Documento Fiscal"
+  ORDER 130
+
+ADD FIELD "ide-nNF" OF "nfe-nota-canc-rec" AS character 
+  DESCRIPTION "Numero da NFE"
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Documento"
+  POSITION 12
+  MAX-WIDTH 32
+  COLUMN-LABEL "Documento"
+  HELP "Numero da NFE"
+  ORDER 140
+
+ADD FIELD "dt-recebto" OF "nfe-nota-canc-rec" AS date 
+  DESCRIPTION "Data Recebimento"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Data Recebimento"
+  POSITION 13
+  MAX-WIDTH 4
+  COLUMN-LABEL "Dt Recbto"
+  HELP "Data Recebimento"
+  ORDER 150
+
+ADD INDEX "chave-acesso" ON "nfe-nota-canc-rec" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+
+ADD INDEX "ix_param" ON "nfe-nota-canc-rec" 
+  AREA "Schema Area"
+  INDEX-FIELD "cod-emitente" ASCENDING 
+  INDEX-FIELD "ide-Serie" ASCENDING 
+  INDEX-FIELD "ide-nNF" ASCENDING 
+  INDEX-FIELD "dt-recebto" ASCENDING 
+
+ADD TABLE "nfe-nota-fiscal-rec"
+  AREA "Schema Area"
+  LABEL "Nota Fiscal Rec."
+  DESCRIPTION "Nota Fiscal Recebimento"
+  DUMP-NAME "nfe005"
+
+ADD FIELD "ide-nNF" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Numero da NFE"
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Documento"
+  POSITION 2
+  MAX-WIDTH 32
+  COLUMN-LABEL "Documento"
+  HELP "Numero da NFE"
+  ORDER 125
+
+ADD FIELD "cgc" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "CNPJ/CPF do Fornecedor"
+  FORMAT "x(19)"
+  INITIAL ""
+  LABEL "CGC"
+  POSITION 3
+  MAX-WIDTH 38
+  COLUMN-LABEL "CGC"
+  HELP "CNPJ/CPF do Fornecedor"
+  ORDER 20
+
+ADD FIELD "nome-abrev" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Nome Abreviado Fornecedor"
+  FORMAT "x(12)"
+  INITIAL ""
+  LABEL "Nome Abreviado"
+  POSITION 4
+  MAX-WIDTH 24
+  COLUMN-LABEL "Nome Abreviado"
+  HELP "Nome Abreviado Fornecedor"
+  ORDER 30
+
+ADD FIELD "chave-acesso-nfe" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Chave Acesso do SEFAZ"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave Acesso Sefaz"
+  POSITION 5
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave Acesso"
+  HELP "Chave Acesso do SEFAZ"
+  ORDER 40
+
+ADD FIELD "cod-situacao" OF "nfe-nota-fiscal-rec" AS integer 
+  DESCRIPTION "Codigo da Situacao NFE"
+  FORMAT ">>>,>>9"
+  INITIAL "0"
+  LABEL "Codigo Situacao"
+  POSITION 6
+  MAX-WIDTH 4
+  COLUMN-LABEL "Situacao"
+  HELP "Codigo da Situacao NFE"
+  ORDER 50
+
+ADD FIELD "ide-cuf" OF "nfe-nota-fiscal-rec" AS integer 
+  DESCRIPTION "C¢digo da UF do emitente do Documento Fiscal"
+  FORMAT "99"
+  INITIAL "0"
+  LABEL "UF"
+  POSITION 9
+  MAX-WIDTH 4
+  COLUMN-LABEL "UF"
+  HELP "C¢digo da Unidade Federativa (IBGE)"
+  ORDER 80
+
+ADD FIELD "ide-natOp" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Descriá∆o da Natureza da Operaá∆o"
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Natureza de Operaá∆o"
+  POSITION 10
+  MAX-WIDTH 120
+  COLUMN-LABEL "Natureza"
+  HELP "Natureza de Operaá∆o"
+  ORDER 90
+
+ADD FIELD "ide-indPag" OF "nfe-nota-fiscal-rec" AS integer 
+  DESCRIPTION "Indicador da forma de pagamento"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Forma Pagamento"
+  POSITION 11
+  MAX-WIDTH 4
+  COLUMN-LABEL "Forma Pagto"
+  HELP "0 - pagamento Ö vista;
+ 1 - pagamento Ö prazo; 
+2 - outros.
+"
+  ORDER 100
+
+ADD FIELD "ide-Mod" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "C¢digo do Modelo do Documento Fiscal"
+  FORMAT "X(2)"
+  INITIAL ""
+  LABEL "Modelo"
+  POSITION 12
+  MAX-WIDTH 4
+  COLUMN-LABEL "Modelo"
+  HELP "C¢digo do Modelo do Documento Fiscal"
+  ORDER 110
+
+ADD FIELD "ide-Serie" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "SÇrie do Documento Fiscal"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "SÇrie"
+  POSITION 13
+  MAX-WIDTH 4
+  COLUMN-LABEL "Serie"
+  HELP "SÇrie do Documento Fiscal"
+  ORDER 120
+
+ADD FIELD "ide-dEmi" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Data de emiss∆o do Documento Fiscal"
+  FORMAT "9999-99-99"
+  INITIAL ""
+  LABEL "Data Emiss∆o"
+  POSITION 14
+  MAX-WIDTH 20
+  COLUMN-LABEL "Emissao"
+  HELP "Data de emiss∆o do Documento Fiscal"
+  ORDER 130
+
+ADD FIELD "ide-tpNF" OF "nfe-nota-fiscal-rec" AS integer 
+  DESCRIPTION "Tipo do Documento Fiscal"
+  FORMAT "->,>>>,>>9"
+  INITIAL "0"
+  LABEL "Tipo Documento"
+  POSITION 15
+  MAX-WIDTH 4
+  COLUMN-LABEL "Tp Docto"
+  HELP "Tipo do Documento Fiscal 0-entrada / 1-sa°da"
+  ORDER 140
+
+ADD FIELD "ide-cMunFG" OF "nfe-nota-fiscal-rec" AS integer 
+  DESCRIPTION "C¢digo do Munic°pio de Ocorrància do Fato Gerador"
+  FORMAT "9999999"
+  INITIAL "0"
+  LABEL "Codigo Municipio"
+  POSITION 16
+  MAX-WIDTH 4
+  COLUMN-LABEL "Cod Municipio"
+  HELP "C¢digo do Munic°pio de Ocorrància do Fato Gerador (IBGE)"
+  ORDER 150
+
+ADD FIELD "ide-tpImp" OF "nfe-nota-fiscal-rec" AS integer 
+  DESCRIPTION "Formato de Impress∆o do DANFE"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Formato"
+  POSITION 17
+  MAX-WIDTH 4
+  COLUMN-LABEL "Formato"
+  HELP "Formato de Impress∆o do DANFE 1-Retrato/ 2-Paisagem"
+  ORDER 160
+
+ADD FIELD "ide-tpEmis" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Forma de Emiss∆o da NF-e"
+  FORMAT "X(1)"
+  INITIAL ""
+  LABEL "Forma"
+  POSITION 18
+  MAX-WIDTH 2
+  COLUMN-LABEL "Forma"
+  HELP "Forma de Emiss∆o da NF-e N-Normal/ C-Contingància"
+  ORDER 170
+
+ADD FIELD "ide-chaveOrigem" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Identificaá∆o da NFe no Sistema Origem"
+  FORMAT "X(50)"
+  INITIAL ""
+  LABEL "ID Origem"
+  POSITION 19
+  MAX-WIDTH 100
+  COLUMN-LABEL "ID Origem"
+  HELP "Identificaá∆o da NFe no Sistema Origem"
+  ORDER 180
+
+ADD FIELD "emit-cnpj" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "CNPJ do Emitente"
+  FORMAT "X(14)"
+  INITIAL ""
+  LABEL "CNPJ do Emitente"
+  POSITION 20
+  MAX-WIDTH 28
+  COLUMN-LABEL "CNPJ Emit"
+  HELP "CNPJ do Emitente"
+  ORDER 190
+
+ADD FIELD "emit-xNome" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Raz∆o Social ou Nome do Emitente"
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Nome Emitente"
+  POSITION 21
+  MAX-WIDTH 120
+  COLUMN-LABEL "Nome Emit"
+  HELP "Raz∆o Social ou Nome do Emitente"
+  ORDER 200
+
+ADD FIELD "emit-xLgr" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Logradouro do Emitente"
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Endereco Emitente"
+  POSITION 22
+  MAX-WIDTH 120
+  COLUMN-LABEL "Ender Emit"
+  HELP "Logradouro do Emitente"
+  ORDER 210
+
+ADD FIELD "emit-nro" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "N£mero do Emitente"
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Numero Emitente"
+  POSITION 23
+  MAX-WIDTH 120
+  COLUMN-LABEL "Num Emit"
+  HELP "N£mero do Emitente"
+  ORDER 220
+
+ADD FIELD "emit-xBairro" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Bairro do Emitente"
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Bairro Emitente"
+  POSITION 24
+  MAX-WIDTH 120
+  COLUMN-LABEL "Bairro Emit"
+  HELP "Bairro do Emitente"
+  ORDER 230
+
+ADD FIELD "emit-cMun" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "C¢digo do Municipio do Emitente"
+  FORMAT "X(7)"
+  INITIAL ""
+  LABEL "C¢digo Municipio do Emitente"
+  POSITION 25
+  MAX-WIDTH 14
+  COLUMN-LABEL "Municipio Emit"
+  HELP "C¢digo do Municipio do Emitente (IBGE)"
+  ORDER 240
+
+ADD FIELD "emit-xMun" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Nome do Municipio do Emitente"
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Nome Municipio do Emitente"
+  POSITION 26
+  MAX-WIDTH 120
+  COLUMN-LABEL "Nome Municipio do Emit"
+  HELP "Nome do Municipio do Emitente"
+  ORDER 250
+
+ADD FIELD "emit-UF" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Sigla da UF do Emitente"
+  FORMAT "X(2)"
+  INITIAL ""
+  LABEL "UF do Emitente"
+  POSITION 27
+  MAX-WIDTH 4
+  COLUMN-LABEL "UF Emit"
+  HELP "Sigla da UF do Emitente"
+  ORDER 260
+
+ADD FIELD "emit-IE" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "IE do Emitente"
+  FORMAT "X(14)"
+  INITIAL ""
+  LABEL "IE do Emitente"
+  POSITION 28
+  MAX-WIDTH 28
+  COLUMN-LABEL "IE Emit"
+  HELP "IE do Emitente"
+  ORDER 270
+
+ADD FIELD "dest-cnpj" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "CNPJ do Destinatario"
+  FORMAT "X(14)"
+  INITIAL ""
+  LABEL "CNPJ do Destinatario"
+  POSITION 29
+  MAX-WIDTH 28
+  COLUMN-LABEL "CNPJ Dest"
+  HELP "CNPJ do Destinatario"
+  ORDER 280
+
+ADD FIELD "dest-xNome" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Raz∆o Social ou Nome do Emitente"
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Nome do Emitente"
+  POSITION 30
+  MAX-WIDTH 120
+  COLUMN-LABEL "Nome Emit"
+  HELP "Raz∆o Social ou Nome do Emitente"
+  ORDER 290
+
+ADD FIELD "dest-xLgr" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Logradouro do Destinatario"
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Endereco Destinatario"
+  POSITION 31
+  MAX-WIDTH 120
+  COLUMN-LABEL "Ender Dest"
+  HELP "Logradouro do Destinatario"
+  ORDER 300
+
+ADD FIELD "dest-nro" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "N£mero do Destinatario"
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "N£mero do Destinatario"
+  POSITION 32
+  MAX-WIDTH 120
+  COLUMN-LABEL "Num Dest"
+  HELP "N£mero do Destinatario"
+  ORDER 310
+
+ADD FIELD "dest-xBairro" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Bairro do Destinatario"
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Bairro do Destinatario"
+  POSITION 33
+  MAX-WIDTH 120
+  COLUMN-LABEL "Bairro Dest"
+  HELP "Bairro do Destinatario"
+  ORDER 320
+
+ADD FIELD "dest-cMun" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "C¢digo do Municipio do Destinatario"
+  FORMAT "X(7)"
+  INITIAL ""
+  LABEL "C¢digo Municipio do Destinatario"
+  POSITION 34
+  MAX-WIDTH 14
+  COLUMN-LABEL "Municipio Dest"
+  HELP "C¢digo do Municipio do Destinatario (IBGE)"
+  ORDER 330
+
+ADD FIELD "dest-xMun" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Nome do Municipio do Destinatario"
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Nome Municipio Destinatario"
+  POSITION 35
+  MAX-WIDTH 120
+  COLUMN-LABEL "Nome Municipio Dest"
+  HELP "Nome do Municipio do Destinatario"
+  ORDER 340
+
+ADD FIELD "dest-UF" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Sigla da UF do Destinatario"
+  FORMAT "X(2)"
+  INITIAL ""
+  LABEL "UF Destinatario"
+  POSITION 36
+  MAX-WIDTH 4
+  COLUMN-LABEL "UF Dest"
+  HELP "Sigla da UF do Destinatario"
+  ORDER 350
+
+ADD FIELD "dest-cep" OF "nfe-nota-fiscal-rec" AS integer 
+  DESCRIPTION "C¢digo do CEP do Destinat†rio"
+  FORMAT "99999999"
+  INITIAL "0"
+  LABEL "CEP do Destinat†rio"
+  POSITION 37
+  MAX-WIDTH 4
+  COLUMN-LABEL "CEP Dest"
+  HELP "C¢digo do CEP do Destinat†rio"
+  ORDER 360
+
+ADD FIELD "dest-xPais" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Nome do Pa°s"
+  FORMAT "X(60)"
+  INITIAL ""
+  LABEL "Nome do Pa°s"
+  POSITION 38
+  MAX-WIDTH 120
+  COLUMN-LABEL "Nome Pa°s"
+  HELP "Nome do Pa°s"
+  ORDER 370
+
+ADD FIELD "cod-estabel" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Estabelecimento"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Estabelecimento"
+  POSITION 39
+  MAX-WIDTH 6
+  COLUMN-LABEL "Estab"
+  HELP "Estabelecimento"
+  ORDER 35
+
+ADD FIELD "dest-IE" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "IE do Destinatario"
+  FORMAT "X(14)"
+  INITIAL ""
+  LABEL "IE do Destinatario"
+  POSITION 40
+  MAX-WIDTH 28
+  COLUMN-LABEL "IE Dest"
+  HELP "IE do Destinatario"
+  ORDER 390
+
+ADD FIELD "tot-vBC" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Base de Calculo do ICMS - (328-W03)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Base Calculo ICMS"
+  POSITION 41
+  MAX-WIDTH 17
+  COLUMN-LABEL "BC ICMS"
+  HELP "Base de Calculo do ICMS - (328-W03)"
+  DECIMALS 2
+  ORDER 400
+
+ADD FIELD "tot-vICMS" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor Total do ICMS - (329-W04)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total do ICMS"
+  POSITION 42
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL ICMS"
+  HELP "Valor Total do ICMS - (329-W04)"
+  DECIMALS 2
+  ORDER 410
+
+ADD FIELD "tot-vBCST" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Base de C†lculo do ICMS Substituiá∆o Tribut†ria - (330-W05)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Base Calc. ICMS ST"
+  POSITION 43
+  MAX-WIDTH 17
+  COLUMN-LABEL "BC ICMS ST"
+  HELP "Base de C†lculo do ICMS Substituiá∆o Tribut†ria - (330-W05)"
+  DECIMALS 2
+  ORDER 420
+
+ADD FIELD "tot-vST" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor Total do ICMS Substituiá∆o Tribut†ria - (331-W06)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total ICMS ST"
+  POSITION 44
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL ICMS ST"
+  HELP "Valor Total do ICMS Substituiá∆o Tribut†ria - (331-W06)"
+  DECIMALS 2
+  ORDER 430
+
+ADD FIELD "tot-vProd" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor Total dos produtos e serviáos - (332-W07)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total Produto"
+  POSITION 45
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Prod"
+  HELP "Valor Total dos produtos e serviáos - (332-W07)"
+  DECIMALS 2
+  ORDER 440
+
+ADD FIELD "tot-vFrete" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor Total do Frete - (333-W08)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total do Frete"
+  POSITION 46
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Frete"
+  HELP "Valor Total do Frete - (333-W08)"
+  DECIMALS 2
+  ORDER 450
+
+ADD FIELD "tot-vSeg" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor Total do Seguro - (334-W09)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total do Seguro"
+  POSITION 47
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Seguro"
+  HELP "Valor Total do Seguro - (334-W09)"
+  DECIMALS 2
+  ORDER 460
+
+ADD FIELD "tot-vDesc" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor Total do Desconto - (335-W10)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total do Desconto"
+  POSITION 48
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Desc"
+  HELP "Valor Total do Desconto - (335-W10)"
+  DECIMALS 2
+  ORDER 470
+
+ADD FIELD "tot-VII" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor Total do II - (336-W11)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total do II"
+  POSITION 49
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl II"
+  HELP "Valor Total do II - (336-W11)"
+  DECIMALS 2
+  ORDER 480
+
+ADD FIELD "tot-vIPI" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor Total do IPI - (337-W12)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total do IPI"
+  POSITION 50
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl IPI"
+  HELP "Valor Total do IPI - (337-W12)"
+  DECIMALS 2
+  ORDER 490
+
+ADD FIELD "tot-vPIS" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor do PIS - (338-W13)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total do PIS"
+  POSITION 51
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl PIS"
+  HELP "Valor do PIS - (338-W13)"
+  DECIMALS 2
+  ORDER 500
+
+ADD FIELD "tot-vCOFINS" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor do COFINS - (339-W14)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total do COFINS"
+  POSITION 52
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Cofins"
+  HELP "Valor do COFINS - (339-W14)"
+  DECIMALS 2
+  ORDER 510
+
+ADD FIELD "tot-vOutro" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Outras Despesas acess¢rias - (340-W15)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Despesas Acessorias"
+  POSITION 53
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Desp"
+  HELP "Outras Despesas acess¢rias - (340-W15)"
+  DECIMALS 2
+  ORDER 520
+
+ADD FIELD "tot-vNF" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor Total da NFe - (341-W16)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total da NFe"
+  POSITION 54
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl TOTAL"
+  HELP "Valor Total da NFe - (341-W16)"
+  DECIMALS 2
+  ORDER 530
+
+ADD FIELD "tot-ISS-vBC" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Base de C†lculo do ISS - (344-W19)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Base de C†lculo do ISS"
+  POSITION 55
+  MAX-WIDTH 17
+  COLUMN-LABEL "BC ISS"
+  HELP "Base de C†lculo do ISS - (344-W19)"
+  DECIMALS 2
+  ORDER 550
+
+ADD FIELD "tot-ISS-vServ" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor Total dos Serviáos sob n∆o-incidància ou n∆o tributados pelo ICMS - (343-W18)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total dos Serviáos"
+  POSITION 56
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL Serv."
+  HELP "Valor Total dos Serviáos sob n∆o-incidància ou n∆o tribut ICMS"
+  DECIMALS 2
+  ORDER 540
+
+ADD FIELD "tot-ISS-vISS" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor Total do ISS - (345-W20)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total do ISS"
+  POSITION 57
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL ISS"
+  HELP "Valor Total do ISS - (345-W20)"
+  DECIMALS 2
+  ORDER 560
+
+ADD FIELD "tot-ISS-vPIS" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor do PIS sobre serviáos - (346-W21)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor do PIS SERV."
+  POSITION 58
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL PIS Serv"
+  HELP "Valor do PIS sobre serviáos - (346-W21)"
+  DECIMALS 2
+  ORDER 570
+
+ADD FIELD "tot-ISS-vCOFINS" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor do COFINS sobre serviáos - (347-W22)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor do COFINS SERV."
+  POSITION 59
+  MAX-WIDTH 17
+  COLUMN-LABEL "VL COFINS Serv"
+  HELP "Valor do COFINS sobre serviáos - (347-W22)"
+  DECIMALS 2
+  ORDER 580
+
+ADD FIELD "trans-modFrete" OF "nfe-nota-fiscal-rec" AS integer 
+  DESCRIPTION "Modalidade do frete - (357-X02)"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Modalidade do Frete"
+  POSITION 60
+  MAX-WIDTH 4
+  COLUMN-LABEL "Frete"
+  HELP "Modalidade do frete - (357-X02)"
+  ORDER 590
+
+ADD FIELD "trans-CNPJ" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "CNPJ Da transportadora - (359-X04)"
+  FORMAT "x(14)"
+  INITIAL ""
+  LABEL "CNPJ da Transportadora"
+  POSITION 61
+  MAX-WIDTH 28
+  COLUMN-LABEL "CNPJ Trans."
+  HELP "CNPJ Da transportadora - (359-X04)"
+  ORDER 600
+
+ADD FIELD "trans-CPF" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "CPF Transportadora - (360-X05)"
+  FORMAT "x(11)"
+  INITIAL ""
+  LABEL "CPF da Transportadora"
+  POSITION 62
+  MAX-WIDTH 22
+  COLUMN-LABEL "CPF Transp."
+  HELP "CPF Transportadora - (360-X05)"
+  ORDER 610
+
+ADD FIELD "trans-xNome" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Raz∆o Social ou nome - (361-X06)"
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Raá∆o Social Transp."
+  POSITION 63
+  MAX-WIDTH 120
+  COLUMN-LABEL "Nome Trans."
+  HELP "Raz∆o Social ou nome - (361-X06)"
+  ORDER 620
+
+ADD FIELD "trans-IE" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Inscriá∆o Estadual - (362-X07)"
+  FORMAT "x(14)"
+  INITIAL ""
+  LABEL "Inscricao Estadual"
+  POSITION 64
+  MAX-WIDTH 28
+  COLUMN-LABEL "IE"
+  HELP "Inscriá∆o Estadual - (362-X07)"
+  ORDER 630
+
+ADD FIELD "trans-xEnder" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Endereáo Completo - (363-X08)"
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Endereáo Transportadora"
+  POSITION 65
+  MAX-WIDTH 120
+  COLUMN-LABEL "End. Trans"
+  HELP "Endereáo Completo - (363-X08)"
+  ORDER 640
+
+ADD FIELD "trans-xMun" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Nome do munic°pio - (364-X09)"
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Nome Municipio"
+  POSITION 66
+  MAX-WIDTH 120
+  COLUMN-LABEL "Municipio"
+  HELP "Nome do munic°pio - (364-X09)"
+  ORDER 650
+
+ADD FIELD "trans-UF" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Sigla da UF - (365-X10)"
+  FORMAT "x(2)"
+  INITIAL ""
+  LABEL "Sigla da UF"
+  POSITION 67
+  MAX-WIDTH 4
+  COLUMN-LABEL "UF"
+  HELP "Sigla da UF - (365-X10)"
+  ORDER 660
+
+ADD FIELD "trans-vServ" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Valor do Serviáo - (367-X12)"
+  FORMAT "x(15)"
+  INITIAL ""
+  LABEL "Valor do Serviáo"
+  POSITION 68
+  MAX-WIDTH 30
+  COLUMN-LABEL "Vl Serv."
+  HELP "Valor do Serviáo - (367-X12)"
+  ORDER 670
+
+ADD FIELD "trans-vBCRet" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Base de C†lculo da Retená∆o do ICMS - (368-X13)"
+  FORMAT "x(15)"
+  INITIAL ""
+  LABEL "BC Retencao ICMS"
+  POSITION 69
+  MAX-WIDTH 30
+  COLUMN-LABEL "BC ICMS"
+  HELP "Base de C†lculo da Retená∆o do ICMS - (368-X13)"
+  ORDER 680
+
+ADD FIELD "trans-pICMSRet" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Al°quota da Retená∆o - (369-X14)"
+  FORMAT "x(5)"
+  INITIAL ""
+  LABEL "Aliquota de Retenáao"
+  POSITION 70
+  MAX-WIDTH 10
+  COLUMN-LABEL "% Ret ICMS"
+  HELP "Al°quota da Retená∆o - (369-X14)"
+  ORDER 690
+
+ADD FIELD "trans-vICMSRet" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Valor do ICMS Retido - (370-X15)"
+  FORMAT "x(15)"
+  INITIAL ""
+  LABEL "Valor do ICMS Ret."
+  POSITION 71
+  MAX-WIDTH 30
+  COLUMN-LABEL "Vl ICMS Ret"
+  HELP "Valor do ICMS Retido - (370-X15)"
+  ORDER 700
+
+ADD FIELD "trans-CFOP" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "CFOP - (371-X16)"
+  FORMAT "x(4)"
+  INITIAL ""
+  LABEL "CFOP"
+  POSITION 72
+  MAX-WIDTH 8
+  COLUMN-LABEL "CFOP"
+  HELP "CFOP - (371-X16)"
+  ORDER 710
+
+ADD FIELD "trans-cMunFG" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "C¢digo do munic°pio de ocorrància do fato gerador do ICMS do transporte - (372-X17)
+"
+  FORMAT "x(7)"
+  INITIAL ""
+  LABEL "Cod. Municipio"
+  POSITION 73
+  MAX-WIDTH 14
+  COLUMN-LABEL "Cod.Mun."
+  HELP "C¢digo do munic°pio de ocorrància do fato gerador ICMS Transp"
+  ORDER 720
+
+ADD FIELD "trans-veic-placa" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Placa do Ve°culo - (374-X19)"
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "Placa do Veiculo"
+  POSITION 74
+  MAX-WIDTH 16
+  COLUMN-LABEL "Placa"
+  HELP "Placa do Ve°culo - (374-X19)"
+  ORDER 730
+
+ADD FIELD "trans-veic-UF" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Sigla da UF - (379-X24)"
+  FORMAT "x(2)"
+  INITIAL ""
+  LABEL "Sigla da UF"
+  POSITION 75
+  MAX-WIDTH 4
+  COLUMN-LABEL "UF"
+  HELP "Sigla da UF - (379-X24)"
+  ORDER 740
+
+ADD FIELD "trans-veic-RNTC" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Registro Nacional de Transportador de Carga (ANTT)  - (380-X25)"
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Registro Nacional"
+  POSITION 76
+  MAX-WIDTH 40
+  COLUMN-LABEL "RNTC"
+  HELP "Registro Nacional de Transportador de Carga (ANTT)  - (380-X25)"
+  ORDER 750
+
+ADD FIELD "trans-qVol" OF "nfe-nota-fiscal-rec" AS integer 
+  DESCRIPTION "Quantidade de volumes transportados - (382-X27)"
+  FORMAT ">>>,>>>,>>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Qtda Volumes"
+  POSITION 77
+  MAX-WIDTH 4
+  COLUMN-LABEL "Qt Vol."
+  HELP "Quantidade de volumes transportados - (382-X27)"
+  ORDER 760
+
+ADD FIELD "trans-esp" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "EspÇcie dos volumes transportados - (383-X28)"
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Especie dos Volumes"
+  POSITION 78
+  MAX-WIDTH 120
+  COLUMN-LABEL "Especies"
+  HELP "EspÇcie dos volumes transportados - (383-X28)"
+  ORDER 770
+
+ADD FIELD "trans-marca" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Marca dos volumes transportados - (384-X29)"
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Marca dos Volumes"
+  POSITION 79
+  MAX-WIDTH 120
+  COLUMN-LABEL "Marca"
+  HELP "Marca dos volumes transportados - (384-X29)"
+  ORDER 780
+
+ADD FIELD "trans-nVol" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Numeraá∆o dos volumes transportados - (385-X30)"
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Numeracao dos Volumes"
+  POSITION 80
+  MAX-WIDTH 120
+  COLUMN-LABEL "Nr. Volumes"
+  HELP "Numeraá∆o dos volumes transportados - (385-X30)"
+  ORDER 790
+
+ADD FIELD "trans-pesoL" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Peso L°quido (em Kg) - (386-X31)"
+  FORMAT ">>>,>>>,>>>,>>9.999"
+  INITIAL "0"
+  LABEL "Peso Liquido (KG)"
+  POSITION 81
+  MAX-WIDTH 17
+  COLUMN-LABEL "Peso Liq."
+  HELP "Peso L°quido (em Kg) - (386-X31)"
+  DECIMALS 3
+  ORDER 800
+
+ADD FIELD "trans-pesoB" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Peso Bruto (em Kg) - (387-X32)"
+  FORMAT ">>>,>>>,>>>,>>9.999"
+  INITIAL "0"
+  LABEL "Peso Bruto (KG)"
+  POSITION 82
+  MAX-WIDTH 17
+  COLUMN-LABEL "Peso Bru."
+  HELP "Peso Bruto (em Kg) - (387-X32)"
+  DECIMALS 3
+  ORDER 810
+
+ADD FIELD "cobr-nFat" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "N£mero da Fatura - (391-Y03)"
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "N£mero da Fatura"
+  POSITION 83
+  MAX-WIDTH 120
+  COLUMN-LABEL "Nr. Fat."
+  HELP "N£mero da Fatura - (391-Y03)"
+  ORDER 820
+
+ADD FIELD "cobr-vOrig" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor Original da Fatura - (392-Y04)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Original da Fatura"
+  POSITION 84
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Fatura"
+  HELP "Valor Original da Fatura - (392-Y04)"
+  DECIMALS 2
+  ORDER 830
+
+ADD FIELD "cobr-vDesc" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor do desconto - (393-Y05)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Desconto"
+  POSITION 85
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Desconto"
+  HELP "Valor do desconto - (393-Y05)"
+  DECIMALS 2
+  ORDER 840
+
+ADD FIELD "cobr-vLiq" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor L°quido da Fatura - (394-Y06)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Liquido Fatura"
+  POSITION 86
+  MAX-WIDTH 17
+  COLUMN-LABEL "Vl Liq. Fatura"
+  HELP "Valor L°quido da Fatura - (394-Y06)"
+  DECIMALS 2
+  ORDER 850
+
+ADD FIELD "cobr-dVenc" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Data de vencimento - (397-Y09)"
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Data de Vencimento"
+  POSITION 87
+  MAX-WIDTH 792
+  COLUMN-LABEL "Dt. Venc"
+  HELP "Data de vencimento - (397-Y09)"
+  EXTENT 36
+  ORDER 870
+
+ADD FIELD "cobr-nDup" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "N£mero da Duplicata - (396-Y08)"
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Nr Duplicada"
+  POSITION 88
+  MAX-WIDTH 4392
+  COLUMN-LABEL "Nr Duplic."
+  HELP "N£mero da Duplicata - (396-Y08)"
+  EXTENT 36
+  ORDER 860
+
+ADD FIELD "cobr-vDup" OF "nfe-nota-fiscal-rec" AS decimal 
+  DESCRIPTION "Valor da duplicata - (398-Y10)"
+  FORMAT ">>>>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor da duplicata"
+  POSITION 89
+  MAX-WIDTH 1440
+  COLUMN-LABEL "Vl da Duplicata"
+  HELP "Valor da duplicata - (398-Y10)"
+  EXTENT 36
+  DECIMALS 2
+  ORDER 880
+
+ADD FIELD "inf-infAdFisco" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Informaá‰es Adicionais de Interesse do Fisco - (400-Z02)"
+  FORMAT "x(256)"
+  INITIAL ""
+  LABEL "Inf. Adicionais do Fisco"
+  POSITION 90
+  MAX-WIDTH 512
+  COLUMN-LABEL "Inf Fisco"
+  HELP "Informaá‰es Adicionais de Interesse do Fisco - (400-Z02)"
+  ORDER 890
+
+ADD FIELD "inf-infCpl" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Informaá‰es Complementares de interesse do Contribuinte - (401-Z03)"
+  FORMAT "x(5000)"
+  INITIAL ""
+  LABEL "Informaá‰es do Contribuite"
+  POSITION 91
+  MAX-WIDTH 10000
+  COLUMN-LABEL "Inf. Cpl"
+  HELP "Informaá‰es Complementares de interesse do Contribuinte"
+  ORDER 900
+
+ADD FIELD "cod-observa" OF "nfe-nota-fiscal-rec" AS integer 
+  DESCRIPTION "Observacao da Nota Fiscal"
+  FORMAT ">9"
+  INITIAL "0"
+  LABEL "Observacao NFE"
+  POSITION 92
+  MAX-WIDTH 4
+  COLUMN-LABEL "Obs NFE"
+  HELP "Observacao da Nota Fiscal"
+  ORDER 910
+
+ADD FIELD "lg-sefaz" OF "nfe-nota-fiscal-rec" AS logical 
+  DESCRIPTION "Consulta Sefaz"
+  FORMAT "yes/no"
+  INITIAL ?
+  LABEL "Consulta Sefaz"
+  POSITION 94
+  MAX-WIDTH 1
+  COLUMN-LABEL "Sefaz"
+  HELP "Consulta Sefaz"
+  ORDER 920
+
+ADD FIELD "lg-retorna-forn" OF "nfe-nota-fiscal-rec" AS logical 
+  DESCRIPTION "Retornou Fornecedor"
+  FORMAT "yes/no"
+  INITIAL ?
+  LABEL "Retornou Fornecedor"
+  POSITION 95
+  MAX-WIDTH 1
+  COLUMN-LABEL "Ret Fornecedor"
+  HELP "Retornou Fornecedor"
+  ORDER 930
+
+ADD FIELD "lg-implantada" OF "nfe-nota-fiscal-rec" AS logical 
+  DESCRIPTION "NF-e Implantada"
+  FORMAT "yes/no"
+  INITIAL "no"
+  LABEL "NF-e Implantada"
+  POSITION 96
+  MAX-WIDTH 1
+  COLUMN-LABEL "Implantada"
+  HELP "NF-e Implantada"
+  ORDER 940
+
+ADD FIELD "ide-refNFe" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Chave NFe Referenciada"
+  FORMAT "x(44)"
+  INITIAL ""
+  LABEL "Chave NFe Referenciada"
+  POSITION 97
+  MAX-WIDTH 88
+  COLUMN-LABEL "NFe Ref"
+  HELP "Chave NFe Referenciada"
+  ORDER 950
+
+ADD FIELD "ide-dTrans" OF "nfe-nota-fiscal-rec" AS date 
+  DESCRIPTION "Data de transaá∆o do Documento Fiscal"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Data Transacao"
+  POSITION 98
+  MAX-WIDTH 4
+  COLUMN-LABEL "Trans"
+  HELP "Data de transaá∆o do Documento Fiscal"
+  ORDER 960
+
+ADD FIELD "ret-verAplic" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Versao do Aplicativo - Retorno/Consulta Sefaz"
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Versao do Aplicativo"
+  POSITION 109
+  MAX-WIDTH 40
+  COLUMN-LABEL "Versao Aplicativo"
+  HELP "Versao do Aplicativo - Retorno/Consulta Sefaz"
+  ORDER 1051
+
+ADD FIELD "ret-cStat" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Status da Resposta - Retorno/Consulta Sefaz"
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Status da Resposta"
+  POSITION 110
+  MAX-WIDTH 4
+  COLUMN-LABEL "Status"
+  HELP "Status da Resposta - Retorno/Consulta Sefaz"
+  ORDER 1061
+
+ADD FIELD "ret-xMotivo" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Descricao da Resposta - Retorno/Consulta Sefaz"
+  FORMAT "x(400)"
+  INITIAL ""
+  LABEL "Descricao da Resposta"
+  POSITION 111
+  MAX-WIDTH 510
+  COLUMN-LABEL "Desc Resposta"
+  HELP "Descricao da Resposta - Retorno/Consulta Sefaz"
+  ORDER 1071
+
+ADD FIELD "ret-cUF" OF "nfe-nota-fiscal-rec" AS integer 
+  DESCRIPTION "Codigo UF da Solicitaá∆o - Retorno/Consulta Sefaz"
+  FORMAT ">9"
+  INITIAL "0"
+  LABEL "Codigo UF"
+  POSITION 112
+  MAX-WIDTH 4
+  COLUMN-LABEL "UF"
+  HELP "Codigo UF da Solicitaá∆o - Retorno/Consulta Sefaz"
+  ORDER 1081
+
+ADD FIELD "ret-tpAmb" OF "nfe-nota-fiscal-rec" AS integer 
+  DESCRIPTION "ID Ambiente - Retorno/Consulta Sefaz"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "ID Ambiente"
+  POSITION 115
+  MAX-WIDTH 4
+  COLUMN-LABEL "ID Ambiente"
+  HELP "ID Ambiente - Retorno/Consulta Sefaz"
+  ORDER 1041
+
+ADD FIELD "ret-dhRecbto" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Data/Hora Recebimento - Retorno/Consulta Sefaz"
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Data/Hora Recebimento"
+  POSITION 122
+  MAX-WIDTH 40
+  COLUMN-LABEL "DH Receb"
+  HELP "Data/Hora Recebimento - Retorno/Consulta Sefaz"
+  ORDER 1091
+
+ADD FIELD "ret-nProt" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Protocolo - Retorno/Consulta Sefaz"
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Protocolo"
+  POSITION 123
+  MAX-WIDTH 40
+  COLUMN-LABEL "Protocolo"
+  HELP "Protocolo - Retorno/Consulta Sefaz"
+  ORDER 1101
+
+ADD FIELD "ret-digVal" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Dig Val - Retorno/Consulta Sefaz"
+  FORMAT "x(30)"
+  INITIAL ""
+  LABEL "Dig Val"
+  POSITION 124
+  MAX-WIDTH 60
+  COLUMN-LABEL "Dig Val"
+  HELP "Dig Val - Retorno/Consulta Sefaz"
+  ORDER 1111
+
+ADD FIELD "inf-tpAmb" OF "nfe-nota-fiscal-rec" AS integer 
+  DESCRIPTION "ID Ambiente - XML Original do Fornecedor"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "ID Ambiente"
+  POSITION 140
+  MAX-WIDTH 4
+  COLUMN-LABEL "ID Ambiente"
+  HELP "ID Ambiente - XML Original do Fornecedor"
+  ORDER 1121
+
+ADD FIELD "inf-verAplic" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Versao do Aplicativo - XML Original do Fornecedor"
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Versao do Aplicativo"
+  POSITION 141
+  MAX-WIDTH 40
+  COLUMN-LABEL "Versao Aplicativo"
+  HELP "Versao do Aplicativo - XML Original do Fornecedor"
+  ORDER 1131
+
+ADD FIELD "inf-cStat" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Status da Resposta - XML Original do Fornecedor"
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Status da Resposta"
+  POSITION 142
+  MAX-WIDTH 20
+  COLUMN-LABEL "Status"
+  HELP "Status da Resposta - XML Original do Fornecedor"
+  ORDER 1141
+
+ADD FIELD "inf-xMotivo" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Descricao da Resposta - XML Original do Fornecedor"
+  FORMAT "x(400)"
+  INITIAL ""
+  LABEL "Descricao da Resposta"
+  POSITION 143
+  MAX-WIDTH 510
+  COLUMN-LABEL "Desc Resposta"
+  HELP "Descricao da Resposta - XML Original do Fornecedor"
+  ORDER 1151
+
+ADD FIELD "inf-cUF" OF "nfe-nota-fiscal-rec" AS integer 
+  DESCRIPTION "Codigo UF da Solicitaá∆o - XML Original do Fornecedor"
+  FORMAT ">9"
+  INITIAL "0"
+  LABEL "Codigo UF"
+  POSITION 144
+  MAX-WIDTH 4
+  COLUMN-LABEL "UF"
+  HELP "Codigo UF da Solicitaá∆o - XML Original do Fornecedor"
+  ORDER 1161
+
+ADD FIELD "inf-dhRecbto" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Data/Hora Recebimento - XML Original do Fornecedor"
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Data/Hora Recebimento"
+  POSITION 145
+  MAX-WIDTH 40
+  COLUMN-LABEL "DH Receb"
+  HELP "Data/Hora Recebimento - XML Original do Fornecedor"
+  ORDER 1171
+
+ADD FIELD "inf-nProt" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Protocolo - XML Original do Fornecedor"
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Protocolo"
+  POSITION 146
+  MAX-WIDTH 40
+  COLUMN-LABEL "Protocolo"
+  HELP "Protocolo - XML Original do Fornecedor"
+  ORDER 1181
+
+ADD FIELD "inf-digVal" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Dig Val - XML Original do Fornecedor"
+  FORMAT "x(30)"
+  INITIAL ""
+  LABEL "Dig Val"
+  POSITION 147
+  MAX-WIDTH 60
+  COLUMN-LABEL "Dig Val"
+  HELP "Dig Val - XML Original do Fornecedor"
+  ORDER 1191
+
+ADD FIELD "dir-arquivo" OF "nfe-nota-fiscal-rec" AS character 
+  DESCRIPTION "Diretorio Arquivo XML"
+  FORMAT "x(256)"
+  INITIAL ""
+  LABEL "Diretorio Arquivo XML"
+  POSITION 148
+  MAX-WIDTH 512
+  COLUMN-LABEL "Dir XML"
+  HELP "Diretorio Arquivo XML"
+  ORDER 1201
+
+ADD INDEX "chave-acesso" ON "nfe-nota-fiscal-rec" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+
+ADD INDEX "ch-param" ON "nfe-nota-fiscal-rec" 
+  AREA "Schema Area"
+  INDEX-FIELD "cod-estabel" ASCENDING 
+  INDEX-FIELD "ide-Serie" ASCENDING 
+  INDEX-FIELD "ide-nNF" ASCENDING 
+  INDEX-FIELD "nome-abrev" ASCENDING 
+  INDEX-FIELD "ide-dEmi" ASCENDING 
+
+ADD TABLE "nfe-param-rec"
+  AREA "Schema Area"
+  LABEL "Tabela de Parametros"
+  DESCRIPTION "Tabela de Parametros"
+  DUMP-NAME "nfe006"
+
+ADD FIELD "cod-parametro" OF "nfe-param-rec" AS character 
+  DESCRIPTION "C¢digo do Parametro"
+  FORMAT "x(30)"
+  INITIAL ""
+  LABEL "C¢digo do Parametro"
+  POSITION 2
+  MAX-WIDTH 60
+  COLUMN-LABEL "Cod. Parametro"
+  HELP "C¢digo do Parametro"
+  ORDER 10
+  MANDATORY
+
+ADD FIELD "desc-parametro" OF "nfe-param-rec" AS character 
+  DESCRIPTION "Descriá∆o do Parametro"
+  FORMAT "x(250)"
+  INITIAL ""
+  LABEL "Descriá∆o do Parametro"
+  POSITION 3
+  MAX-WIDTH 500
+  COLUMN-LABEL "Desc. Parametro"
+  HELP "Descriá∆o do Parametro"
+  ORDER 20
+
+ADD INDEX "ix_codigo" ON "nfe-param-rec" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "cod-parametro" ASCENDING 
+
+ADD TABLE "nfe-relac-doc-nota-lote"
+  AREA "Schema Area"
+  LABEL "Relacionamento de Docto/Nota POr lote"
+  DESCRIPTION "Relacionamento de Docto/Nota"
+  DUMP-NAME "nfe011-1"
+
+ADD FIELD "chave-acesso-nfe" OF "nfe-relac-doc-nota-lote" AS character 
+  DESCRIPTION "Chave Acesso do SEFAZ"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave Acesso Sefaz"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave Acesso"
+  HELP "Chave Acesso do SEFAZ"
+  ORDER 40
+
+ADD FIELD "seq-item" OF "nfe-relac-doc-nota-lote" AS integer 
+  DESCRIPTION "Sequencia do Item na NF-e"
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Sequencia"
+  POSITION 3
+  MAX-WIDTH 4
+  COLUMN-LABEL "Seq"
+  HELP "Sequencia do Item na NF-e"
+  ORDER 50
+
+ADD FIELD "serie" OF "nfe-relac-doc-nota-lote" AS character 
+  DESCRIPTION "SÇrie do Docto ou Nota Referenciada"
+  FORMAT "x(5)"
+  INITIAL ""
+  LABEL "SÇrie"
+  POSITION 4
+  MAX-WIDTH 10
+  COLUMN-LABEL "Ser"
+  HELP "SÇrie do Docto ou Nota Referenciada"
+  ORDER 60
+
+ADD FIELD "nr-docto-nota" OF "nfe-relac-doc-nota-lote" AS character 
+  DESCRIPTION "N£mero do Docto ou Nota Referenciada"
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Docto/Nota"
+  POSITION 5
+  MAX-WIDTH 32
+  COLUMN-LABEL "Docto/Nota"
+  HELP "N£mero do Docto ou Nota Referenciada"
+  ORDER 70
+
+ADD FIELD "cod-emitente" OF "nfe-relac-doc-nota-lote" AS integer 
+  DESCRIPTION "Codigo do Emitente"
+  FORMAT ">>>>>>>>9"
+  INITIAL "0"
+  LABEL "Emitente"
+  POSITION 6
+  MAX-WIDTH 4
+  COLUMN-LABEL "Emit"
+  HELP "Codigo do Emitente"
+  ORDER 80
+
+ADD FIELD "nat-operacao" OF "nfe-relac-doc-nota-lote" AS character 
+  DESCRIPTION "Natureza de Operaá∆o do Docto Referenciado"
+  FORMAT "x(6)"
+  INITIAL ""
+  LABEL "Nat Operaá∆o"
+  POSITION 7
+  MAX-WIDTH 12
+  COLUMN-LABEL "Nat Oper"
+  HELP "Natureza de Operaá∆o do Docto Referenciado"
+  ORDER 90
+
+ADD FIELD "it-codigo" OF "nfe-relac-doc-nota-lote" AS character 
+  DESCRIPTION "C¢digo do Item"
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Item"
+  POSITION 8
+  MAX-WIDTH 32
+  COLUMN-LABEL "Item"
+  HELP "C¢digo do Item"
+  ORDER 100
+
+ADD FIELD "cod-refer" OF "nfe-relac-doc-nota-lote" AS character 
+  DESCRIPTION "Informe o codigo da Referencia - prod acabado controlado por referencia"
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "Referància"
+  POSITION 9
+  MAX-WIDTH 16
+  COLUMN-LABEL "Refer"
+  HELP "Informe o codigo da Referencia - prod acab controlado por refer"
+  ORDER 110
+
+ADD FIELD "cod-estabel" OF "nfe-relac-doc-nota-lote" AS character 
+  DESCRIPTION "Estabelecimento"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Estabelecimento"
+  POSITION 10
+  MAX-WIDTH 6
+  COLUMN-LABEL "Estab"
+  HELP "Estabelecimento"
+  ORDER 120
+
+ADD FIELD "sequencia" OF "nfe-relac-doc-nota-lote" AS integer 
+  DESCRIPTION "Sequància"
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Sequància"
+  POSITION 11
+  MAX-WIDTH 4
+  COLUMN-LABEL "Seq"
+  HELP "Sequància"
+  ORDER 130
+
+ADD FIELD "quantidade" OF "nfe-relac-doc-nota-lote" AS decimal 
+  DESCRIPTION "Quantidade do Item"
+  FORMAT ">>>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Quantidade do Item"
+  POSITION 12
+  MAX-WIDTH 19
+  COLUMN-LABEL "Qtde Item"
+  HELP "Quantidade do Item"
+  DECIMALS 4
+  ORDER 140
+
+ADD FIELD "nr-ord-produ" OF "nfe-relac-doc-nota-lote" AS integer 
+  DESCRIPTION "Ordem de Producao"
+  FORMAT ">>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Ordem de Producao"
+  POSITION 13
+  MAX-WIDTH 4
+  COLUMN-LABEL "Ord Prod"
+  HELP "Ordem de Producao"
+  ORDER 150
+
+ADD FIELD "cod-depos" OF "nfe-relac-doc-nota-lote" AS character 
+  DESCRIPTION "Codigo do Deposito"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Deposito"
+  POSITION 14
+  MAX-WIDTH 6
+  COLUMN-LABEL "Deposito"
+  HELP "Codigo do Deposito"
+  ORDER 160
+
+ADD FIELD "cod-localiz" OF "nfe-relac-doc-nota-lote" AS character 
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Localizacao"
+  POSITION 15
+  MAX-WIDTH 20
+  COLUMN-LABEL "Localizacao"
+  ORDER 170
+
+ADD FIELD "lote" OF "nfe-relac-doc-nota-lote" AS character 
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Lote/Serie"
+  POSITION 16
+  MAX-WIDTH 20
+  COLUMN-LABEL "Lote/Serie"
+  ORDER 180
+
+ADD INDEX "ix_docto" ON "nfe-relac-doc-nota-lote" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+  INDEX-FIELD "seq-item" ASCENDING 
+  INDEX-FIELD "serie" ASCENDING 
+  INDEX-FIELD "nr-docto-nota" ASCENDING 
+  INDEX-FIELD "cod-emitente" ASCENDING 
+  INDEX-FIELD "nat-operacao" ASCENDING 
+  INDEX-FIELD "it-codigo" ASCENDING 
+  INDEX-FIELD "cod-refer" ASCENDING 
+  INDEX-FIELD "sequencia" ASCENDING 
+  INDEX-FIELD "lote" ASCENDING 
+
+ADD INDEX "ix_nota" ON "nfe-relac-doc-nota-lote" 
+  AREA "Schema Area"
+  UNIQUE
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+  INDEX-FIELD "seq-item" ASCENDING 
+  INDEX-FIELD "cod-estabel" ASCENDING 
+  INDEX-FIELD "serie" ASCENDING 
+  INDEX-FIELD "nr-docto-nota" ASCENDING 
+  INDEX-FIELD "sequencia" ASCENDING 
+  INDEX-FIELD "it-codigo" ASCENDING 
+  INDEX-FIELD "lote" ASCENDING 
+
+ADD TABLE "nfe-relac-doc-nota-rec"
+  AREA "Schema Area"
+  LABEL "Relacionamento de Docto/Nota"
+  DESCRIPTION "Relacionamento de Docto/Nota"
+  DUMP-NAME "nfe011"
+
+ADD FIELD "chave-acesso-nfe" OF "nfe-relac-doc-nota-rec" AS character 
+  DESCRIPTION "Chave Acesso do SEFAZ"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave Acesso Sefaz"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave Acesso"
+  HELP "Chave Acesso do SEFAZ"
+  ORDER 40
+
+ADD FIELD "seq-item" OF "nfe-relac-doc-nota-rec" AS integer 
+  DESCRIPTION "Sequencia do Item na NF-e"
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Sequencia"
+  POSITION 3
+  MAX-WIDTH 4
+  COLUMN-LABEL "Seq"
+  HELP "Sequencia do Item na NF-e"
+  ORDER 50
+
+ADD FIELD "serie" OF "nfe-relac-doc-nota-rec" AS character 
+  DESCRIPTION "SÇrie do Docto ou Nota Referenciada"
+  FORMAT "x(5)"
+  INITIAL ""
+  LABEL "SÇrie"
+  POSITION 4
+  MAX-WIDTH 10
+  COLUMN-LABEL "Ser"
+  HELP "SÇrie do Docto ou Nota Referenciada"
+  ORDER 60
+
+ADD FIELD "nr-docto-nota" OF "nfe-relac-doc-nota-rec" AS character 
+  DESCRIPTION "N£mero do Docto ou Nota Referenciada"
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Docto/Nota"
+  POSITION 5
+  MAX-WIDTH 32
+  COLUMN-LABEL "Docto/Nota"
+  HELP "N£mero do Docto ou Nota Referenciada"
+  ORDER 70
+
+ADD FIELD "cod-emitente" OF "nfe-relac-doc-nota-rec" AS integer 
+  DESCRIPTION "Codigo do Emitente"
+  FORMAT ">>>>>>>>9"
+  INITIAL "0"
+  LABEL "Emitente"
+  POSITION 6
+  MAX-WIDTH 4
+  COLUMN-LABEL "Emit"
+  HELP "Codigo do Emitente"
+  ORDER 80
+
+ADD FIELD "nat-operacao" OF "nfe-relac-doc-nota-rec" AS character 
+  DESCRIPTION "Natureza de Operaá∆o do Docto Referenciado"
+  FORMAT "x(6)"
+  INITIAL ""
+  LABEL "Nat Operaá∆o"
+  POSITION 7
+  MAX-WIDTH 12
+  COLUMN-LABEL "Nat Oper"
+  HELP "Natureza de Operaá∆o do Docto Referenciado"
+  ORDER 90
+
+ADD FIELD "it-codigo" OF "nfe-relac-doc-nota-rec" AS character 
+  DESCRIPTION "C¢digo do Item"
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Item"
+  POSITION 8
+  MAX-WIDTH 32
+  COLUMN-LABEL "Item"
+  HELP "C¢digo do Item"
+  ORDER 100
+
+ADD FIELD "cod-refer" OF "nfe-relac-doc-nota-rec" AS character 
+  DESCRIPTION "Informe o codigo da Referencia - prod acabado controlado por referencia"
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "Referància"
+  POSITION 9
+  MAX-WIDTH 16
+  COLUMN-LABEL "Refer"
+  HELP "Informe o codigo da Referencia - prod acab controlado por refer"
+  ORDER 110
+
+ADD FIELD "cod-estabel" OF "nfe-relac-doc-nota-rec" AS character 
+  DESCRIPTION "Estabelecimento"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Estabelecimento"
+  POSITION 10
+  MAX-WIDTH 6
+  COLUMN-LABEL "Estab"
+  HELP "Estabelecimento"
+  ORDER 120
+
+ADD FIELD "sequencia" OF "nfe-relac-doc-nota-rec" AS integer 
+  DESCRIPTION "Sequància"
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Sequància"
+  POSITION 11
+  MAX-WIDTH 4
+  COLUMN-LABEL "Seq"
+  HELP "Sequància"
+  ORDER 130
+
+ADD FIELD "quantidade" OF "nfe-relac-doc-nota-rec" AS decimal 
+  DESCRIPTION "Quantidade do Item"
+  FORMAT ">>>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Quantidade do Item"
+  POSITION 12
+  MAX-WIDTH 19
+  COLUMN-LABEL "Qtde Item"
+  HELP "Quantidade do Item"
+  DECIMALS 4
+  ORDER 140
+
+ADD FIELD "nr-ord-produ" OF "nfe-relac-doc-nota-rec" AS integer 
+  DESCRIPTION "Ordem de Producao"
+  FORMAT ">>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Ordem de Producao"
+  POSITION 13
+  MAX-WIDTH 4
+  COLUMN-LABEL "Ord Prod"
+  HELP "Ordem de Producao"
+  ORDER 150
+
+ADD FIELD "cod-depos" OF "nfe-relac-doc-nota-rec" AS character 
+  DESCRIPTION "Codigo do Deposito"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Deposito"
+  POSITION 14
+  MAX-WIDTH 6
+  COLUMN-LABEL "Deposito"
+  HELP "Codigo do Deposito"
+  ORDER 160
+
+ADD FIELD "cod-localiz" OF "nfe-relac-doc-nota-rec" AS character 
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Localizacao"
+  POSITION 15
+  MAX-WIDTH 20
+  COLUMN-LABEL "Localizacao"
+  ORDER 170
+
+ADD FIELD "lote" OF "nfe-relac-doc-nota-rec" AS character 
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Lote/Serie"
+  POSITION 16
+  MAX-WIDTH 20
+  COLUMN-LABEL "Lote/Serie"
+  ORDER 180
+
+ADD INDEX "ix_docto" ON "nfe-relac-doc-nota-rec" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+  INDEX-FIELD "seq-item" ASCENDING 
+  INDEX-FIELD "serie" ASCENDING 
+  INDEX-FIELD "nr-docto-nota" ASCENDING 
+  INDEX-FIELD "cod-emitente" ASCENDING 
+  INDEX-FIELD "nat-operacao" ASCENDING 
+  INDEX-FIELD "it-codigo" ASCENDING 
+  INDEX-FIELD "cod-refer" ASCENDING 
+  INDEX-FIELD "sequencia" ASCENDING 
+
+ADD INDEX "ix_nota" ON "nfe-relac-doc-nota-rec" 
+  AREA "Schema Area"
+  UNIQUE
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+  INDEX-FIELD "seq-item" ASCENDING 
+  INDEX-FIELD "cod-estabel" ASCENDING 
+  INDEX-FIELD "serie" ASCENDING 
+  INDEX-FIELD "nr-docto-nota" ASCENDING 
+  INDEX-FIELD "sequencia" ASCENDING 
+  INDEX-FIELD "it-codigo" ASCENDING 
+
+ADD TABLE "nfe-relac-ordem-rec"
+  AREA "Schema Area"
+  LABEL "Relacionamento de Ordens"
+  DESCRIPTION "Relacionamento de Ordens"
+  DUMP-NAME "nfe009"
+
+ADD FIELD "chave-acesso-nfe" OF "nfe-relac-ordem-rec" AS character 
+  DESCRIPTION "Chave Acesso do SEFAZ"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave Acesso Sefaz"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave Acesso"
+  HELP "Chave Acesso do SEFAZ"
+  ORDER 40
+
+ADD FIELD "seq-item" OF "nfe-relac-ordem-rec" AS integer 
+  DESCRIPTION "Sequencia do Item na NF-e"
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Sequencia"
+  POSITION 3
+  MAX-WIDTH 4
+  COLUMN-LABEL "Seq"
+  HELP "Sequencia do Item na NF-e"
+  ORDER 50
+
+ADD FIELD "num-pedido" OF "nfe-relac-ordem-rec" AS integer 
+  DESCRIPTION "Numero do Pedido"
+  FORMAT ">>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Num Pedido"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "Pedido"
+  HELP "Numero do Pedido"
+  ORDER 60
+
+ADD FIELD "numero-ordem" OF "nfe-relac-ordem-rec" AS integer 
+  DESCRIPTION "Numero da Ordem"
+  FORMAT "zzzzz9.99"
+  INITIAL "0"
+  LABEL "Num Ordem"
+  POSITION 5
+  MAX-WIDTH 4
+  COLUMN-LABEL "Ordem"
+  HELP "Numero da Ordem"
+  ORDER 70
+
+ADD FIELD "parcela-oc" OF "nfe-relac-ordem-rec" AS integer 
+  DESCRIPTION "Parcela da Ordem de Compra"
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Parcela"
+  POSITION 6
+  MAX-WIDTH 4
+  COLUMN-LABEL "/P"
+  HELP "Parcela da Ordem de Compra"
+  ORDER 80
+
+ADD FIELD "quantidade" OF "nfe-relac-ordem-rec" AS decimal 
+  DESCRIPTION "Quantidade do Item"
+  FORMAT ">>>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Quantidade do Item"
+  POSITION 7
+  MAX-WIDTH 19
+  COLUMN-LABEL "Qtde Item"
+  HELP "Quantidade do Item"
+  DECIMALS 4
+  ORDER 90
+
+ADD FIELD "vl-unitario" OF "nfe-relac-ordem-rec" AS decimal 
+  DESCRIPTION "Valor Unit†rio"
+  FORMAT ">>>,>>>,>>>,>>9.99999"
+  INITIAL "0"
+  LABEL "Valor Unit†rio"
+  POSITION 9
+  MAX-WIDTH 19
+  COLUMN-LABEL "Vl Unit"
+  HELP "Valor Unit†rio"
+  DECIMALS 5
+  ORDER 120
+
+ADD FIELD "conta-contabil" OF "nfe-relac-ordem-rec" AS character 
+  DESCRIPTION "Conta Contabil"
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Conta Contabil"
+  POSITION 10
+  MAX-WIDTH 32
+  COLUMN-LABEL "Conta Contab"
+  HELP "Conta Contabil"
+  ORDER 130
+
+ADD FIELD "nr-ord-produ" OF "nfe-relac-ordem-rec" AS integer 
+  DESCRIPTION "Ordem de Producao"
+  FORMAT ">>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Ordem de Producao"
+  POSITION 11
+  MAX-WIDTH 4
+  COLUMN-LABEL "Ord Prod"
+  HELP "Ordem de Producao"
+  ORDER 140
+
+ADD FIELD "seq-item-it-fisico" OF "nfe-relac-ordem-rec" AS integer 
+  DESCRIPTION "Sequencia do Item na tabela it-doc-est"
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Sequencia Item Fisico"
+  POSITION 12
+  MAX-WIDTH 4
+  COLUMN-LABEL "Seq It Fisico"
+  HELP "Sequencia do Item na tabela it-doc-est"
+  ORDER 150
+
+ADD INDEX "ix_codigo" ON "nfe-relac-ordem-rec" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+  INDEX-FIELD "seq-item" ASCENDING 
+  INDEX-FIELD "num-pedido" ASCENDING 
+  INDEX-FIELD "numero-ordem" ASCENDING 
+  INDEX-FIELD "parcela-oc" ASCENDING 
+
+ADD INDEX "idx-ordem" ON "nfe-relac-ordem-rec" 
+  AREA "Schema Area"
+  INDEX-FIELD "numero-ordem" ASCENDING 
+  INDEX-FIELD "parcela-oc" ASCENDING 
+
+ADD TABLE "nfe-relac-ser-lote-rec"
+  AREA "Schema Area"
+  LABEL "Relacionamento de Serie/Lote"
+  DESCRIPTION "Relacionamento de Serie/Lote"
+  DUMP-NAME "nfe010"
+
+ADD FIELD "chave-acesso-nfe" OF "nfe-relac-ser-lote-rec" AS character 
+  DESCRIPTION "Chave Acesso do SEFAZ"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave Acesso Sefaz"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave Acesso"
+  HELP "Chave Acesso do SEFAZ"
+  ORDER 40
+
+ADD FIELD "seq-item" OF "nfe-relac-ser-lote-rec" AS integer 
+  DESCRIPTION "Sequencia do Item na NF-e"
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Sequencia"
+  POSITION 3
+  MAX-WIDTH 4
+  COLUMN-LABEL "Seq"
+  HELP "Sequencia do Item na NF-e"
+  ORDER 50
+
+ADD FIELD "ser-lote" OF "nfe-relac-ser-lote-rec" AS character 
+  DESCRIPTION "Serie/Lote"
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Serie/Lote"
+  POSITION 4
+  MAX-WIDTH 20
+  COLUMN-LABEL "Serie/Lote"
+  HELP "Serie/Lote"
+  ORDER 60
+
+ADD FIELD "quantidade" OF "nfe-relac-ser-lote-rec" AS decimal 
+  DESCRIPTION "Quantidade SÇrie/Lote"
+  FORMAT ">>>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Quantidade"
+  POSITION 5
+  MAX-WIDTH 19
+  COLUMN-LABEL "Qtde"
+  HELP "Quantidade SÇrie/Lote"
+  DECIMALS 4
+  ORDER 70
+
+ADD FIELD "dt-vali-lote" OF "nfe-relac-ser-lote-rec" AS date 
+  DESCRIPTION "Data de Validade do Lote"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Dt Vali Lote"
+  POSITION 6
+  MAX-WIDTH 4
+  COLUMN-LABEL "Dt VLote"
+  HELP "Data de Validade do Lote"
+  ORDER 80
+
+ADD FIELD "cod-depos" OF "nfe-relac-ser-lote-rec" AS character 
+  DESCRIPTION "Codigo do Deposito"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Deposito"
+  POSITION 7
+  MAX-WIDTH 6
+  COLUMN-LABEL "Deposito"
+  HELP "Codigo do Deposito"
+  ORDER 90
+
+ADD FIELD "cod-localiz" OF "nfe-relac-ser-lote-rec" AS character 
+  DESCRIPTION "Codigo da Localizacao"
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Localizacao"
+  POSITION 8
+  MAX-WIDTH 20
+  COLUMN-LABEL "Localiz"
+  HELP "Codigo da Localizacao"
+  ORDER 100
+
+ADD INDEX "ix_codigo" ON "nfe-relac-ser-lote-rec" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+  INDEX-FIELD "seq-item" ASCENDING 
+  INDEX-FIELD "ser-lote" ASCENDING 
+  INDEX-FIELD "cod-depos" ASCENDING 
+  INDEX-FIELD "cod-localiz" ASCENDING 
+
+ADD INDEX "ix_dep_loc" ON "nfe-relac-ser-lote-rec" 
+  AREA "Schema Area"
+  INDEX-FIELD "cod-depos" ASCENDING 
+  INDEX-FIELD "cod-localiz" ASCENDING 
+
+ADD TABLE "nfe-retorna-forn-rec"
+  AREA "Schema Area"
+  LABEL "Erro NFe"
+  DUMP-NAME "nfe007"
+
+ADD FIELD "codigo" OF "nfe-retorna-forn-rec" AS integer 
+  DESCRIPTION "C¢digo da Situaá∆o"
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "C¢digo"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "C¢digo"
+  HELP "C¢digo da Situaá∆o"
+  ORDER 10
+
+ADD FIELD "cod-status" OF "nfe-retorna-forn-rec" AS character 
+  DESCRIPTION "C¢digo do Status"
+  FORMAT "X(10)"
+  INITIAL ""
+  LABEL "C¢digo Status"
+  POSITION 3
+  MAX-WIDTH 14
+  COLUMN-LABEL "C¢digo Status"
+  HELP "C¢digo do Status"
+  ORDER 20
+
+ADD FIELD "desc-status" OF "nfe-retorna-forn-rec" AS character 
+  DESCRIPTION "Descriá∆o do Erro"
+  FORMAT "X(100)"
+  INITIAL ""
+  LABEL "Descriá∆o"
+  POSITION 4
+  MAX-WIDTH 200
+  COLUMN-LABEL "Descriá∆o"
+  HELP "Descriá∆o do Erro"
+  ORDER 30
+
+ADD INDEX "ix_codigo" ON "nfe-retorna-forn-rec" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "codigo" ASCENDING 
+  INDEX-FIELD "cod-status" ASCENDING 
+
+ADD TABLE "nfe-situacao-rec"
+  AREA "Schema Area"
+  LABEL "Situaá∆o da Nota Fiscal NFE"
+  DESCRIPTION "Situaá∆o da Nota Fiscal NFE"
+  DUMP-NAME "nfe013"
+
+ADD FIELD "cod-situacao" OF "nfe-situacao-rec" AS integer 
+  DESCRIPTION "Codigo da Situacao NFE"
+  FORMAT ">>>,>>9"
+  INITIAL "0"
+  LABEL "Codigo Situacao"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Situacao"
+  HELP "Codigo da Situacao NFE"
+  ORDER 10
+
+ADD FIELD "desc-situacao" OF "nfe-situacao-rec" AS character 
+  DESCRIPTION "Descricao da Situaá∆o"
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Descricao da Situaá∆o"
+  POSITION 3
+  MAX-WIDTH 120
+  COLUMN-LABEL "Desc Situacao"
+  HELP "Descricao da Situaá∆o"
+  ORDER 20
+
+ADD INDEX "ix_codigo" ON "nfe-situacao-rec" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "cod-situacao" ASCENDING 
+
+ADD TABLE "nfe-usuar-estab"
+  AREA "Schema Area"
+  LABEL "Usuario x Estabelecimento"
+  DESCRIPTION "Tabela de Usuario x Estabelecimento para o sistema de Recebimento Automatico NFE"
+  DUMP-NAME "nfe008"
+
+ADD FIELD "cod-usuario" OF "nfe-usuar-estab" AS character 
+  DESCRIPTION "C¢digo do usu†rio"
+  FORMAT "X(12)"
+  INITIAL ""
+  LABEL "Usu†rio"
+  POSITION 2
+  MAX-WIDTH 24
+  COLUMN-LABEL "Usu†rio"
+  HELP "C¢digo do usu†rio"
+  ORDER 10
+  MANDATORY
+
+ADD FIELD "cod-estabel" OF "nfe-usuar-estab" AS character 
+  DESCRIPTION "C¢digo do estabelecimento"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Estabelecimento"
+  POSITION 3
+  MAX-WIDTH 6
+  COLUMN-LABEL "Estab"
+  HELP "C¢digo do estabelecimento"
+  ORDER 20
+  MANDATORY
+
+ADD FIELD "lg-atualiza-if" OF "nfe-usuar-estab" AS logical 
+  DESCRIPTION "Permissao para Atualizar Relacionamento Item x Fornecedor"
+  FORMAT "yes/no"
+  INITIAL "no"
+  LABEL "Atualiza Relacionamento Item x Fornecedor"
+  POSITION 4
+  MAX-WIDTH 1
+  COLUMN-LABEL "Atualiza IF"
+  HELP "Permissao para Atualizar Relacionamento Item x Fornecedor"
+  ORDER 31
+
+ADD FIELD "lg-cons-sefaz" OF "nfe-usuar-estab" AS logical 
+  FORMAT "yes/no"
+  INITIAL "no"
+  POSITION 5
+  MAX-WIDTH 1
+  ORDER 40
+
+ADD FIELD "lg-rec-devol" OF "nfe-usuar-estab" AS logical 
+  DESCRIPTION "Permissao para receber devoluá∆o sem informar nf de origem"
+  FORMAT "yes/no"
+  INITIAL "no"
+  LABEL "Recebe devoluá∆o sem informar nf de origem"
+  POSITION 6
+  MAX-WIDTH 1
+  COLUMN-LABEL "Recebe Devol s/ origem"
+  HELP "Permissao para receber devoluá∆o sem informar nf de origem"
+  ORDER 30
+
+ADD FIELD "lg-so-auto" OF "nfe-usuar-estab" AS logical 
+  FORMAT "yes/no"
+  INITIAL "no"
+  LABEL "Receb. so Auto"
+  POSITION 7
+  MAX-WIDTH 1
+  COLUMN-LABEL "Receb. so Auto"
+  ORDER 50
+
+ADD INDEX "ix_codigo" ON "nfe-usuar-estab" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "cod-usuario" ASCENDING 
+  INDEX-FIELD "cod-estabel" ASCENDING 
+
+.
+PSC
+cpstream=ibm850
+.
+0000160397

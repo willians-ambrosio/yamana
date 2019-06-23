@@ -1,0 +1,818 @@
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                 Lay-out do Arquivo de Importa‡Æo de Contratos                          Folha:  01|
++----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Importa‡Æo de Contratos                                     |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 2                                                           |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                             | Formato | Conte£do | Decimais | Obrigat¢rio |           |
+|--------+---------------------------------------------------------------+---------+----------+----------+-------------+-----------|
+|    A   | Codigo do Registro (CCIN)                                     |     4   | Caracter |          |     Sim     |           |
+|    B   | 1-InclusÆo Contratos / 2-InclusÆo Itens / 3-Altera Pre‡o Itens|     1   | Inteiro  |          |     Sim     |           |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                 Lay-out do Arquivo de Importa‡Æo de Contratos                          Folha:  02|
++----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Importa‡Æo de Contratos                                     |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 31                                                          |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo do Registro (CC00)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Numero do Contrato                                      |    16   | Caracter |          |     Sim     |                 |
+|    C   | Imprime Contrato? (S/N)                                 |     1   | Logico   |          |     Sim     |                 |
+|    D   | Modalidade                                              |     2   | Inteiro  |          |     Sim     |                 |
+|    E   | Natureza (1-Compra / 2-Servico / 3-Beneficiamento)      |     1   | Inteiro  |          |     Sim     |                 |
+|    F   | Gestor Tecnico                                          |    12   | Caracter |          |     Sim     |                 |
+|    G   | Tipo do Frete (Pago/A Pagar)                            |     1   | Inteiro  |          |     Sim     |                 |
+|    H   | Variacao de Quantidade                                  |     5   | Decimal  |     2    |     Nao     |                 |
+|    I   | Variacao de Preco                                       |     5   | Decimal  |     2    |     Nao     |                 |
+|    J   | Codigo da Mensagem (Mensagem do Pedido de CC)           |     3   | Inteiro  |          |     Nao     |                 |
+|    K   | Cond. Pagto (Qdo 0 gerar condicao especif.)             |     3   | Inteiro  |          |     Sim     |                 |
+|    L   | Codigo do Transportador                                 |     5   | Inteiro  |          |     Sim     |                 |
+|    M   | Via de Transporte (Rodoviaria - Fluvial ...)            |     1   | Inteiro  |          |     Sim     |                 |
+|    N   | Preco Total                                             |    13   | Decimal  |     4    |     Sim     |                 |
+|    O   | Codigo do Comprador                                     |    12   | Caracter |          |     Sim     |                 |
+|    P   | Situacao (1-Nao Emitido / 2-Emitido / 3-Cancelado)      |     1   | Inteiro  |          |     Sim     |                 |
+|    Q   | Quantidade Total                                        |    15   | Decimal  |     4    |     Nao     |                 |
+|    R   | Quantidade em Saldo                                     |    15   | Decimal  |     4    |     Nao     |                 |
+|    S   | Saldo Valor                                             |    12   | Decimal  |     4    |     Nao     |                 |
+|    T   | Quantidade Recebida                                     |    15   | Decimal  |     4    |     Nao     |                 |
+|    U   | Valor Recebido                                          |    13   | Decimal  |     4    |     Nao     |                 |
+|    V   | Quantidade Liberada                                     |    15   | Decimal  |     4    |     Nao     |                 |
+|    W   | Valor Liberado                                          |    13   | Decimal  |     4    |     Nao     |                 |
+|    X   | Faturamento Minimo                                      |    13   | Decimal  |     4    |     Nao     |                 |
+|    Y   | Data Inicial                                            |     8   | Data     |          |     Sim     |                 |
+|    Z   | Data Final                                              |     8   | Data     |          |     Sim     |                 |
+|   AA   | Data da Emissao                                         |     8   | Data     |          |     Sim     |                 |
+|   AB   | Codigo do Fornecedor		               	           |     9   | Inteiro  |          |     Sim     |                 |            
+|   AC   | Estabelecimento                                         |     5   | Caracter |          |     Sim     |                 |
+|   AD   | Estabelecimento de Cobranca                             |     5   | Caracter |          |     Sim     |                 |
+|   AE   | Estabelecimento de Origem                               |     5   | Caracter |          |     Sim     |                 |
+|   AF   | Estabelecimento de Entrega                              |     5   | Caracter |          |     Sim     |                 |
+|   AG   | Limite Valor (dec-2)                                    |    13   | Caracter |     4    |     Sim     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+ 
+ 
+ 
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                 Lay-out do Arquivo de Importa‡Æo de Contratos                          Folha:  03|
++----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Importa‡Æo de Contratos                                     |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 19                                                          |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo do Registro (CC01)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Numero do Contrato                                      |    16   | Caracter |          |     Sim     |                 |
+|    C   | Descrição do Contrato                                   |    32   | Caracter |          |     Sim     |                 |
+|    D   | Valor Pago                                              |    13   | Decimal  |          |     Sim     |                 |
+|    E   | Codigo da Moeda                                         |     2   | Inteiro  |          |     Sim     |                 |
+|    F   | Contrato Ativo (S/N)                                    |     1   | Lógico   |          |     Sim     |                 |
+|    G   | Tipo de Fornecimento                                    |     2   | Inteiro  |          |     Sim     |                 |
+|    H   | Contato (deixar em branco)                              |    12   | Caracter |          |     Nao     |                 |
+|    I   | Indicador de Controle Recebimento 1-Total da nota 2-Item|     1   | Inteiro  |          |     Sim     |                 |
+|    J   | Saldo em Quantidade do Contrato                         |    15   | Decimal  |     4    |     Nao     |                 |
+|    K   | Saldo em Quantidade Liberado para Recebimento           |    15   | Decimal  |     4    |     Nao     |                 |
+|    L   | Saldo em Valor do Contrato                              |    13   | Decimal  |     4    |     Nao     |                 |
+|    M   | Saldo em Valor Liberado para Recebimento                |    13   | Decimal  |     4    |     Nao     |                 |
+|    N   | Codigo do Projeto                                       |    12   | Caracter |          |     Nao     |                 |
+|    O   | Condicao de Faturamento                                 |     3   | Inteiro  |          |     Sim     |                 |
+|    P   | Data Ultima alteracao efetuada na clausula do contrato  |     8   | Data     |          |     Sim     |                 |
+|    Q   | Contato                                                 |    40   | Caracter |          |     Nao     |                 |
+|    R   | Narrativa                                               |  2000   | Caracter |          |     Sim     |                 |
+|    S   | Ordem Investimentos                                     |     9   | Inteiro  |          |     Nao     |                 |
+|    T   | Percentual Alerta Saldo                                 |     4   | Decimal  |     2    |     Nao     |                 |
+|    U   | E-mail Alerta                                           |    40   | Caracter |          |     Nao     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+ 
+
+ 
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                 Lay-out do Arquivo de Importação de Contratos                          Folha:  04|
++----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Pedido de Compra Automático                                 |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 19                                                          |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigatório |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo do Registro (PD00)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Estabelecimento Entrega                                 |     5   | Caracter |          |     Sim     |                 |
+|    C   | Estabelecimento Cobrança                                |     5   | Caracter |          |     Sim     |                 |
+|    D   | Condição de Pagamento                                   |     4   | Inteiro  |          |     Sim     |                 |
+|    E   | Emitente Entrega                                        |     9   | Inteiro  |          |     Não     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                 Lay-out do Arquivo de Importa‡Æo de Contratos                          Folha:  05|
++----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Item do Contrato                                            |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 42                                                          |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|   A    | Codigo do Registro (IC00)                               |     4   | Caracter |          |     Sim     |                 |
+|   B    | Numero do Contrato                                      |    16   | Caracter |          |     Sim     |                 |
+|   C    | Preco Unitario                                          |    11   | Decimal  |     5    |     Sim     |                 |
+|   D    | Quantidade Minima                                       |    11   | Decimal  |     4    |     Nao     |                 |
+|   E    | Saldo a receber em valor para o item                    |    11   | Decimal  |     4    |     Nao     |                 |
+|   F    | Valor do Faturamento Minimo Fornecedor para o Item      |    12   | Decimal  |     4    |     Nao     |                 |
+|   G    | Codigo da Moeda                                         |     2   | Inteiro  |          |     Sim     |                 |
+|   H    | Contrato Ativo                                          |     1   | Logico   |          |     Sim     |                 |
+|   I    | Codigo do Item                                          |    16   | Caracter |          |     Sim     |                 |
+|   J    | Valor Total do Item no Contrato                         |    13   | Decimal  |     4    |     Sim     |                 |
+|   K    | Codigo da Referência                                    |     8   | Caracter |          |     Sim     |                 |
+|   L    | IPI Incluso                                             |     1   | Logico   |          |     Sim     |                 |
+|   M    | ICMS                                                    |     1   | Inteiro  |          |     Sim     |                 |
+|   N    | Unidade de Medida                                       |     2   | Caracter |          |     Sim     |                 |
+|   O    | Contato                                                 |    12   | Caracter |          |     Sim     |                 |
+|   P    | Sequencia do Item                                       |     4   | Inteiro  |          |     Sim     |                 |
+|   Q    | Frequencia                                              |     3   | Inteiro  |          |     Sim     |                 |
+|   R    | Situacao:1-Nao emitido 2-Emitido 3-Cancelado 4-Atendido |     1   | Inteiro  |          |     Sim     |                 |
+|   S    | Quantidade Total                                        |    15   | Decimal  |     4    |     Nao     |                 |
+|   T    | Unidade do Contrato                                     |     1   | Inteiro  |          |     Sim     |                 |
+|   U    | Quantidade em Saldo                                     |    13   | Decimal  |     4    |     Sim     |                 |
+|   V    | Valor Recebido                                          |    15   | Decimal  |     4    |     Nao     |                 |
+|   W    | Quantidade Recebida                                     |    15   | Decimal  |     4    |     Nao     |                 |
+|   X    | Controle: 1 - Quantidade e Preco fixos 2 - qtde aberta  |         |          |          |             |                 |
+|        | Preco fixo 3 - Limite de custo                          |     1   | Inteiro  |          |     Sim     |                 |
+|   Y    | Saldo em Qtde do Contrato Liberado para Recebimento     |    15   | Decimal  |     4    |     Nao     |                 |
+|   Z    | Saldo em Valor do Contrato Liberado                     |    15   | Decimal  |     4    |     Nao     |                 |
+|  AA    | Item Controlado por Evento  (S/N)                       |     1   | Logico   |          |     Sim     |                 |
+|  AB    | Caracteristica : 1 - Aditivo 2 - Redutor                |     1   | Inteiro  |          |     Sim     |                 |
+|  AC    | Valor Obrigat¢rio ao Contrato e Sempre Pago             |     1   | Logico   |          |     Sim     |                 |
+|  AD    | Multa                                                   |     1   | Logico   |          |     Sim     |                 |
+|  AE    | Percentual Multa diario                                 |     5   | Decimal  |     2    |     Nao     |                 |
+|  AF    | Percentual Multa Limite                                 |     5   | Decimal  |     2    |     Nao     |                 |
+|  AG    | Deposito                                                |     3   | Caracter |          |     Sim     |                 |
+|  AH    | Aliquota ICMS                                           |     5   | Decimal  |     2    |     Sim     |                 |
+|  AI    | Aliquota IPI                                            |     5   | Decimal  |     2    |     Sim     |                 |
+|  AJ    | Aliquota ISS                                            |     5   | Decimal  |     2    |     Sim     |                 |
+|  AK    | Tipo de Despesa                                         |     3   | Inteiro  |          |     Sim     |                 |
+|  AL    | Condicao de Pagamento                                   |     3   | Inteiro  |          |     Sim     |                 |
+|  AM    | Frete                                                   |     1   | Logico   |          |     Sim     |                 |
+|  AN    | Codigo do Fornecedor                                    |     9   | Inteiro  |          |     Sim     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+  
+ 
+ 
+ 
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                 Lay-out do Arquivo de Importa‡Æo de Contratos                          Folha:  06|
++----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Item do Contrato                                            |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 23                                                          |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo do Registro (IC01)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Numero do Contrato                                      |    16   | Caracter |          |     Sim     |                 |
+|    C   | Sequencia do Item                                       |     4   | Inteiro  |          |     Sim     |                 |
+|    D   | Preco Fornecedor                                        |    16   | Decimal  |     5    |     Sim     |                 |
+|    E   | Taxa Financeira (Incluso/Nao Incluso)                   |     1   | Logico   |          |     Sim     |                 |
+|    F   | Valor Frete                                             |    13   | Decimal  |     4    |     Sim     |                 |
+|    G   | Valor Taxa                                              |     7   | Decimal  |     4    |     Sim     |                 |
+|    H   | Prazo Entrega                                           |     4   | Inteiro  |          |     Sim     |                 |
+|    I   | Data Preco Unitario                                     |     8   | Data     |          |     Sim     |                 |
+|    J   | Preco Base                                              |    16   | Decimal  |     5    |     Sim     |                 |
+|    K   | Comprador                                               |    12   | Caracter |          |     Sim     |                 |
+|    L   | Percentual de Desconto                                  |     5   | Decimal  |     2    |     Sim     |                 |
+|    M   | Narrativa Compra                                        |    76   | Caracter |          |     Sim     |                 |
+|    N   | Controle (1 - Medicao 2 - Ordem 3 - Programacao)        |     1   | Inteiro  |          |     Sim     |                 |
+|    O   | Preco Unitario Final                                    |    16   | Decimal  |     5    |     Sim     |                 |
+|    P   | Data Preco Base                                         |     8   | Data     |          |     Sim     |                 |
+|    Q   | Saldo Quantidade Recebido                               |    12   | Decimal  |     4    |     Sim     |                 |
+|    R   | Saldo Valor Recebido                                    |    12   | Decimal  |     4    |     Sim     |                 |
+|    S   | Numero Ordem                                            |     8   | Inteiro  |          |     Sim     |                 |
+|    T   | Narrativa                                               |  2000   | Caracter |          |     Nao     |                 |
+|    U   | Percentual de compra                                    |     3   | Inteiro  |          |     Sim     |                 |
+|    V   | Ordem Investimentos                                     |     9   | Inteiro  |          |     Nao     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+ 
+ 
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                 Lay-out do Arquivo de Importa‡Æo de Contratos                          Folha:  07|
++----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Matriz de Rateio Contrato                                   |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 6                                                           |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo do Registro (MC00)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Numero do Contrato                                      |    16   | Caracter |          |     Sim     |                 |
+|    C   | Conta                                                   |    20   | Caracter |          |     Sim     |                 |
+|    D   | Centro Custo                                            |    20   | Caracter |          |     Sim     |                 |
+|    E   | Percentual de Rateio                                    |     5   | Decimal  |     2    |     Sim     |                 |
+|    F   | Unidade de Neg¢cio                                      |     3   | Caracter |          |     Não     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+ 
+ 
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                 Lay-out do Arquivo de Importa‡Æo de Contratos                          Folha:  08|
++----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Matriz de Rateio Item                                       |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 9                                                           |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo do Registro (MI00)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Numero do Contrato                                      |    16   | Caracter |          |     Sim     |                 |
+|    C   | Conta                                                   |    20   | Caracter |          |     Sim     |                 |
+|    D   | Centro Custo                                            |    20   | Caracter |          |     Sim     |                 |
+|    E   | Percentual de Rateio                                    |     5   | Decimal  |     2    |     Sim     |                 |
+|    F   | Sequencia do Item                                       |     4   | Inteiro  |          |     Sim     |                 |
+|    G   | Codigo do Item                                          |    16   | Caracter |          |     Sim     |                 |
+|    H   | Unidade de Neg¢cio                                      |     3   | Caracter |          |     Não     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+ 
+ 
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                 Lay-out do Arquivo de Importa‡Æo de Contratos                          Folha:  09|
++----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Reajuste Formula                                            |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 15                                                          | 
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo do Registro (FR00)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Numero do Contrato                                      |    16   | Caracter |          |     Sim     |                 |
+|    C   | Data Preco Base                                         |     8   | Data     |          |     Sim     |                 |
+|    D   | Sequencia do Item                                       |     4   | Inteiro  |          |     Sim     |                 |
+|    E   | Codigo da Moeda [1]                                     |     2   | Inteiro  |          |     Sim     |                 |
+|    F   | Codigo da Moeda [2]                                     |     2   | Inteiro  |          |     Sim     |                 |
+|    G   | Codigo da Moeda [3]                                     |     2   | Inteiro  |          |     Sim     |                 |
+|    H   | Codigo da Moeda [4]                                     |     2   | Inteiro  |          |     Sim     |                 |
+|    I   | Codigo da Moeda [5]                                     |     2   | Inteiro  |          |     Sim     |                 |
+|    J   | Data do Proximo Reajuste                                |     8   | Data     |          |     Sim     |                 |
+|    K   | Periodo ( 1 - Mensal / 2 - Bimestral / 3 - Trimestral   |         |          |          |             |                 |
+|        | 4 - Semestral / 5 - Anual / 6 - Informado)              |     1   | Inteiro  |          |     Sim     |                 |
+|    L   | Reajuste Automatico                                     |     1   | Logico   |          |     Sim     |                 |
+|    M   | Data indice                                             |     8   | Data     |          |     Sim     |                 |
+|    N   | Percentual de Reajuste                                  |     5   | Decimal  |     2    |     Sim     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+ 
+ 
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                 Lay-out do Arquivo de Importa‡Æo de Contratos                          Folha:  10|
++----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Evento Modelo                                               |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 13                                                          | 
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo do Registro (EM00)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Numero do Contrato                                      |    16   | Caracter |          |     Sim     |                 |
+|    C   | Condicao de Pagamento                                   |     3   | Inteiro  |          |     Sim     |                 |
+|    D   | Data de Emissao                                         |     8   | Data     |          |     Sim     |                 |
+|    E   | Quantidade Prevista                                     |    15   | Decimal  |     4    |     Sim     |                 |
+|    F   | Valor Previsto                                          |    13   | Decimal  |     4    |     Sim     |                 |
+|    G   | Percentual Previsto Liberacao Evento                    |     5   | Decimal  |     2    |     Sim     |                 |
+|    H   | Destino do Evento                                       |     1   | Inteiro  |          |     Sim     |                 |
+|    I   | Sequencia do Evento Modelo                              |     4   | Inteiro  |          |     Sim     |                 |
+|    J   | Sequencia Item                                          |     4   | Inteiro  |          |     Sim     |                 |
+|    K   | Codigo do Item                                          |    16   | Caracter |          |     Sim     |                 |
+|    L   | Prazo Realizacao                                        |     3   | Inteiro  |          |     Sim     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+ 
+ 
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                 Lay-out do Arquivo de Importa‡Æo de Contratos                          Folha:  11|
++----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Pedido de Compra                                            |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 20                                                          | 
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo do Registro (PE00)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Numero do Pedido de Compras                             |     8   | Inteiro  |          |     Sim     |                 |
+|    C   | Natureza (1-Compra / 2-Servico / 3-Beneficiamento)      |     1   | Inteiro  |          |     Sim     |                 |
+|    D   | Cond. Pagto (Qdo 0 gerar condicao especif.)             |     3   | Inteiro  |          |     Sim     |                 |
+|    E   | Data da Emissao do Pedido                               |     8   | Data     |          |     Sim     |                 |
+|    F   | Situacao (1-Impresso / 2-Nao Impresso / 3-Eliminado)    |     1   | Inteiro  |          |     Sim     |                 |
+|    G   | Responsavel (Comprador Responsavel)                     |    12   | Caracter |          |     Sim     |                 |
+|    H   | Tipo do Frete (Pago/A Pagar)                            |     1   | Inteiro  |          |     Sim     |                 |
+|    I   | Codigo do Transportador                                 |     5   | Inteiro  |          |     Sim     |                 |
+|    J   | Via de Transporte (Rodoviaria - Fluvial ...)            |     1   | Inteiro  |          |     Sim     |                 |
+|    K   | Codigo da Mensagem (Mensagem do Pedido de CC)           |     3   | Inteiro  |          |     Sim     |                 |
+|    L   | Imprime Pedido (Reimprime o Pedido? S/N)                |     1   | Logico   |          |     Sim     |                 |
+|    M   | Pedido Emergencial (Nao Utilizado)                      |     1   | Logico   |          |     Nao     |                 |
+|    N   | Numero Proximo Pedido (Nao Utilizado)                   |     8   | Inteiro  |          |     Nao     |                 |
+|    O   | Contrato de Fornecimento (Possui contr? S/N)            |     1   | Logico   |          |     Nao     |                 |
+|    P   | Numero do Processo (Caso tenha processo)                |     6   | Inteiro  |          |     Nao     |                 |
+|    Q   | Numero do Contrato                                      |    16   | Caracter |          |     Nao     |                 |
+|    R   | Codigo do Fornecedor                                    |     9   | Inteiro  |          |     Sim     |                 |
+|    S   | Estabelecimento de Entrega                              |     5   | Caracter |          |     Sim     |                 |
+|    T   | Estabelecimento de Cobranca                             |     5   | Caracter |          |     Sim     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                Lay-out do Arquivo de Importa‡Æo de Contratos                           Folha:  12|
+|----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Pedido de Compra                                            |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 8/4/3/3                                                     |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                 Lay-out do Arquivo de Importa‡Æo de Importacoes do Pedido                                        |
++----------------------------------------------------------------------------------------------------------------------------------+
+|    A   | Codigo do Registro (PE01)                               |     4   | Caracter |          |     Nao     |                 |
+|    B   | Numero do Pedido de Compras                             |     8   | Inteiro  |          |     Nao     |                 |
+|    C   | Nome do Assinante [1]                                   |    30   | Caracter |          |     Nao     |                 |
+|    D   | Nome do Assinante [2]                                   |    30   | Caracter |          |     Nao     |                 |
+|    E   | Nome do Assinante [3]                                   |    30   | Caracter |          |     Nao     |                 |
+|    F   | Cargo do Assinante [1] (Nao utilizado)                  |    30   | Caracter |          |     Nao     |                 |
+|    G   | Cargo do Assinante [2] (Nao utilizado)                  |    30   | Caracter |          |     Nao     |                 |
+|    H   | Cargo do Assinante [3] (Nao utilizado)                  |    30   | Caracter |          |     Nao     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                 Lay-out do Arquivo de Importa‡Æo de Importacoes do Pedido                                        |
++----------------------------------------------------------------------------------------------------------------------------------+
+|    A   | Codigo do Registro (PE02)                               |     4   | Caracter |          |     Nao     |                 |
+|    B   | Numero do Pedido de Compras                             |     8   | Inteiro  |          |     Nao     |                 |
+|    C   | Motivo da Eliminacao (qdo pedido.situacao =E)           |    76   | Caracter |          |     Nao     |                 |
+|    D   | Comentarios (Opcional)                                  |   152   | Caracter |          |     Nao     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                 Lay-out do Arquivo de Importa‡Æo de Cargos Assinantes do Pedido                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|    A   | Codigo do Registro (PE03)                               |     4   | Caracter |          |     Nao     |                 |
+|    B   | Numero do Pedido de Compras                             |     8   | Inteiro  |          |     Nao     |                 |
+|    C   | Comentarios (Opcional)                                  |   228   | Caracter |          |     Nao     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                 Lay-out do Arquivo de Importa‡Æo de Nomes de Assinantes do Pedido                                |
++----------------------------------------------------------------------------------------------------------------------------------+
+|    A   | Codigo do Registro (PE04)                               |     4   | Caracter |          |     Nao     |                 |
+|    B   | Numero do Pedido de Compras                             |     8   | Inteiro  |          |     Nao     |                 |
+|    C   | Comentarios (Opcional)                                  |    76   | Caracter |          |     Nao     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+ 
+ 
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                 Lay-out do Arquivo de Importa‡Æo de Contratos                          Folha:  13|
++----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Ordem de Compra                                             |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 39                                                          | 
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo do Registro (OR00)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Numero da Ordem de Compra                               |     8   | Inteiro  |          |     Sim     |                 |
+|    C   | Codigo do Item                                          |    16   | Caracter |          |     Sim     |                 |
+|    D   | Natureza (1-Compra / 2-Servico / 3-Beneficiamento)      |     1   | Inteiro  |          |     Sim     |                 |
+|    E   | Situacao (01-Nao Confirmada / 02-Confirmada / 03-Cotada |         |          |          |             |                 |
+|        | 04-Eliminada / 05-Em Cotacao / 06-Recebida              |     1   | Inteiro  |          |     Sim     |                 |
+|    F   | Origem (Manual - Dependente - Independente)             |     1   | Inteiro  |          |     Sim     |                 |
+|    G   | Operacao                                                |     5   | Inteiro  |          |     Sim     |                 |
+|    H   | Data Emissao                                            |     8   | Data     |          |     Nao     |                 |
+|    I   | Conta                                                   |    20   | Caracter |          |     Sim     |                 |
+|    J   | Centro Custo                                            |    20   | Caracter |          |     Nao     |                 |
+|    K   | Requisitante                                            |    12   | Caracter |          |     Nao     |                 |
+|    L   | Almoxarifado (Deposito do Item)                         |     3   | Caracter |          |     Sim     |                 |
+|    M   | Numero de Ordem de Servico                              |     9   | Inteiro  |          |     Nao     |                 |
+|    N   | Codigo do Comprador                                     |    12   | Caracter |          |     Sim     |                 |
+|    O   | Pedido                                                  |     8   | Inteiro  |          |     Sim     |                 |
+|    P   | Data do Pedido                                          |     8   | Data     |          |     Sim     |                 |
+|    Q   | Data da Cotacao                                         |     8   | Data     |          |     Sim     |                 |
+|    R   | Preco Original                                          |    16   | Decimal  |     5    |     Sim     |                 |
+|    S   | Preco Unitario                                          |    16   | Decimal  |     5    |     Sim     |                 |
+|    T   | Preco Unitario do Fornecedor                            |    16   | Decimal  |     5    |     Sim     |                 |
+|    U   | Preco do Fornecedor                                     |    16   | Decimal  |     5    |     Sim     |                 |
+|    V   | Numero de Altera‡äes de Preco (Controle Interno)        |     2   | Inteiro  |          |     Sim     |                 |
+|    W   | Codigo da Moeda                                         |     2   | Inteiro  |          |     Sim     |                 |
+|    X   | IPI incluso                                             |     1   | Logico   |          |     Sim     |                 |
+|    Y   | Aliquota IPI                                            |     5   | Decimal  |     2    |     Sim     |                 |
+|    Z   | Codigo ICMS (Industrializacao / Consumo)                |     1   | Inteiro  |          |     Sim     |                 |
+|   AA   | Aliquota ICMS                                           |     5   | Decimal  |     2    |     Sim     |                 |
+|   AB   | Frete Incluso                                           |     1   | Logico   |          |     Sim     |                 |
+|   AC   | Valor Frete                                             |    13   | Decimal  |     4    |     Sim     |                 |
+|   AD   | Encargos Financeiros (Incluso - Sim / Nao Incluso - Nao)|     1   | Logico   |          |     Sim     |                 |
+|   AE   | Valor da Taxa                                           |     7   | Decimal  |     4    |     Sim     |                 |
+|   AF   | Percentual Desconto                                     |     7   | Decimal  |     5    |     Sim     |                 |
+|   AG   | Condicao de Pagamento                                   |     3   | Inteiro  |          |     Sim     |                 |
+|   AH   | Prazo Entrega                                           |     4   | Inteiro  |          |     Sim     |                 |
+|   AI   | Contato                                                 |    40   | Caracter |          |     Sim     |                 |
+|   AJ   | Imprime Ficha Cotacao (S/N)                             |     1   | Logico   |          |     Sim     |                 |
+|   AK   | Codigo do Fornecedor (Caso tenha pedido)                |     9   | Inteiro  |          |     Sim     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                Lay-out do Arquivo de Importa‡Æo de Contratos                           Folha:  14|
+|----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Ordem de Compra                                             |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 16                                                          |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo do Registro (OR01)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Numero da Ordem de Compra                               |     8   | Inteiro  |          |     Sim     |                 |
+|    C   | Codigo do Item                                          |    16   | Caracter |          |     Sim     |                 |
+|    D   | Comentarios                                             |    76   | Caracter |          |     Sim     |                 |
+|    E   | Hora da Atualizacao (Controle Interno)                  |     8   | Caracter |          |     Nao     |                 |
+|    F   | Numero da Ordem Original (ordens divid/mult)            |     9   | Inteiro  |          |     Nao     |                 |
+|    G   | Índice de Reajuste                                      |     5   | Decimal  |     2    |     Nao     |                 |
+|    H   | Linha de Producao                                       |     3   | Inteiro  |          |     Nao     |                 |
+|    I   | Referência                                              |     8   | Caracter |          |     Sim     |                 |
+|    J   | Situacao da Ordem no Contrato                           |     1   | Inteiro  |          |     Sim     |                 |
+|    K   | Sequencia do Item no Contrato                           |     4   | Inteiro  |          |     Sim     |                 |
+|    L   | Data da Atualizacao (Controle Interno)                  |     8   | Data     |          |     Nao     |                 |
+|    M   | Número do Contrato                                      |    16   | Caracter |          |     Nao     |                 |
+|    N   | Estabelecimento                                         |     5   | Caracter |          |     Sim     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                Lay-out do Arquivo de Importa‡Æo de Contratos                           Folha:  15|
+|----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Parcela da Ordem de Compra                                  |
+|                                                             Formato: Texto                                                       |
+|                                               Quantidade de Colunas: 26                                                          |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo do Registro (PA00)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Numero da Ordem de Compra (que a parc perten)           |     8   | Inteiro  |          |     Sim     |                 |
+|    C   | Parcela                                                 |     5   | Inteiro  |          |     Sim     |                 |
+|    D   | Codigo do Item                                          |    16   | Caracter |          |     Sim     |                 |
+|    E   | Quantidade (Na unidade de medida interna)               |    11   | Decimal  |     4    |     Sim     |                 |
+|    F   | Unidade de Medida                                       |     2   | Caracter |          |     Sim     |                 |
+|    G   | Data de Entrega (dd/mm/aaaa)                            |     8   | Data     |          |     Sim     |                 |
+|    H   | Nome Abreviado do Cliente (Nao Obrigat¢rio)             |    12   | Caracter |          |     Nao     |                 |
+|    I   | Numero do Pedido do Cliente (Nao Obrigat¢rio)           |    12   | Caracter |          |     Nao     |                 |
+|    J   | Situacao da Parcela (1-Nao confirmada / 2-Confirmada    |         |          |          |             |                 |
+|        | 03-Cotada / 4-Eliminada / 5-Em cotacao / 6-Recebida)    |     1   | Inteiro  |          |     Sim     |                 |
+|    K   | Quantidade do Fornecedor (UM fornecedor)                |    11   | Decimal  |     4    |     Sim     |                 |
+|    L   | Quantidade Recebida do Fornecedor (UM fornec)           |    11   | Decimal  |     4    |     Sim     |                 |
+|    M   | Quantidade Rejeitada do Fornecedor(UMfornec)            |    11   | Decimal  |     4    |     Sim     |                 |
+|    N   | Quantidade Saldo do Fornecedor (UMfornec)               |    11   | Decimal  |     4    |     Sim     |                 |
+|    O   | Quantidade Recebida da Empresa (UMinterna)              |    11   | Decimal  |     4    |     Sim     |                 |
+|    P   | Quantidade Rejeitada da Empresa(UM interna)             |    11   | Decimal  |     4    |     Sim     |                 |
+|    Q   | Quantidade Saldo da Empresa (UMinterna)                 |    11   | Decimal  |     4    |     Sim     |                 |
+|    R   | Quantidade Original da Empresa(UM interna)              |    11   | Decimal  |     4    |     Sim     |                 |
+|    S   | Codigo de Alteracao da Parcela (Nao utilizad)           |     1   | Logico   |          |     Nao     |                 |
+|    T   | Data Entrega Original (Controle Interno)                |     8   | Data     |          |     Nao     |                 |
+|    U   | Data Ultima Alteracao (Controle Interno)                |     8   | Data     |          |     Nao     |                 |
+|    V   | Usuario Ultima Alteracao (Controle interno)             |    12   | Caracter |          |     Nao     |                 |
+|    W   | Numero Alteracao na Data (Controle interno)             |     2   | Inteiro  |          |     Nao     |                 |
+|    X   | Numero Alteracao Quantidade (Controle intern)           |     2   | Inteiro  |          |     Nao     |                 |
+|    Y   | Natureza (1-Compra / 2-Servico / 3-Beneficiamento)      |     1   | Inteiro  |          |     Sim     |                 |
+|    Z   | Codigo Referencia (Nao utilizado)                       |     8   | Caracter |          |     Nao     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                Lay-out do Arquivo de Importa‡Æo de Contratos                           Folha:  16|
+|----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Cotacoes do Item                                            |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 29                                                          |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo do Registro (CT00)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Codigo do Item                                          |    16   | Caracter |          |     Sim     |                 |
+|    C   | Numero da Ordem de Compra                               |     8   | Inteiro  |          |     Sim     |                 |
+|    D   | Data da Cotacao (dd/mm/aaaa)                            |     8   | Data     |          |     Sim     |                 |
+|    E   | Unidade de Medida                                       |     2   | Caracter |          |     Sim     |                 |
+|    F   | Preco Unitario (UM interna)                             |    16   | Decimal  |     5    |     Sim     |                 |
+|    G   | Preco Unitario Fornecedor (UM fornecedor)               |    16   | Decimal  |     5    |     Sim     |                 |
+|    H   | Preco do Fornecedor (UM fornecedor)                     |    16   | Decimal  |     5    |     Sim     |                 |
+|    I   | Codigo da Moeda                                         |     2   | Inteiro  |          |     Sim     |                 |
+|    J   | Codigo de Tributacao do IPI (Incluso/Nao Inc)           |     1   | Logico   |          |     Sim     |                 |
+|    K   | Aliquota de IPI                                         |     5   | Decimal  |     2    |     Sim     |                 |
+|    L   | Codigo de Tributacao do ICMS (Indust/Consumo)           |     1   | Inteiro  |          |     Sim     |                 |
+|    M   | Aliquota de ICMS                                        |     5   | Decimal  |     2    |     Sim     |                 |
+|    N   | Aliquota de ISS                                         |     5   | Decimal  |     2    |     Nao     |                 |
+|    O   | Frete (Incluso/Nao Incluso)                             |     1   | Logico   |          |     Sim     |                 |
+|    P   | Valor do Frete                                          |    13   | Decimal  |     4    |     Nao     |                 |
+|    Q   | Taxa Financiamento (Incluso/Nao Incluso)                |     1   | Logico   |          |     Sim     |                 |
+|    R   | Valor da Taxa                                           |     7   | Decimal  |     4    |     Sim     |                 |
+|    S   | Percentual de Desconto                                  |     7   | Decimal  |     2    |     Sim     |                 |
+|    T   | Codigo da Condicao de Pagamento                         |     3   | Inteiro  |          |     Sim     |                 |
+|    U   | Prazo de Entrega                                        |     4   | Inteiro  |          |     Sim     |                 |
+|    V   | Contato                                                 |    40   | Caracter |          |     Sim     |                 |
+|    W   | Cotacao Aprovada? (S/N)                                 |     1   | Logico   |          |     Sim     |                 |
+|    X   | Aprovador (obrigat qdo utiliza aprovac eletr)           |    12   | Caracter |          |     Sim     |                 |
+|    Y   | Usuario (Controle Interno)                              |    12   | Caracter |          |     Nao     |                 |
+|    Z   | Data Atualizacao (Controle Interno)                     |     8   | Data     |          |     Nao     |                 |
+|   AA   | Hora Atualizacao (Controle Interno)                     |     8   | Caracter |          |     Nao     |                 |
+|   AC   | Codigo do Fornecedor                                    |     9   | Inteiro  |          |     Sim     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                Lay-out do Arquivo de Importa‡Æo de Contratos                           Folha:  17|
+|----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: Cotacoes do Item                                            |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 6                                                           |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo do Registro (CT01)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Codigo do Item                                          |    16   | Caracter |          |     Sim     |                 |
+|    C   | Numero da Ordem de Compra                               |     8   | Inteiro  |          |     Sim     |                 |
+|    D   | Motivo de Aprov/Rejeic (qdo cotacao = aprov)            |    76   | Caracter |          |     Sim     |                 |
+|    E   | Indice de Reajuste (Nao utilizado)                      |     5   | Decimal  |     2    |     Nao     |                 |
+|    F   | Codigo do Fornecedor                                    |     9   | Inteiro  |          |     Sim     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                Lay-out do Arquivo de Importa‡Æo de Contratos                           Folha:  18|
+|----------------------------------------------------------------------------------------------------------------------------------|
+|                                                                                                                                  |
+|                                                                                                                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                                     Nome do Arquivo: A ser informado                                             |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 16/4/4/4/2                                                  |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                 Lay-out do Arquivo de Importa‡Æo de Condicao Especifica                                          |
++----------------------------------------------------------------------------------------------------------------------------------+
+|    A   | Codigo do Registro (CE00)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Numero do Pedido de Compras                             |     8   | Inteiro  |          |     Sim     |                 |
+|    C   | Data de Pagamento [1]                                   |     8   | Data     |          |     Sim     |                 |
+|    D   | Data de Pagamento [2]                                   |     8   | Data     |          |     Sim     |                 |
+|    E   | Data de Pagamento [3]                                   |     8   | Data     |          |     Sim     |                 |
+|    F   | Data de Pagamento [4]                                   |     8   | Data     |          |     Sim     |                 |
+|    G   | Data de Pagamento [5]                                   |     8   | Data     |          |     Sim     |                 |
+|    H   | Data de Pagamento [6]                                   |     8   | Data     |          |     Sim     |                 |
+|    I   | Percentual de Pagamento [1] (Obrigat¢rio em             |     3   | Inteiro  |          |     Sim     |                 |
+|    J   | Percentual de Pagamento [2]  100%)                      |     3   | Inteiro  |          |     Sim     |                 |
+|    K   | Percentual de Pagamento [3]                             |     3   | Inteiro  |          |     Sim     |                 |
+|    L   | Percentual de Pagamento [4]                             |     3   | Inteiro  |          |     Sim     |                 |
+|    M   | Percentual de Pagamento [5]                             |     3   | Inteiro  |          |     Sim     |                 |
+|    N   | Percentual de Pagamento [6]                             |     3   | Inteiro  |          |     Sim     |                 |
+|    O   | Comentarios [1]                                         |    76   | Caracter |          |     Nao     |                 |
+|    P   | Comentarios [2]                                         |    76   | Caracter |          |     Nao     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                          Lay-out do Arquivo de Importa‡Æo de Comentarios da Condicao Especifica                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|    A   | Codigo do Registro (CE01)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Comentarios [3]                                         |    76   | Caracter |          |     Nao     |                 |
+|    C   | Comentarios [4]                                         |    76   | Caracter |          |     Nao     |                 |
+|    D   | Comentarios [5]                                         |    76   | Caracter |          |     Nao     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                          Lay-out do Arquivo de Importa‡Æo de Comentarios da Condicao Especifica                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|    A   | Codigo do Registro (CE02)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Comentarios [6]                                         |    76   | Caracter |          |     Nao     |                 |
+|    C   | Comentarios [7]                                         |    76   | Caracter |          |     Nao     |                 |
+|    D   | Comentarios [8]                                         |    76   | Caracter |          |     Nao     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                          Lay-out do Arquivo de Importa‡Æo de Comentarios da Condicao Especifica                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|    A   | Codigo do Registro (CE03)                               |     2   | Caracter |          |     Sim     |                 |
+|    B   | Comentarios [9]                                         |    76   | Caracter |          |     Nao     |                 |
+|    C   | Comentarios [10]                                        |    76   | Caracter |          |     Nao     |                 |
+|    D   | Comentarios [11]                                        |    76   | Caracter |          |     Nao     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+|                          Lay-out do Arquivo de Importa‡Æo de Comentarios da Condicao Especifica                                  |
++----------------------------------------------------------------------------------------------------------------------------------+
+|    A   | Codigo do Registro (CE04)                               |     4   | Caracter |          |     Sim     |                 |
+|    B   | Comentarios [12]                                        |    76   | Caracter |          |     Nao     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|                                 Lay-out do Arquivo de Importa‡Æo de Recebimentos de Materiais                          Folha:  19|
+|----------------------------------------------------------------------------------------------------------------------------------|
+|                                                     Nome do Arquivo: Recebimento de Materiais                                    |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 31                                                          |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo Registro  (RE00)                                 |     4   | Caracter |          |     Sim     |                 |
+|    B   | Codigo do Movimento (Recebimento/Devolucao)             |     1   | Inteiro  |          |     Sim     |                 |
+|    C   | Codigo de Devolucao                                     |     3   | Inteiro  |          |     Sim     |                 |
+|    D   | Data da Atualizacao                                     |     8   | Data     |          |     Sim     |                 |
+|    E   | Data do Movimento                                       |     8   | Data     |          |     Sim     |                 |
+|    F   | Data do Documento                                       |     8   | Data     |          |     Sim     |                 |
+|    G   | Hora da Atualizacao                                     |     8   | Caracter |          |     Sim     |                 |
+|    H   | Codigo do Item                                          |    16   | Caracter |          |     Sim     |                 |
+|    I   | Numero do Pedido                                        |     8   | Inteiro  |          |     Sim     |                 |
+|    J   | Numero do Documento                                     |     7   | Inteiro  |          |     Sim     |                 |
+|    K   | Numero da Ordem de Compras                              |     8   | Inteiro  |          |     Sim     |                 |
+|    L   | Numero da Parcela                                       |     5   | Inteiro  |          |     Sim     |                 |
+|    M   | Preco Unitario do Fornecedor                            |    13   | Decimal  |     5    |     Sim     |                 |
+|    N   | Preco Unitario da Empresa                               |    13   | Decimal  |     5    |     Sim     |                 |
+|    O   | Quantidade Recebida do Fornecedor                       |    11   | Decimal  |     4    |     Sim     |                 |
+|    P   | Quantidade Devolvida do Fornecedor                      |    11   | Decimal  |     4    |     Sim     |                 |
+|    Q   | Quantidade Recebida da Empresa                          |    11   | Decimal  |     4    |     Sim     |                 |
+|    R   | Quantidade Devolvida da Empresa                         |    11   | Decimal  |     4    |     Sim     |                 |
+|    S   | Responsavel                                             |    12   | Caracter |          |     Sim     |                 |
+|    T   | Serie do Documento                                      |     3   | Caracter |          |     Sim     |                 |
+|    U   | Usuario                                                 |    12   | Caracter |          |     Sim     |                 |
+|    V   | Valor Total                                             |    13   | Decimal  |     4    |     Sim     |                 |
+|    W   | Situacao da Ordem                                       |     1   | Caracter |          |     Sim     |                 |
+|    Y   | Situacao da Parcela                                     |     1   | Caracter |          |     Sim     |                 |
+|    Z   | Aliquota ICMS                                           |     5   | Decimal  |     2    |     Sim     |                 |
+|   AA   | Aliquota IPI                                            |     5   | Decimal  |     2    |     Sim     |                 |
+|   AB   | Aliquota ISS                                            |     5   | Decimal  |     2    |     Sim     |                 |
+|   AC   | Valor ICMS                                              |    12   | Decimal  |     2    |     Sim     |                 |
+|   AD   | Valor IPI                                               |    12   | Decimal  |     2    |     Sim     |                 |
+|   AE   | Valor ISS                                               |    12   | Decimal  |     2    |     Sim     |                 |
+|   AF   | Codigo do Fornecedor                                    |     9   | Inteiro  |          |     Sim     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|               Lay-out do Arquivo de Importa‡Æo do relacionamento Item estabelecimento do contrato                      Folha:  20|
+|----------------------------------------------------------------------------------------------------------------------------------|
+|                                                     Nome do Arquivo: Relacionamento Item estabelecimento do contrato             |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 18                                                          |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo Registro  (IE00)                                 |     4   | Caracter |          |     Sim     |                 |
+|    B   | Acum-rec-qtd                                            |    14   | Decimal  |          |     Sim     |                 |
+|    C   | Acum-rec-val                                            |    14   | Decimal  |          |     Sim     |                 |
+|    D   | Cod-emitente                                            |    14   | Decimal  |          |     Sim     |                 |
+|    E   | Deixar em Branco                                        |     3   |          |          |     Sim     |                 |
+|    F   | It-codigo                                               |    16   | Caracter |          |     Sim     |                 |
+|    G   | Nr-contrato                                             |    16   | Caracter |          |     Sim     |                 |
+|    H   | Num-seq-item                                            |     4   | Inteiro  |          |     Sim     |                 |
+|    I   | Qtd-total                                               |    14   | Decimal  |          |     Sim     |                 |
+|    J   | Sld-qtd                                                 |    14   | Decimal  |          |     Sim     |                 |
+|    K   | Sld-qtd-liber                                           |    14   | Decimal  |          |     Nao     |                 |
+|    L   | Sld-qtd-receb                                           |    15   | Decimal  |          |     Sim     |                 |
+|    M   | Sld-val                                                 |    17   | Decimal  |          |     Sim     |                 |
+|    N   | Sld-val-liber                                           |    19   | Decimal  |          |     Nao     |                 |
+|    O   | Sld-val-receb                                           |    15   | Decimal  |          |     Sim     |                 |
+|    P   | Val-total                                               |    17   | Decimal  |          |     Sim     |                 |
+|    Q   | Cod-estabel                                             |     5   | Caracter |          |     Sim     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|               Lay-out do Arquivo de Importa‡Æo do relacionamento Despesa do Item do contrato                           Folha:  21|
+|----------------------------------------------------------------------------------------------------------------------------------|
+|                                                     Nome do Arquivo: Desp-item-contrat                                           |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 9                                                           |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo Registro  (DI00)                                 |     4   | Caracter |          |     Sim     |                 |
+|    B   | Numero do Contrato                                      |    09   | Inteiro  |          |     Sim     |                 |
+|    C   | Numero da Sequencia do Item                             |     4   | Inteiro  |          |     Sim     |                 |
+|    D   | Numero da sequencia da Despesa                          |     4   | Inteiro  |          |     Sim     |                 |
+|    E   | Codigo da Despesa                                       |    12   | Caracter |          |     Nao     |                 |
+|    F   | Valor da Despesa                                        |    12   | Decimal  |      5   |     Nao     |                 |
+|    G   | Percentual da Despesa                                   |     8   | Decimal  |      5   |     Nao     |                 |
+|    H   | Descrição da Narrativa                                  |  2000   | Caracter |          |     Nao     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|               Lay-out do Arquivo de Importação do relacionamento Despesa de Cotação do Item                            Folha:  22|
+|----------------------------------------------------------------------------------------------------------------------------------|
+|                                                     Nome do Arquivo: Desp-cotacao-item                                           |
+|                                                             Formato: .csv                                                        |
+|                                               Quantidade de Colunas: 10                                                          |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo Registro  (DC00)                                 |     4   | Caracter |          |     Sim     |                 |
+|    B   | Numero da Ordem de Compra                               |    08   | Inteiro  |          |     Sim     |                 |
+|    C   | Codigo do Emitente                                      |     9   | Inteiro  |          |     Sim     |                 |
+|    D   | Codigo do Item                                          |    16   | Caracter |          |     Sim     |                 |
+|    E   | Sequencia da Cotação                                    |     3   | Inteiro  |          |     Sim     |                 |
+|    F   | Numero da Sequencia da Despesa                          |     4   | Inteiro  |          |     Sim     |                 |
+|    G   | Codigo da Despesa                                       |    12   | Caracter |          |     Sim     |                 |
+|    H   | Valor da Despesa                                        |    12   | Decimal  |     5    |     Nao     |                 |
+|    I   | Percentual da Despesa                                   |     8   | Decimal  |     5    |     Nao     |                 |
+|    J   | Descrição da Narrativa                                  |  2000   | Caracter |          |     Nao     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+
+
+
+
+
++----------------------------------------------------------------------------------------------------------------------------------+
+|               Lay-out do Arquivo de Importa‡Æo do Anexo de contratos                                                   Folha:  23|
+|----------------------------------------------------------------------------------------------------------------------------------|
+|                                                     Nome do Arquivo: anexo-contrat                                               |
+|                                                             Formato: Texto                                                       |
+|                                               Quantidade de Colunas: 6                                                           |
+|----------------------------------------------------------------------------------------------------------------------------------|
+| Coluna |                         Descrição                       | Formato | Conte£do | Decimais | Obrigat¢rio |                 |
+|--------+---------------------------------------------------------+---------+----------+----------+-------------+-----------------|
+|    A   | Codigo Registro  (AC00)                                 |     4   | Caracter |          |     Sim     |                 |
+|    B   | Sequencia do Anexo                                      |     2   | Inteiro  |          |     Sim     |                 |
+|    C   | Usuario Ultima Alteracao (Controle interno)             |    12   | Caracter |          |     Nao     |                 |
+|    D   | Numero do Contrato                                      |     9   | Inteiro  |          |     Sim     |                 |
+|    E   | Descrição do Anexo                                      |    32   | Caracter |          |     Sim     |                 |
+|    F   | Narrativa do Anexo                                      |  2000   | Caracter |          |     Sim     |                 |
++----------------------------------------------------------------------------------------------------------------------------------+

@@ -1,0 +1,24 @@
+/****************************************************************************
+**
+**    MI0408.i1 - Include para imprimir Narrativa da Ord-Manut
+**
+****************************************************************************/
+
+            if  tt-param.l-narrativa then do:
+                find msg-ord-man where 
+                     msg-ord-man.nr-ord-produ = ord-manut.nr-ord-produ no-lock no-error.
+                if  avail msg-ord-man then do:
+                    display c-narrativa-ordem with frame f-titulo.
+                    pause 0.
+                    run pi-print-editor (msg-ord-man.msg-exp, 76).
+                    for each tt-editor:
+                        disp tt-editor.conteudo @ c-desc-tar
+                             with frame f-narrativa-1.
+                        down with frame f-narrativa-1.
+                    end.
+                end.
+            end.
+            run pi-acompanhar in h-acomp ( input string(ord-manut.nr-ord-produ)).
+
+/* Fim do Include */
+

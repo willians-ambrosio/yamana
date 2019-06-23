@@ -1,0 +1,218 @@
+/*********************** INICIO INCLUDE ESCE0108B.I0 *****************************/
+
+&GLOBAL-DEFINE tabela item-uni-estab
+
+{cdp/cd1234.i}       /* Decimais - Chile */
+
+def buffer bb-item              for item.
+DEF BUFFER b-item-uni-estab     FOR item-uni-estab.
+def buffer bf1-ord-prod         for ord-prod     label "bf1-ord-prod for ord-prod":U.    
+def buffer bf1-item-estab       for item-estab   label "bf1-item-estab for item-estab":U.
+def buffer bf1-item             for item         label "bf1-item for item":U.            
+def buffer b-conta              for conta-contab label "b-conta for conta-contab":U.  
+def buffer b-conta-1            for conta-contab label "b-conta-1 for conta-contab":U.
+DEF buffer b-conta-2            for conta-contab label "b-conta-2 for conta-contab":U. 
+
+/* tt-ext-movto => Utilizada para controle de lock de registros de saldo-estoq e item-estab.
+   Alem disso, acumula as quantidades dos movimentos semelhantes, para validacao de alocacao
+   no FT */
+
+def temp-table tt-item-2     like item use-index codigo.
+
+define temp-table tt-ext-movto no-undo
+    field rw-movto       as rowid
+    field processado     as logical
+    field tempo          as integer
+    field tentativas     as integer
+    field tabela         as integer /* 1 - saldo-estoq // 2 - item-estab // 3 - item */
+    field travado        as logical
+    field it-codigo      as char
+    field cod-estabel    as char
+    field cod-depos      as char
+    field cod-localiz    as char
+    field cod-refer      as char
+    field lote           as char
+    field ge-codigo      as integer
+    field dt-trans       as date
+    field nr-ord-produ   as integer
+    field conta-contabil as char
+    field qt-acum        as decimal
+    field qt-alocada     as decimal
+    field sequencia      as int
+    field i-sequen       as int 
+    index proc is primary processado
+    index codigo it-codigo cod-depos cod-localiz cod-refer lote sequencia
+    index item it-codigo.  
+
+DEFINE TEMP-TABLE tt-er-item NO-UNDO
+    FIELD it-codigo   AS CHAR
+    FIELD cd-msg      AS INT
+    FIELD tipo-msg    AS INT
+    FIELD cd-msg-subs AS INT
+    FIELD texto-msg   AS CHAR
+    FIELD help-msg    AS CHAR
+    INDEX xx-er-item it-codigo.
+    
+DEFINE TEMP-TABLE tt-simula-alter
+    FIELD cod-estabel   AS CHAR format "X(3)"
+    FIELD it-codigo     AS CHAR format "X(16)"
+    FIELD cod-depos     AS CHAR format "X(3)"
+    FIELD valor         AS DEC  format ">>>,>>>,>>9.9999"
+    FIELD conta-db      AS CHAR format "X(20)"
+    FIELD conta-cr      AS CHAR format "X(20)"
+    FIELD qtde          AS DEC  format "->>>>,>>>,>>9.9999"
+    INDEX xx-simula-alter it-codigo.
+    .
+
+/*ccnpatibilidade para a temp-table padrao de erros - include cd0669.i*/
+DEFINE TEMP-TABLE tt-erro-movto NO-UNDO
+    FIELD i-sequen AS INT             
+    FIELD cd-erro  AS INT
+    FIELD mensagem AS CHAR FORMAT "x(255)"
+    FIELD c-param  AS CHAR.
+
+define temp-table tt-param no-undo
+    field destino           as integer
+    field arquivo           as char format "x(35)"
+    field usuario           as char format "x(12)"
+    field data-exec         as date
+    field hora-exec         as integer
+    field c-it-codigo-ini   LIKE item.it-codigo 
+    field c-it-codigo-fim   LIKE item.it-codigo
+    field tipo              as integer
+    field medio-mat         as dec decimals 4 extent 3 format ">>>,>>>,>>9.9999"
+    field medio-mob         as dec decimals 4 extent 3 format ">>>,>>>,>>9.9999"
+    field medio-ggf         as dec decimals 4 extent 3 format ">>>,>>>,>>9.9999"
+    field r-conta           as rowid
+    field da-inipa-x        like movto-estoq.dt-trans
+    field depos-pad         like movto-estoq.cod-depos
+    field serie1            like movto-estoq.serie-docto
+    field docto1            like movto-estoq.nro-docto
+    field it-codigo         like item.it-codigo
+    field parametro         as char format "x(30)"
+    field c-estab           AS CHAR
+    field i-ge-codigo-ini   AS INT
+    field i-ge-codigo-fim   AS INT
+    field c-fm-codigo-ini   AS CHAR
+    field c-fm-codigo-fim   AS CHAR
+    field c-dep-ini         AS CHAR
+    field c-dep-fim         AS CHAR
+    field c-conta-contabil  AS CHAR
+    field i-movto-tipo      AS INT
+    FIELD i-modo-execute    AS INT
+    .
+
+def temp-table tt-param-transf
+    field tipo          as integer 
+    field medio-mat     as dec decimals 4 extent 3 format ">>>,>>>,>>9.9999"
+    field medio-mob     as dec decimals 4 extent 3 format ">>>,>>>,>>9.9999"
+    field medio-ggf     as dec decimals 4 extent 3 format ">>>,>>>,>>9.9999"
+    field r-conta       as rowid 
+    field da-inipa-x    like movto-estoq.dt-trans
+    field depos-pad     like movto-estoq.cod-depos
+    field serie1        like movto-estoq.serie-docto
+    field docto1        like movto-estoq.nro-docto
+    field it-codigo     like item.it-codigo
+    field parametro     as char format "x(30)".
+
+define temp-table tt-digita no-undo
+    FIELD sel              AS CHAR INITIAL "*"
+    field it-codigo        as CHAR 
+    field desc-item        as character format "x(40)"
+    FIELD tp-controle      AS CHAR
+    index id it-codigo.
+
+DEF TEMP-TABLE tt-raw-digita
+    FIELD raw-digita    AS raw.
+
+/*******************************************************************************/
+{cep/ceapi001.i10} 
+{utp/ut-glob.i}
+{cep/ceapi001k.i} 
+{cdp/cd0666.i}
+
+/*******************************************************************
+  Verifica se a funcao EMS2-UNIDADE-NEGOCIO esta definida
+*******************************************************************/
+def var l-unidade-negocio as log no-undo.
+def var l-dis-unid-negoc  as log no-undo.
+def var l-mat-unid-negoc  as log no-undo.
+
+if can-find (first funcao where
+                   funcao.cd-funcao = "ems2-unidade-negocio":U and
+                   funcao.ativo     = yes) then
+    assign l-unidade-negocio = yes.
+
+find first para-dis no-lock no-error.
+if avail para-dis then
+    assign l-dis-unid-negoc = para-dis.log-unid-neg.
+
+find first param-mat no-lock no-error.
+if avail param-mat then
+    assign l-mat-unid-negoc = param-mat.ind-unid-neg.
+/*******************************************************************
+  Verifica se a funcao EMS2-UNIDADE-NEGOCIO esta definida
+*******************************************************************/
+
+DEF TEMP-TABLE tt-erro-spp NO-UNDO LIKE tt-erro.
+
+def var da-aux                      as date         no-undo.
+def var da-data                     as date.
+                                    
+DEF VAR v_msg_1                     AS CHARACTER    NO-UNDO.
+DEF VAR c-list-it-ctrl              AS CHARACTER    NO-UNDO.
+def var c-desc-erro                 as char         no-undo.                                      
+def var c-liter-item                as char format "x(15)" no-undo.                  
+DEF VAR c-cod-prog-orig             AS CHAR         NO-UNDO.                                 
+
+def var i-docto                     AS INT INITIAL 0         NO-UNDO.
+def var i-mo-fasb                   as integer               no-undo.
+def var i-mo-cmi                    as integer               no-undo.
+def var i-cont                      as integer               no-undo.
+def var i-versao-integ              as  integer format "999" no-undo.                 
+def var i-ano-corrente              as integer               no-undo.                                 
+def var i-per-corrente              as integer               no-undo.                                 
+def var i-y                         as int.
+def var i-x                         as int.
+def var i-sequencia                 as int  init 1           no-undo.                  
+def var unid-monet                  as int extent 3          no-undo.
+
+DEF VAR de-quant                    AS DECIMAL     NO-UNDO.
+
+def var l-nota-ft                   as logical no-undo.
+DEF VAR l-OK                        AS LOGICAL INITIAL YES  NO-UNDO.
+def  var l-desc-med-item            as logical no-undo.
+def var l-usa-on-line               as logical              no-undo init no.     
+DEF VAR l-consiste-saldo            AS LOGICAL              NO-UNDO.              
+def var l-tipo                      as logical extent 9.
+Def var l-programa-origem           as logical initial      no no-undo.   
+def var l-fraciona                  as log                  no-undo. 
+def var l-fech-estab                as logical init no.     
+DEF VAR l-valida-saldo-neg-eac-ref  AS LOGICAL NO-UNDO.                       
+
+def var i-empresa                   like param-global.empresa-prin  no-undo.
+def var c-depos-pad                 like item.deposito-pad.
+def var da-ult-fech-dia             like param-estoq.ult-fech-dia   no-undo.
+DEF VAR n-preco-unit                LIKE ordem-compra.preco-fornec  NO-UNDO.
+def var de-qt-acum                  like movto-estoq.quantidade.                        
+def var de-qt-aloc                  like movto-estoq.quantidade.                        
+def var de-disponivel               like saldo-estoq.qtidade-atu    no-undo.            
+def var da-iniper-fech              like param-estoq.ult-fech-dia   no-undo.             
+def var da-fimper-fech              like param-estoq.ult-fech-dia   no-undo.    
+def var da-ult-per                  like param-estoq.ult-per-fech   no-undo.
+def var de-vl-mat-m                 like movto-estoq.valor-mat-m.
+def var de-vl-mat-p                 like movto-estoq.valor-mat-p.
+def var de-vl-mat-o                 like movto-estoq.valor-mat-o.
+def var de-vl-mob-m                 like movto-estoq.valor-mob-m.
+def var de-vl-mob-p                 like movto-estoq.valor-mob-p.
+def var de-vl-mob-o                 like movto-estoq.valor-mob-o.
+def var de-vl-ggf-m                 like movto-estoq.valor-ggf-m.
+def var de-vl-ggf-p                 like movto-estoq.valor-ggf-p.
+def var de-vl-ggf-o                 like movto-estoq.valor-ggf-o.
+def var c-lote                      like saldo-estoq.lote           no-undo.
+def var c-cod-refer                 like referencia.cod-refer.
+
+DEF VAR h-cdapi024                  AS HANDLE  NO-UNDO.
+/*888888888888888888888888888888888888888888888888888888888888888888888888888888888*/
+
+/*********************** FIM INCLUDE ESCE0108B.I0 *****************************/

@@ -1,0 +1,91 @@
+/********************************************************************************
+**       PROGRAMA: COL0602.i
+**
+**       DATA....: Janeiro de 2006
+**
+**       AUTOR...: Herc¡lio Werneck de Capistrano - Manufatura - DATASUL S.A.
+*****************************************************************************/
+                                                /** Defini‡Æo de Vari veis **/
+DEFINE VARIABLE c-liter-imp  AS CHARACTER FORMAT "x(14)" NO-UNDO.
+DEFINE VARIABLE c-liter-par  AS CHARACTER FORMAT "x(14)" NO-UNDO.
+DEFINE VARIABLE c-destino    AS CHARACTER FORMAT "x(09)" NO-UNDO.
+DEFINE VARIABLE c-fora       AS CHARACTER FORMAT "x(01)" NO-UNDO.
+
+/*****************************************************************************/
+                                                     /** Form de Parƒmetros **/
+
+form   /*PAR¶METROS*/
+       skip(1)
+       c-liter-par              at 09    no-label
+       skip(1)
+       tt-param.iTipo           COLON 30 " - " tt-param.cTipo  format "x(25)" no-label
+       /*IMPRESSÇO*/
+       skip(1)
+       c-liter-imp              AT 09    no-label
+       skip(1)
+       c-destino                COLON 30 " - " tt-param.arquivo NO-LABEL
+       tt-param.usuario         COLON 30
+       skip(1)
+       with width 132 side-labels frame f-param-definidos stream-io.
+/*****************************************************************************/
+                                                              /** ImpressÆo **/
+form tt-digita.c-des-eqpto  at 20
+     tt-digita.cod-oficial  at 20 " - " 
+     tt-digita.desc-dimensao no-label format "x(75)"
+     with width 132 no-attr-space no-box side-labels frame f-visoes stream-io.
+     
+form bfDigita.desc-dimensao format "x(50)" at 01
+     bfDigita.uso-real     at 52
+     bfDigita.val-uso-padr at 65
+     bfDigita.un           at 78
+     bfDigita.garantia     at 82
+     bfDigita.ung          at 94
+     bfDigita.atualizacao  at 98
+     bfdigita.ordem        at 110
+     cest format "x(10)"   at 122
+     with width 132 no-attr-space no-box down frame f-dados stream-io.   
+
+/*****************************************************************************/
+                                               /** Literais Form Parƒmetros **/
+{utp/ut-liter.i Usu rio * l}
+assign tt-param.usuario:label in frame f-param-definidos = trim(return-value).
+
+{utp/ut-liter.i Destino * l}
+assign c-destino:label in frame f-param-definidos = trim(return-value).
+
+{utp/ut-liter.i Tipo_de_Relat¢rio * l}
+assign tt-param.iTipo:label in frame f-param-definidos = trim(return-value).
+
+{utp/ut-liter.i PAR¶METROS * R}
+assign c-liter-par = trim(return-value).
+
+{utp/ut-liter.i IMPRESSÇO * R}
+assign c-liter-imp = trim(return-value).
+
+/*****************************************************************************/
+                                                    /** Literais Form Dados **/
+{utp/ut-liter.i "C¢digo"}
+assign tt-digita.cod-oficial:label in frame f-visoes = trim(return-value).                                                    
+{utp/ut-liter.i "Equipamento"}
+assign tt-digita.c-des-eqpto:label in frame f-visoes = trim(return-value).
+{utp/ut-liter.i "Descri‡Æo"}
+assign bfDigita.desc-dimensao:label in frame f-dados = trim(return-value).
+{utp/ut-liter.i "Uso Real"}
+assign bfDigita.uso-real:label in frame f-dados = trim(return-value).
+{utp/ut-liter.i "UN"}
+assign bfDigita.ung:label in frame f-dados = trim(return-value).                                                                                                        
+{utp/ut-liter.i "UN"}
+assign bfDigita.un:label in frame f-dados = trim(return-value).                                                    
+{utp/ut-liter.i "Garantia"}
+assign bfDigita.garantia:label in frame f-dados = trim(return-value).                                                    
+{utp/ut-liter.i "Atualiza‡Æo"}
+assign bfDigita.atualizacao:label in frame f-dados = trim(return-value).                                                    
+{utp/ut-liter.i "Ordem"}
+assign bfDigita.ordem:label in frame f-dados = trim(return-value).                                                    
+{utp/ut-liter.i "Uso PadrÆo"}
+assign bfDigita.val-uso-padr:label in frame f-dados = trim(return-value).
+{utp/ut-liter.i "Estado"}
+assign cest:label in frame f-dados = trim(return-value).
+
+/*****************************************************************************/
+                                                         /** Fim da Include **/

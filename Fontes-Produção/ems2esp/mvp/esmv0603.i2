@@ -1,0 +1,56 @@
+/********************************************************************************
+** Copyright DATASUL S.A. (1997)
+** Todos os Direitos Reservados.
+**
+** Este fonte e de propriedade exclusiva da DATASUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+*******************************************************************************/
+/*******************************************************************************
+*   {1}  N£mero da imagem
+*******************************************************************************/
+
+case {1}:
+    when 1 then do:
+        {utp/ut-liter.i Empresa}
+    end.
+    when 2 then do:
+        {utp/ut-liter.i Equipamento}
+    end.
+    when 3 then do:
+        {utp/ut-liter.i Grupo_Equipamento}
+    end.
+    when 4 then do:
+        {utp/ut-liter.i Modelo_Equipamento}
+    end.
+    when 5 then do:
+        {utp/ut-liter.i Estabelecimento}
+    end.
+    when 6 then do:
+        {utp/ut-liter.i Grupo_Evento}
+    end.
+    when 7 then do:
+        {utp/ut-liter.i Evento}
+    end.
+    when 8 then do:
+        {utp/ut-liter.i Sistema}
+    end.
+    when 9 then do:
+        {utp/ut-liter.i Sub-sistema}
+    end.
+    when 10 then do:
+        {utp/ut-liter.i Ano_Fabrica‡Æo_Equipamento}
+    end.
+    when 11 then do:
+        {utp/ut-liter.i Estat¡stica_Tipo_Manuten‡Æo}
+    end.
+    when 12 then do:
+        {utp/ut-liter.i Tipo_Manuten‡Æo}
+    end.
+    when 13 then do:
+        {utp/ut-liter.i Tag}
+    end.
+    when 14 then do:
+        {utp/ut-liter.i Centro_de_Custo}
+    end.    
+end case.

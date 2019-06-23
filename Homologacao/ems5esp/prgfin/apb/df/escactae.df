@@ -1,0 +1,82 @@
+ADD TABLE "es-cat-code-cta-ex"
+  AREA "Schema Area"
+  LABEL "Relac CAT CODE Ctbl Excecao"
+  DESCRIPTION "Relacionamento Cat Code Conta Contabil Exce‡Æo"
+  DUMP-NAME "escactae"
+
+ADD FIELD "cod_cta_ctbl" OF "es-cat-code-cta-ex" AS character 
+  DESCRIPTION "Conta Cont bil"
+  FORMAT "x(20)"
+  INITIAL ""
+  LABEL "Conta Ctbl"
+  POSITION 3
+  MAX-WIDTH 40
+  COLUMN-LABEL "Conta Ctbl"
+  HELP "Conta Cont bil"
+  ORDER 10
+
+ADD FIELD "cod_plano_cta_ctbl" OF "es-cat-code-cta-ex" AS character 
+  DESCRIPTION "Plano de Contas"
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "Plano de Contas"
+  POSITION 4
+  MAX-WIDTH 16
+  COLUMN-LABEL "Plano de Contas"
+  HELP "Plano de Contas"
+  ORDER 20
+
+ADD FIELD "dt-trans" OF "es-cat-code-cta-ex" AS date 
+  DESCRIPTION "Data Transa‡Æo"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Data Transa‡Æo"
+  POSITION 5
+  MAX-WIDTH 4
+  COLUMN-LABEL "Dt.Trans"
+  HELP "Data Transa‡Æo"
+  ORDER 30
+
+ADD FIELD "hr-trans" OF "es-cat-code-cta-ex" AS character 
+  DESCRIPTION "Hora da Transa‡Æo"
+  FORMAT "x(8)"
+  INITIAL ""
+  LABEL "Hr.Trans"
+  POSITION 6
+  MAX-WIDTH 16
+  COLUMN-LABEL "Hr.Trans"
+  HELP "Hora da Transa‡Æo"
+  ORDER 40
+
+ADD FIELD "cod_usuario" OF "es-cat-code-cta-ex" AS character 
+  DESCRIPTION "Usu rio da Transa‡Æo"
+  FORMAT "x(12)"
+  INITIAL ""
+  LABEL "Usu rio"
+  POSITION 7
+  MAX-WIDTH 24
+  COLUMN-LABEL "Usu rio"
+  HELP "Usu rio da Transa‡Æo"
+  ORDER 50
+
+ADD INDEX "idx_001" ON "es-cat-code-cta-ex" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "cod_cta_ctbl" ASCENDING 
+  INDEX-FIELD "cod_plano_cta_ctbl" ASCENDING 
+
+ADD INDEX "idx_002" ON "es-cat-code-cta-ex" 
+  AREA "Schema Area"
+  INDEX-FIELD "cod_usuario" ASCENDING 
+
+ADD INDEX "idx_003" ON "es-cat-code-cta-ex" 
+  AREA "Schema Area"
+  INDEX-FIELD "dt-trans" ASCENDING 
+  INDEX-FIELD "hr-trans" ASCENDING 
+
+.
+PSC
+cpstream=ibm850
+.
+0000001874

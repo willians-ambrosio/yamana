@@ -1,0 +1,45 @@
+/**********************************************************************************************
+**
+**                              IMPRESSÇO DADOS DO EXTRA-FORNEC
+**
+**********************************************************************************************/
+if  tt-param.l-extra-fornecedor then do:
+    find dist-emitente where 
+         dist-emitente.cod-emitente = pedido-compr.cod-emitente no-lock no-error.
+    if  avail dist-emitente and
+              dist-emitente.extra-fornec then do:
+        find first extra-fornec where
+             extra-fornec.num-pedido   = pedido-compr.num-pedido and
+             extra-fornec.cod-emitente = dist-emitente.cod-emitente
+             no-lock no-error.
+        if avail extra-fornec then do:
+             if line-counter > 55 then do:
+                 page.
+                 run pi-mostra-cabecalho.
+             end.
+            put   c-lb-emit-extra   to 10  format "x(10)" ": " extra-fornec.nome-emit     at 13  
+                  c-lb-contato      to 61  format "x(07)" ": " extra-fornec.contato       at 64  format "x(36)"
+                  c-lb-cnpj         to 105 format "x(04)" ": " extra-fornec.cgc           at 108  
+                  /********************************/
+                  c-lb-endereco     to 10  format "x(08)" ": " extra-fornec.endereco      at 13  format "x(40)"
+                  c-lb-bairro       to 61  format "x(06)" ": " extra-fornec.endereco2     at 64  format "x(34)"
+                  c-lb-cidade       to 105 format "x(06)" ": " extra-fornec.cidade        at 108 format "x(26)"
+                  /********************************/
+                  c-lb-e-mail       to 10  format "x(06)" ": " extra-fornec.e-mail        at 13
+                  c-lb-telefone     to 61  format "x(08)" ": " extra-fornec.telefone      at 64
+                  c-lb-estado       to 105 format "x(02)" ": " extra-fornec.estado        at 108  
+                  /********************************/
+                  c-lb-end-completo to 17  format "x(17)" ": ".
+                  
+                  /*******Imprime 4 linhas de 40 char*****/
+                  run pi-print-editor (extra-fornec.endereco_text, 112).
+                  for each tt-editor:
+                     if  tt-editor.conteudo <> "" then
+                     put unformatted tt-editor.conteudo at 20.
+                  end.
+            put skip(1).
+        end.       
+    end.
+end.
+assign i-linha = 0.
+

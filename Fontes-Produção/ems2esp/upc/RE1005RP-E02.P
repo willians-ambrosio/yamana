@@ -1,0 +1,186 @@
+/****************************************************************************************** 
+** 	   Programa: re1005rp-e02.p
+**   	      Autor: Daniela Campos
+**   	 Fornecedor: DKP
+**    	 Data: 31/10/2018
+** Change/Chamado: Projeto Tesouraria - REQ06
+**    Objetivo: Epc para validar se nota possui contrato e foram efetuadas as reten‡äes e glosas - Change CH0032386 chamado pelo fonte re1005rp-e00.p
+**
+******************************** CONTROLE DE ALTERA€åES *********************************
+** 
+** Data         Autor   		Fornecedor  Change/Chamado Descri‡Æo da Altera‡Æo
+**
+**
+
+****************************** INFORMA€åES ADICIONAIS ************************************
+** PAR¶METROS DE ENTRADA: p-ind-event
+** PAR¶METROS DE SAÖDA: tt-epc
+** CADASTRADO NO FONTE TOTVS: 
+** CADASTRADO NA TABELA: N/A
+******************************************************************************************/
+
+{include/i-epc200.i} /* Upc  */
+DEFINE INPUT        PARAMETER p-ind-event AS CHAR NO-UNDO.
+DEFINE INPUT-OUTPUT PARAMETER TABLE FOR tt-epc.
+
+
+/* MESSAGE p-ind-event                                    */
+/*         VIEW-AS ALERT-BOX INFO BUTTONS OK.             */
+/* FOR EACH tt-epc:                                       */
+/*   MESSAGE                                              */
+/*     "tt-epc.cod-event      " tt-epc.cod-event     skip */
+/*     "tt-epc.cod-parameter  " tt-epc.cod-parameter skip */
+/*     "tt-epc.val-parameter  " tt-epc.val-parameter skip */
+/*     VIEW-AS ALERT-BOX INFO BUTTONS OK.                 */
+/* END.                                                   */
+
+ /* Caso j  existe ou seja criada uma nova upc para o re1005rp fazer a chamada para este fonte a partir do original */  
+DEFINE NEW GLOBAL SHARED VARIABLE l-re1005-glosa    AS LOGICAL     NO-UNDO.
+DEFINE NEW GLOBAL SHARED VARIABLE l-re1005-retencao AS LOGICAL     NO-UNDO.
+
+ IF p-ind-event = "inicio-verifica-documento" THEN DO:
+
+    DEFINE VARIABLE c-especie2   AS CHARACTER   NO-UNDO.
+    DEFINE VARIABLE c-especie    AS CHARACTER   NO-UNDO.
+
+    DEFINE BUFFER bf-docum-est FOR docum-est.
+    DEFINE BUFFER bf-item-doc-est FOR item-doc-est.
+    DEFINE BUFFER bf-dupli-apagar FOR dupli-apagar.
+    
+    ASSIGN l-re1005-glosa    = NO
+           l-re1005-retencao = NO.
+
+		   /*
+   FIND es_parametros NO-LOCK 
+      WHERE es_parametros.cod_prog_dtsul = "re1001" 
+      AND   es_parametros.cod_referencia = "especie_glosa" 
+      AND   es_parametros.dat_valid_ini <= TODAY NO-ERROR.
+    ASSIGN c-especie2 = es_parametros.cod_parametro WHEN AVAIL es_parametros.
+*/
+    FIND es_parametros NO-LOCK 
+          WHERE es_parametros.cod_prog_dtsul = "re1001" 
+          AND   es_parametros.cod_referencia = "especie_retencao" 
+          AND   es_parametros.dat_valid_ini <= TODAY NO-ERROR.
+    ASSIGN c-especie = es_parametros.cod_parametro WHEN AVAIL es_parametros.
+    
+    /* Grava chave do documento */
+    FIND FIRST tt-epc 
+        WHERE tt-epc.cod-event = p-ind-event
+        AND   tt-epc.cod-parameter = "docum-est rowid" NO-ERROR.
+
+    FIND bf-docum-est NO-LOCK 
+         WHERE ROWID(bf-docum-est) = TO-ROWID(tt-epc.val-parameter) NO-ERROR.
+    IF AVAIL bf-docum-est THEN DO:
+
+        FOR EACH bf-item-doc-est OF bf-docum-est:
+
+            FIND FIRST rat-ordem
+                 WHERE rat-ordem.cod-emitente  = bf-item-doc-est.cod-emitente
+                   AND rat-ordem.serie-docto   = bf-item-doc-est.serie-docto
+                   AND rat-ordem.nro-docto     = bf-item-doc-est.nro-docto
+                   AND rat-ordem.nat-operacao  = bf-item-doc-est.nat-operacao
+                   AND rat-ordem.sequencia     = bf-item-doc-est.sequencia NO-LOCK NO-ERROR.
+            IF AVAIL rat-ordem THEN DO:
+               
+                /* Verifica se nÆo houve a reten‡Æo do contrato - DPC */
+                RUN pi-valida-retencao-contrato (INPUT rat-ordem.numero-ordem).
+
+                /* Verifica se h  glosa - DPC */
+                FIND FIRST medicao-contrat NO-LOCK 
+                     WHERE medicao-contrat.nr-contrato     = rat-ordem.nr-contrato
+                       AND medicao-contrat.num-seq-item    = rat-ordem.num-seq-item
+                       AND medicao-contrat.numero-ordem    = rat-ordem.numero-ordem
+                       AND medicao-contrat.num-seq-event   = rat-ordem.num-seq-event
+                       AND medicao-contrat.num-seq-medicao = rat-ordem.num-seq-medicao NO-ERROR.
+                IF AVAIL medicao-contrat THEN DO:
+
+					/*
+                    FIND FIRST es-medicao-contrat OF medicao-contrat NO-LOCK NO-ERROR.
+                    IF AVAIL es-medicao-contrat
+                         AND es-medicao-contrat.vl-glosa-desc > 0 THEN DO:
+
+                         ASSIGN l-re1005-glosa   = YES.
+
+                         IF NOT CAN-FIND(FIRST bf-dupli-apagar NO-LOCK                                       
+                                WHERE bf-dupli-apagar.serie-docto  = bf-docum-est.serie-docto    
+                                  AND bf-dupli-apagar.nro-docto    = bf-docum-est.nro-docto      
+                                  AND bf-dupli-apagar.cod-emitente = bf-docum-est.cod-emitente   
+                                  AND bf-dupli-apagar.nat-operacao = bf-docum-est.nat-operacao   
+                                  AND bf-dupli-apagar.cod-esp      = c-especie2) 
+                          THEN DO:
+                               RUN pi-insertError (INPUT 9997,
+                                                   INPUT bf-item-doc-est.it-codigo,
+                                                   INPUT "Item possui glosa, por‚m nÆo foi encontrada a duplicata correspondente!"). 
+                               RETURN RETURN-VALUE.
+                                
+                         END.
+                    END.
+					*/
+                END.
+            END.
+            ELSE RUN pi-valida-retencao-contrato (INPUT bf-item-doc-est.numero-ordem). 
+                
+        END.
+    END.
+END.
+
+PROCEDURE pi-valida-retencao-contrato:
+   
+    DEFINE INPUT  PARAMETER ipi-nr-ordem AS INTEGER NO-UNDO.
+
+    FIND FIRST ordem-compra NO-LOCK 
+        WHERE ordem-compra.numero-ordem = ipi-nr-ordem NO-ERROR.
+    IF AVAIL ordem-compra THEN DO:
+
+        /* Verifica se existe reten‡Æo para a ordem faturamento */
+        FIND FIRST contrato-for NO-LOCK 
+             WHERE contrato-for.nr-contrato = ordem-compra.nr-contrato NO-ERROR.
+        IF AVAIL contrato-for THEN DO:
+
+            FIND FIRST ext-contrato-for OF contrato-for NO-LOCK NO-ERROR.
+            IF AVAIL ext-contrato-for AND ext-contrato-for.ind_tip_gar = 1 /* Cau‡Æo */ THEN DO: 
+
+                ASSIGN l-re1005-retencao = YES.
+
+                IF NOT CAN-FIND(FIRST bf-dupli-apagar NO-LOCK                                       
+                                WHERE bf-dupli-apagar.serie-docto  = bf-docum-est.serie-docto    
+                                  AND bf-dupli-apagar.nro-docto    = bf-docum-est.nro-docto      
+                                  AND bf-dupli-apagar.cod-emitente = bf-docum-est.cod-emitente   
+                                  AND bf-dupli-apagar.nat-operacao = bf-docum-est.nat-operacao   
+                                  AND bf-dupli-apagar.cod-esp      = c-especie) THEN DO:
+
+                     RUN pi-inserterror (INPUT 9998,
+                                         INPUT bf-item-doc-est.it-codigo,
+                                         INPUT "Item possui reten‡Æo, por‚m nÆo foi encontrada a duplicata correspondente!").
+                     RETURN RETURN-VALUE.
+
+                 END.
+            END.
+        END.
+    END.
+END.
+
+PROCEDURE pi-insertError:
+
+   DEFINE INPUT  PARAMETER ipi-cd-erro AS INTEGER     NO-UNDO.
+   DEFINE INPUT  PARAMETER ipc-item    AS CHARACTER   NO-UNDO.
+   DEFINE INPUT  PARAMETER ipc-msg     AS CHARACTER   NO-UNDO.
+
+   create tt-epc.
+   assign tt-epc.cod-event = "tt-erro"
+          tt-epc.cod-parameter = string(ipi-cd-erro)
+          tt-epc.val-parameter = ipc-msg.
+
+   CREATE tt-epc.
+   ASSIGN tt-epc.cod-event = "ERROR"
+          tt-epc.cod-parameter = "EPC-ERROR" 
+          tt-epc.val-parameter = "O campo coment rio deve ser preenchido.".
+
+
+   RUN utp/ut-msgs.p (INPUT "Show",
+                      INPUT 17006,
+                      INPUT "Item: " + ipc-item + " " + ipc-msg).
+
+   RETURN "NOK".
+
+END PROCEDURE.

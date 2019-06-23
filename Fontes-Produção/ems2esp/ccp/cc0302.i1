@@ -1,0 +1,315 @@
+/*******************************************************************************
+**
+**      CC0302.I1 - Rotina para impressao das Fichas de Cotacao
+**
+*******************************************************************************/
+assign de-quant = 0
+       i-cont  = 0.
+
+for each prazo-compra
+    where prazo-compra.numero-ordem = ordem-compra.numero-ordem no-lock:
+    assign de-quant = de-quant + prazo-compra.quantidade
+           c-un     = prazo-compra.un.
+end.           
+
+find narrativa 
+   where narrativa.it-codigo = item.it-codigo no-lock no-error.
+
+assign c-descricao = item.desc-item.
+
+    disp item.it-codigo
+         item-fornec.item-do-forn
+         c-descricao
+         ordem-compra.conta-contabil
+         with frame f-item.
+    
+    
+    if  ordem-compra.narrativa <> "" then
+        run pi-print-editor (ordem-compra.narrativa, 60).
+    else
+    if  avail item-fornec-estab and item-fornec-estab.narrativa <> "" then
+        run pi-print-editor (item-fornec-estab.narrativa, 60).
+    else 
+    if  avail item-fornec and item-fornec.narrativa <> "" then
+        run pi-print-editor (item-fornec.narrativa, 60).
+    else
+    if  avail narrativa
+    and narrativa.descricao <> "" then
+        run pi-print-editor (narrativa.descricao, 60).
+    else
+        put skip(5).
+    
+    /* Imprime Narrativa da Ordem */
+    for each tt-editor:
+        if  tt-editor.linha = 1 then
+            put unformatted
+                fill("-",24) " " c-lb-ordem " " fill("-",29).
+        disp tt-editor.conteudo with frame f-narrativa.
+        down with frame f-narrativa.
+    end.
+    put skip(1).
+    assign c-natureza = {ininc/i01in274.i 04 ordem-compra.natureza}
+           de-indice  = item-fornec.fator-conver
+                      / if item-fornec.num-casa-dec = 0
+                           then 1 else exp(10,item-fornec.num-casa-dec)
+           de-quant   = de-quant * de-indice.
+    disp c-lb-ordem
+         c-lb-natur
+         c-lb-qtd-ord
+         c-lb-un
+         c-lb-emissao
+         c-lb-requis
+         c-lb-compr
+         with frame f-cab-ordem.
+    disp ordem-compra.numero-ordem
+         c-natureza
+         de-quant
+         item-fornec.unid-med-for
+         ordem-compra.data-emissao
+         ordem-compra.requisitante
+         ordem-compra.cod-comprado
+         with frame f-ordem.
+    put skip(1).
+    assign i-cont = 0.
+    for each prazo-compra
+        where prazo-compra.numero-ordem = ordem-compra.numero-ordem no-lock:
+        assign i-cont = i-cont + 1.
+        if  i-cont > 9 then leave.
+    end.
+    if  not tt-param.l-parcela or i-cont <= 9 then do i-cont = 1 to 9:
+        if  i-cont = 1 then
+            find first prazo-compra
+                where prazo-compra.numero-ordem = ordem-compra.numero-ordem
+                no-lock no-error.
+        else
+            find next prazo-compra
+                where prazo-compra.numero-ordem = ordem-compra.numero-ordem
+                no-lock no-error.
+        if  avail prazo-compra then do:
+            assign de-quant = prazo-compra.quantidade * de-indice.
+            if  i-cont = 1 then
+                put ordem-compra.ordem-servic at 3.
+            put prazo-compra.parcela      at 17
+                de-quant                  at 22
+                prazo-compra.data-entrega at 41
+                "________________"        at 52
+                "____/____/____"          at 69 skip.
+       end.
+       else put skip(1).
+    end.
+    else
+    for each prazo-compra
+        where prazo-compra.numero-ordem = ordem-compra.numero-ordem no-lock:
+        assign de-quant = prazo-compra.quantidade * de-indice.
+        if  i-cont = 1 then
+            put ordem-compra.ordem-servic at 3.
+        put prazo-compra.parcela      at 17
+            de-quant                  at 22
+            prazo-compra.data-entrega at 41
+            "________________"        at 52
+            "____/____/____"          at 69 skip.
+    end.
+    find last b-ordem use-index compra-item
+        where b-ordem.it-codigo = ordem-compra.it-codigo
+        and   b-ordem.data-pedido <> ? no-lock no-error.
+
+    if l-ultima-compra then do:    
+        put unformatted
+            fill("-", 30) " " c-lb-compra " " fill("-", 30) skip.
+        clear frame f-ult-compra.
+        if  avail b-ordem then do:
+             find emitente
+                where emitente.cod-emit = b-ordem.cod-emit no-lock no-error.
+            assign de-quant = 0.
+            for each prazo-compra
+                where prazo-compra.numero-ordem = b-ordem.numero-ordem no-lock:
+                assign de-quant = de-quant + prazo-compra.qtd-do-forn.
+            end.
+            find moeda where moeda.mo-codigo = b-ordem.mo-codigo no-error.
+            if  avail moeda then
+                assign c-moeda = moeda.descricao.
+            assign c-natureza = {ininc/i01in274.i 04 b-ordem.natureza}.
+            disp emitente.nome-abrev
+                 b-ordem.num-pedido
+                 b-ordem.data-pedido
+                 c-natureza
+                 item-fornec.unid-med-for @ item.un
+                 b-ordem.cod-cond-pag
+                 c-moeda
+                 b-ordem.pre-unit-for @ b-ordem.preco-unit
+                 de-quant
+                 b-ordem.aliquota-ipi
+                 b-ordem.codigo-ipi
+                 with frame f-ult-compra.
+        end.
+        else do:
+             disp "" @ emitente.nome-abrev with frame f-ult-compra.
+        end.    
+    end.
+    
+    find emitente
+        where emitente.cod-emit = item-fornec.cod-emit no-lock no-error.
+    find first cont-emit
+        where cont-emit.cod-emitente = emitente.cod-emit no-lock no-error.
+    if  avail cont-emit then
+        find  first b-contato
+            where b-contato.cod-emitente = emitente.cod-emit
+            and   b-contato.sequencia    > cont-emit.sequencia no-lock no-error.
+
+clear frame f-emitente.
+disp c-traco1
+     c-traco2
+     c-lb-fornec
+     c-lb-fax
+     c-lb-telex
+     c-lb-contato[1]
+     c-lb-contato[2]
+     c-lb-fone[1]
+     c-lb-fone[2]
+     emitente.cod-emitente
+     emitente.nome-abrev
+     emitente.nome-emit
+     emitente.endereco
+     emitente.bairro
+     emitente.cidade
+     emitente.cep
+     emitente.estado
+     emitente.pais
+     emitente.telefax
+     emitente.telex
+     cont-emit.nome      when avail cont-emit
+     cont-emit.telefone  when avail cont-emit
+     cont-emit.ramal     when avail cont-emit
+     b-contato.nome      when avail b-contato
+     b-contato.telefone  when avail b-contato
+     b-contato.ramal     when avail b-contato
+     with frame f-emitente.
+find last b-ordem use-index compra-forn
+    where b-ordem.cod-emitente = emitente.cod-emitente
+    and   b-ordem.it-codigo    = ordem-compra.it-codigo
+    and   b-ordem.data-pedido <> ? no-lock no-error.
+clear frame f-cotacao-item.
+{utp/ut-liter.i Com * r}
+assign c-lit = trim(return-value) + ":".
+if  avail b-ordem then do:
+    assign de-quant   = 0
+           c-natureza = {ininc/i01in274.i 04 b-ordem.natureza}.
+    for each prazo-compra
+        where prazo-compra.numero-ordem = b-ordem.numero-ordem no-lock:
+        assign de-quant = de-quant + prazo-compra.qtd-sal-forn.
+    end.
+    find moeda where moeda.mo-codigo = b-ordem.mo-codigo no-error.
+    if  avail moeda then
+        assign c-moeda = moeda.descricao.
+    disp c-lit
+         b-ordem.data-pedido
+         c-natureza
+         b-ordem.preco-fornec @ b-ordem.preco-unit
+         c-moeda
+         b-ordem.cod-cond-pag
+         item.un
+         b-ordem.num-pedido
+         b-ordem.numero-ordem
+         b-ordem.aliquota-ipi
+         b-ordem.codigo-ipi
+         with frame f-cotacao-item.
+end.
+/*else do:
+    disp c-lit with stream-io frame f-cotacao-item.
+end.*/    
+    
+
+find prev b-ordem use-index compra-forn
+    where b-ordem.cod-emitente = emitente.cod-emitente
+    and   b-ordem.it-codigo    = ordem-compra.it-codigo
+    and   b-ordem.data-pedido <> ? no-lock no-error.
+down with frame f-cotacao-item.
+clear frame f-cotacao-item.
+
+{utp/ut-liter.i Com * r}
+assign c-lit = trim(return-value) + ":".
+if  avail b-ordem then do:
+    assign de-quant   = 0
+           c-natureza = {ininc/i01in274.i 04 b-ordem.natureza}.
+    for each prazo-compra
+        where prazo-compra.numero-ordem = b-ordem.numero-ordem no-lock:
+        assign de-quant = de-quant + prazo-compra.qtd-sal-forn.
+    end.
+    find moeda where moeda.mo-codigo = b-ordem.mo-codigo no-error.
+    if  avail moeda then
+        assign c-moeda = moeda.descricao.
+    disp c-lit
+         b-ordem.data-pedido
+         c-natureza
+         b-ordem.preco-fornec @ b-ordem.preco-unit
+         c-moeda
+         b-ordem.cod-cond-pag
+         b-ordem.aliquota-ipi
+         b-ordem.codigo-ipi
+         item.un
+         b-ordem.num-pedido
+         b-ordem.numero-ordem
+         with frame f-cotacao-item.
+end.
+/*else do:
+    disp c-lit with stream-io frame f-cotacao-item.
+end.*/    
+
+down with frame f-cotacao-item.
+clear frame f-cotacao-item.
+find last b-cotacao-item use-index emitente
+    where b-cotacao-item.cod-emitente = emitente.cod-emitente
+    and   b-cotacao-item.it-codigo    = ordem-compra.it-codigo
+    and   b-cotacao-item.data-cotacao <> 11/11/1111 no-lock no-error.
+
+{utp/ut-liter.i Cot * r}
+assign c-lit = trim(return-value) + ":".
+if  avail  b-cotacao-item then do:
+    find b-ordem
+        where b-ordem.numero-ordem = b-cotacao-item.numero-ordem
+        no-lock no-error.
+    if  avail b-ordem then
+        assign c-natureza = {ininc/i01in274.i 04 b-ordem.natureza}.
+    find moeda where moeda.mo-codigo = b-cotacao-item.mo-codigo no-error.
+    if  avail moeda then
+        assign c-moeda = moeda.descricao.
+    disp c-lit
+         b-cotacao-item.data-cotacao @ b-ordem.data-pedido
+         c-natureza
+         b-cotacao-item.preco-fornec @ b-ordem.preco-unit
+         c-moeda
+         b-cotacao-item.cod-cond-pag @ b-ordem.cod-cond-pag
+         b-ordem.aliquota-ipi        when avail b-ordem
+         b-ordem.codigo-ipi          when avail b-ordem
+         with frame f-cotacao-item.
+end.
+else
+    disp c-lit with stream-io frame f-cotacao-item.
+
+disp c-lb-data[1]      c-lb-data[2]
+     c-lb-incluso[1]   c-lb-naoincl[1]
+     c-lb-incluso[2]   c-lb-naoincl[2]
+     c-lb-incluso[3]   c-lb-naoincl[3]
+     c-lb-cotacao      c-lb-dt-cot
+     c-lb-frete        c-lb-contato
+     c-lb-comprador    c-lb-compr
+     c-lb-encarg       c-lb-taxa
+     c-lb-gerente      c-lb-coment
+     c-lb-aprov        c-lb-moeda
+     c-lb-indust       c-lb-consumo
+     c-lb-perc         c-lb-prazo
+     c-lb-un-med       c-lb-cpg
+     c-lb-ipi          c-lb-icms
+     c-lb-sim          c-lb-nao
+     c-lb-vl-fre       c-lb-prc-un
+     c-lb-cot-apr      c-lb-cot-mo
+     c-lb-al-ipi       c-lb-al-icms
+     c-lb-al-iss       c-lb-prc-for
+     c-traco1          c-traco2
+     c-traco3          c-traco4
+     c-traco5
+     with frame f-fim.
+page.
+assign ordem-compra.impr-ficha = no.
+
+/* fim de include */

@@ -1,0 +1,250 @@
+ADD TABLE "rof_contrat_apf"
+  AREA "Schema Area"
+  DUMP-NAME "rof_contrato_apf"
+
+ADD FIELD "cod_empresa" OF "rof_contrat_apf" AS character 
+  DESCRIPTION "C¢digo Empresa"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Empresa"
+  POSITION 2
+  MAX-WIDTH 6
+  COLUMN-LABEL "Empresa"
+  HELP "C¢digo Empresa"
+  ORDER 10
+  MANDATORY
+
+ADD FIELD "cod_contrat_apf" OF "rof_contrat_apf" AS character 
+  DESCRIPTION "Contrato "
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Contrato"
+  POSITION 3
+  MAX-WIDTH 20
+  COLUMN-LABEL "Contrato"
+  HELP "Contrato"
+  ORDER 12
+  MANDATORY
+
+ADD FIELD "cod_rof_contrat_apf" OF "rof_contrat_apf" AS character 
+  DESCRIPTION "ROF Contrato"
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "ROF Contrato"
+  POSITION 4
+  MAX-WIDTH 20
+  COLUMN-LABEL "ROF"
+  HELP "ROF Contrato"
+  ORDER 20
+  MANDATORY
+
+ADD FIELD "des_rof_contrat_apf" OF "rof_contrat_apf" AS character 
+  DESCRIPTION "Descriá∆o"
+  FORMAT "x(40)"
+  INITIAL ""
+  LABEL "Descriá∆o"
+  POSITION 5
+  MAX-WIDTH 80
+  COLUMN-LABEL "Descriá∆o"
+  HELP "Descriá∆o"
+  ORDER 30
+
+ADD FIELD "cdn_fornecedor" OF "rof_contrat_apf" AS integer 
+  DESCRIPTION "C¢digo Fornecedor"
+  FORMAT ">>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Fornecedor"
+  POSITION 6
+  MAX-WIDTH 4
+  COLUMN-LABEL "Fornecedor"
+  HELP "C¢digo Fornecedor"
+  ORDER 40
+  MANDATORY
+
+ADD FIELD "val_lim_cr_rof_contrat_apf" OF "rof_contrat_apf" AS decimal 
+  DESCRIPTION "Valor Limite CrÇdito Contrato APF"
+  FORMAT "->>,>>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Limite CrÇdito"
+  POSITION 7
+  MAX-WIDTH 17
+  COLUMN-LABEL "Limite CrÇdito"
+  HELP "Valor Limite CrÇdito Contrato APF"
+  DECIMALS 2
+  ORDER 50
+  MANDATORY
+
+ADD FIELD "cod_espec_docto" OF "rof_contrat_apf" AS character 
+  DESCRIPTION "C¢digo EspÇcie Documento"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "EspÇcie Documento"
+  POSITION 8
+  MAX-WIDTH 6
+  COLUMN-LABEL "EspÇcie"
+  HELP "C¢digo EspÇcie Documento"
+  ORDER 60
+  MANDATORY
+
+ADD FIELD "cod_ser_docto" OF "rof_contrat_apf" AS character 
+  DESCRIPTION "C¢digo SÇrie Documento"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "SÇrie Documento"
+  POSITION 9
+  MAX-WIDTH 6
+  COLUMN-LABEL "SÇrie"
+  HELP "C¢digo SÇrie Documento"
+  ORDER 70
+  MANDATORY
+
+ADD FIELD "cod_livre_1" OF "rof_contrat_apf" AS character 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "x(100)"
+  INITIAL ""
+  LABEL "Livre 1"
+  POSITION 10
+  MAX-WIDTH 200
+  COLUMN-LABEL "Livre 1"
+  HELP "Atributo livre para uso interno"
+  ORDER 90
+
+ADD FIELD "log_livre_1" OF "rof_contrat_apf" AS logical 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "Sim/N∆o"
+  INITIAL "no"
+  LABEL "Livre 1"
+  POSITION 11
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box
+"
+  COLUMN-LABEL "Livre 1"
+  HELP "Atributo livre para uso interno"
+  ORDER 100
+
+ADD FIELD "num_livre_1" OF "rof_contrat_apf" AS integer 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT ">>>>>9"
+  INITIAL "0"
+  LABEL "Livre 1"
+  POSITION 12
+  MAX-WIDTH 4
+  COLUMN-LABEL "Livre 1"
+  HELP "Atributo livre para uso interno"
+  ORDER 110
+
+ADD FIELD "val_livre_1" OF "rof_contrat_apf" AS decimal 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT ">>>,>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Livre 1"
+  POSITION 13
+  MAX-WIDTH 19
+  COLUMN-LABEL "Livre 1"
+  HELP "Atributo livre para uso interno"
+  DECIMALS 4
+  ORDER 120
+
+ADD FIELD "dat_livre_1" OF "rof_contrat_apf" AS date 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "99/99/9999"
+  INITIAL "today"
+  LABEL "Livre 1"
+  POSITION 14
+  MAX-WIDTH 4
+  COLUMN-LABEL "Livre 1"
+  HELP "Atributo livre para uso interno"
+  ORDER 130
+
+ADD FIELD "cod_livre_2" OF "rof_contrat_apf" AS character 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "x(100)"
+  INITIAL ""
+  LABEL "Livre 2"
+  POSITION 15
+  MAX-WIDTH 200
+  COLUMN-LABEL "Livre 2"
+  HELP "Atributo livre para uso interno"
+  ORDER 140
+
+ADD FIELD "dat_livre_2" OF "rof_contrat_apf" AS date 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Livre 2"
+  POSITION 16
+  MAX-WIDTH 4
+  COLUMN-LABEL "Livre 2"
+  HELP "Atributo livre para uso interno"
+  ORDER 150
+
+ADD FIELD "log_livre_2" OF "rof_contrat_apf" AS logical 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "Sim/N∆o"
+  INITIAL "no"
+  LABEL "Livre 2"
+  POSITION 17
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box
+"
+  COLUMN-LABEL "Livre 2"
+  HELP "Atributo livre para uso interno"
+  ORDER 160
+
+ADD FIELD "num_livre_2" OF "rof_contrat_apf" AS integer 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT ">>>>>9"
+  INITIAL "0"
+  LABEL "Livre 2"
+  POSITION 18
+  MAX-WIDTH 4
+  COLUMN-LABEL "Livre 2"
+  HELP "Atributo livre para uso interno"
+  ORDER 170
+
+ADD FIELD "val_livre_2" OF "rof_contrat_apf" AS decimal 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT ">>>,>>>,>>9.9999"
+  INITIAL "0"
+  LABEL "Livre 2"
+  POSITION 19
+  MAX-WIDTH 19
+  COLUMN-LABEL "Livre 2"
+  HELP "Atributo livre para uso interno"
+  DECIMALS 4
+  ORDER 180
+
+ADD FIELD "cdd_version" OF "rof_contrat_apf" AS decimal 
+  DESCRIPTION "C¢digo da Vers∆o do Registro"
+  FORMAT ">>>,>>>,>>>,>>9"
+  INITIAL "0"
+  LABEL "Vers∆o"
+  POSITION 20
+  MAX-WIDTH 15
+  COLUMN-LABEL "Vers∆o"
+  HELP "C¢digo da Vers∆o do Registro"
+  DECIMALS 0
+  ORDER 190
+
+ADD FIELD "arquivo" OF "rof_contrat_apf" AS character 
+  FORMAT "x(100)"
+  INITIAL ""
+  LABEL "Arquivo"
+  POSITION 21
+  MAX-WIDTH 200
+  COLUMN-LABEL "Arquivo"
+  ORDER 200
+
+ADD INDEX "codigo" ON "rof_contrat_apf" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "cod_empresa" ASCENDING 
+  INDEX-FIELD "cod_contrat_apf" ASCENDING 
+  INDEX-FIELD "cod_rof_contrat_apf" ASCENDING 
+
+.
+PSC
+cpstream=ibm850
+.
+0000067201

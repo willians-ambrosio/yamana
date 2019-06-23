@@ -1,0 +1,189 @@
+/*******************************************************************************
+* ESIN0518-EXCEL.I4 - ImpressÆo do cabe‡alho no EXCEL
+********************************************************************************/
+assign de-total = controle-verba.vl-comp[i-moeda-par] +
+                  controle-verba.vl-real[i-moeda-par].
+
+&if '{&bf_mat_versao_ems}' >= '2.062' &THEN
+   if l-unidade-negocio and l-mat-unid-negoc then do:
+        create tt-impressao.
+        ASSIGN tt-impressao.linha-1 = {1} + c-lbl-ep-codigo
+                                    + {1} + string(controle-verba.ep-codigo)
+                                    + {1} + if avail empresa then empresa.nome else ""
+                                    + {1} + {1} + {1} + {1}
+                                    + {1} + c-txt-unid-negoc[01]
+               tt-impressao.linha-2 = {1} + c-lbl-estab-exec
+                                    + {1} + controle-verba.cod-est-exec
+                                    + {1} + if avail estabelec then estabelec.nome else ""
+                                    + {1} + {1} + {1} + {1}
+                                    + {1} + c-txt-unid-negoc[02]
+                                    + {1} + c-txt-unid-negoc[10]
+                                    + {1} + c-txt-unid-negoc[18]
+                                    + {1} + c-txt-unid-negoc[26]
+               tt-impressao.linha-3 = {1} + c-lbl-num-projeto
+                                    + {1} + string(controle-verba.num-projeto)
+                                    + {1} + if avail proj-inv then proj-inv.descricao else ""
+                                    + {1} + {1} + {1} + {1}
+                                    + {1} + c-txt-unid-negoc[03]
+                                    + {1} + c-txt-unid-negoc[11]
+                                    + {1} + c-txt-unid-negoc[19]
+                                    + {1} + c-txt-unid-negoc[27]
+               tt-impressao.linha-4 = {1} + c-lbl-num-ordem
+                                    + {1} + string(controle-verba.num-ordem)
+                                    + {1} + if avail ordem-inv then ordem-inv.descricao else ""
+                                    + {1} + {1} + {1} + {1} 
+                                    + {1} + c-txt-unid-negoc[04]
+                                    + {1} + c-txt-unid-negoc[12]
+                                    + {1} + c-txt-unid-negoc[20]
+                                    + {1} + c-txt-unid-negoc[28]
+               tt-impressao.linha-5 = {1} + c-lbl-situacao
+                                    + {1} + c-situacao
+                                    + {1}
+                                    + {1} + c-lbl-moeda
+                                    + {1} + c-moeda-controle
+                                    + {1} + {1}
+                                    + {1} + c-txt-unid-negoc[05]
+                                    + {1} + c-txt-unid-negoc[13]
+                                    + {1} + c-txt-unid-negoc[21]
+                                    + {1} + c-txt-unid-negoc[29]
+               tt-impressao.linha-6 = {1} + c-lbl-vl-verba
+                                    + {1} + string(controle-verba.vl-verba[i-moeda-par])
+                                    + {1} + c-lbl-vl-verba-orig
+                                    + {1} + string(controle-verba.vl-verba-orig[i-moeda-par])
+                                    + {1} + {1}
+                                    + {1} + c-txt-unid-negoc[06]
+                                    + {1} + c-txt-unid-negoc[14]
+                                    + {1} + c-txt-unid-negoc[22]
+                                    + {1} + c-txt-unid-negoc[30]
+               tt-impressao.linha-7 = {1} + c-lbl-vl-compromis
+                                    + {1} + string(controle-verba.vl-comp[i-moeda-par])
+                                    + {1} + {1} + {1} + {1} + {1}
+                                    + {1} + c-txt-unid-negoc[07]
+                                    + {1} + c-txt-unid-negoc[15]
+                                    + {1} + c-txt-unid-negoc[23]
+                                    + {1} + c-txt-unid-negoc[31]
+               tt-impressao.linha-8 = {1} + c-lbl-vl-realizado
+                                    + {1} + string(controle-verba.vl-real[i-moeda-par])
+                                    + {1} + {1} + {1} + {1} + {1}
+                                    + {1} + c-txt-unid-negoc[08]
+                                    + {1} + c-txt-unid-negoc[16]
+                                    + {1} + c-txt-unid-negoc[24]
+                                    + {1} + c-txt-unid-negoc[32]
+               tt-impressao.linha-9 = {1} + c-lbl-total
+                                    + {1} + string(de-total)
+                                    + {1} + {1} + {1} + {1} + {1}
+                                    + {1} + c-txt-unid-negoc[09]
+                                    + {1} + c-txt-unid-negoc[17]
+                                    + {1} + c-txt-unid-negoc[25]
+                                    + {1} + c-txt-unid-negoc[33]
+
+               tt-impressao.colunas = c-lb-dt-trans
+                                    + {1} + c-lb-item
+                                    + {1} + c-lb-num-ord-magnus
+                                    + {1} + c-lb-tipo-doc
+                                    + {1} + c-lb-solicitacao
+                                    + {1} + c-lb-ordem
+                                    + {1} + c-lb-pedido
+                                    + {1} + c-lb-especie
+                                    + {1} + c-lb-docto
+                                    + {1} + c-lb-ent-comp
+                                    + {1} + c-lb-sai-comp
+                                    + {1} + c-lb-ent-real
+                                    + {1} + c-lb-sai-real
+                                    + {1} + c-lb-acum-comp
+                                    + {1} + c-lb-acum-real.
+   end.
+   else do:
+        create tt-impressao.
+        ASSIGN tt-impressao.linha-1 = {1} + c-lbl-ep-codigo
+                                    + {1} + string(controle-verba.ep-codigo)
+                                    + {1} + if avail empresa then empresa.nome else ""
+               tt-impressao.linha-2 = {1} + c-lbl-estab-exec
+                                    + {1} + controle-verba.cod-est-exec
+                                    + {1} + if avail estabelec then estabelec.nome else ""
+               tt-impressao.linha-3 = {1} + c-lbl-num-projeto
+                                    + {1} + string(controle-verba.num-projeto)
+                                    + {1} + if avail proj-inv then proj-inv.descricao else ""
+               tt-impressao.linha-4 = {1} + c-lbl-num-ordem
+                                    + {1} + string(controle-verba.num-ordem)
+                                    + {1} + if avail ordem-inv then ordem-inv.descricao else ""
+               tt-impressao.linha-5 = {1} + c-lbl-situacao
+                                    + {1} + c-situacao
+                                    + {1} 
+                                    + {1} + c-lbl-moeda
+                                    + {1} + c-moeda-controle
+               tt-impressao.linha-6 = {1} + c-lbl-vl-verba
+                                    + {1} + string(controle-verba.vl-verba[i-moeda-par])
+                                    + {1} 
+                                    + {1} + c-lbl-vl-verba-orig
+                                    + {1} + string(controle-verba.vl-verba-orig[i-moeda-par])
+               tt-impressao.linha-7 = {1} + c-lbl-vl-compromis
+                                    + {1} + string(controle-verba.vl-comp[i-moeda-par])
+               tt-impressao.linha-8 = {1} + c-lbl-vl-realizado
+                                    + {1} + string(controle-verba.vl-real[i-moeda-par])
+               tt-impressao.linha-9 = {1} + c-lbl-total
+                                    + {1} + string(de-total)
+        
+               tt-impressao.colunas = c-lb-dt-trans
+                                    + {1} + c-lb-item
+                                    + {1} + c-lb-num-ord-magnus
+                                    + {1} + c-lb-tipo-doc
+                                    + {1} + c-lb-solicitacao
+                                    + {1} + c-lb-ordem
+                                    + {1} + c-lb-pedido
+                                    + {1} + c-lb-especie
+                                    + {1} + c-lb-docto
+                                    + {1} + c-lb-ent-comp
+                                    + {1} + c-lb-sai-comp
+                                    + {1} + c-lb-ent-real
+                                    + {1} + c-lb-sai-real
+                                    + {1} + c-lb-acum-comp
+                                    + {1} + c-lb-acum-real.
+   end.
+&else
+    create tt-impressao.
+    ASSIGN tt-impressao.linha-1 = {1} + c-lbl-ep-codigo
+                                + {1} + string(controle-verba.ep-codigo)
+                                + {1} + if avail empresa then empresa.nome else ""
+           tt-impressao.linha-2 = {1} + c-lbl-estab-exec
+                                + {1} + controle-verba.cod-est-exec
+                                + {1} + if avail estabelec then estabelec.nome else ""
+           tt-impressao.linha-3 = {1} + c-lbl-num-projeto
+                                + {1} + string(controle-verba.num-projeto)
+                                + {1} + if avail proj-inv then proj-inv.descricao else ""
+           tt-impressao.linha-4 = {1} + c-lbl-num-ordem
+                                + {1} + string(controle-verba.num-ordem)
+                                + {1} + if avail ordem-inv then ordem-inv.descricao else ""
+           tt-impressao.linha-5 = {1} + c-lbl-situacao
+                                + {1} + c-situacao
+                                + {1} 
+                                + {1} + c-lbl-moeda
+                                + {1} + c-moeda-controle
+           tt-impressao.linha-6 = {1} + c-lbl-vl-verba
+                                + {1} + string(controle-verba.vl-verba[i-moeda-par])
+                                + {1} 
+                                + {1} + c-lbl-vl-verba-orig
+                                + {1} + string(controle-verba.vl-verba-orig[i-moeda-par])
+           tt-impressao.linha-7 = {1} + c-lbl-vl-compromis
+                                + {1} + string(controle-verba.vl-comp[i-moeda-par])
+           tt-impressao.linha-8 = {1} + c-lbl-vl-realizado
+                                + {1} + string(controle-verba.vl-real[i-moeda-par])
+           tt-impressao.linha-9 = {1} + c-lbl-total
+                                + {1} + string(de-total)
+
+           tt-impressao.colunas = c-lb-dt-trans
+                                + {1} + c-lb-item
+                                + {1} + c-lb-num-ord-magnus
+                                + {1} + c-lb-tipo-doc
+                                + {1} + c-lb-solicitacao
+                                + {1} + c-lb-ordem
+                                + {1} + c-lb-pedido
+                                + {1} + c-lb-especie
+                                + {1} + c-lb-docto
+                                + {1} + c-lb-ent-comp
+                                + {1} + c-lb-sai-comp
+                                + {1} + c-lb-ent-real
+                                + {1} + c-lb-sai-real
+                                + {1} + c-lb-acum-comp
+                                + {1} + c-lb-acum-real.
+&endif

@@ -1,0 +1,73 @@
+/*****************************************************************
+**
+** I-RPRUN.I - Roda o programa RP do relat½rio
+** {1} = Nome do programa no formato xxp/xx9999.rp.p
+*****************************************************************/
+def var i-num-ped-exec-rpw as integer no-undo.
+
+raw-transfer tt-param    to raw-param.
+
+&IF "{&PGDIG}" <> "" &THEN
+    for each tt-raw-digita:
+        delete tt-raw-digita.
+    end.
+    for each tt-digita:
+        create tt-raw-digita.
+        raw-transfer tt-digita to tt-raw-digita.raw-digita.
+    end.  
+&ENDIF    
+
+&IF DEFINED(ProgramaRP) = 0 &THEN
+if rs-execucao:screen-value in frame f-pg-imp = "2" then do:
+  run btb/btb911zb.p (input c-programa-mg97,
+                      input "{1}",
+                      input c-versao-mg97,
+                      input 97,
+                      input tt-param.arquivo,
+                      input tt-param.destino,
+                      input raw-param,
+                      input table tt-raw-digita,
+                      output i-num-ped-exec-rpw).
+  if i-num-ped-exec-rpw <> 0 then                     
+    run utp/ut-msgs.p (input "show", input 4169, input string(i-num-ped-exec-rpw)).                      
+end.                      
+else do:         
+  run {1} (input raw-param,
+           input table tt-raw-digita,
+           input table tt-liq,
+           input table tt-hist,
+           input table tt-estat,
+           input table tt-doc,
+           input table tt-documento, 
+           input r-emitente,
+           input fi-total-titulos,
+           input fi-total-matriz,
+           input fi-saldo-anterior,
+           input cod-escolha).
+end.
+&ELSE
+if rs-execucao:screen-value in frame f-pg-imp = "2" then do:
+  run btb/btb911zb.p (input c-programa-mg97,
+                      input {&ProgramaRP},
+                      input c-versao-mg97,
+                      input 97,
+                      input tt-param.arquivo,
+                      input tt-param.destino,
+                      input raw-param,
+                      input table tt-raw-digita,
+                      output i-num-ped-exec-rpw).
+  if i-num-ped-exec-rpw <> 0 then                     
+    run utp/ut-msgs.p (input "show", input 4169, input string(i-num-ped-exec-rpw)).                      
+end.                      
+else do: 
+    run value({&ProgramaRP}) (input raw-param,
+                            input table tt-raw-digita,
+                            input table tt-documento, 
+                            input r-emitente,
+                            input fi-total-titulos,
+                            input fi-total-matriz,
+                            input fi-saldo-anterior).
+end.
+&ENDIF
+
+/* i-rprun.i */

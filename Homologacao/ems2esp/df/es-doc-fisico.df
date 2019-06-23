@@ -1,0 +1,148 @@
+ADD TABLE "es-doc-fisico"
+  AREA "Schema Area"
+  LABEL "Documentos do recebimento fisico"
+  DESCRIPTION "Armazena os documentos digitados pelo recebimento fisico"
+  DUMP-NAME "es-doc-fisico"
+
+ADD FIELD "nro-docto" OF "es-doc-fisico" AS character 
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Documento"
+  POSITION 2
+  MAX-WIDTH 32
+  COLUMN-LABEL "Documento"
+  VALEXP "nro-docto <> "" """
+  VALMSG "Numero do Documento deve ser diferente de branco"
+  ORDER 20
+  MANDATORY
+
+ADD FIELD "serie-docto" OF "es-doc-fisico" AS character 
+  FORMAT "x(5)"
+  INITIAL ""
+  LABEL "S‚rie"
+  POSITION 3
+  MAX-WIDTH 10
+  COLUMN-LABEL "Ser"
+  ORDER 10
+  MANDATORY
+
+ADD FIELD "cod-emitente" OF "es-doc-fisico" AS integer 
+  FORMAT ">>>>>>>>9"
+  INITIAL "0"
+  LABEL "Emitente"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "Emit"
+  ORDER 30
+  MANDATORY
+
+ADD FIELD "situacao" OF "es-doc-fisico" AS character 
+  FORMAT "x(15)"
+  INITIAL ""
+  LABEL "Situa‡Æo"
+  POSITION 5
+  MAX-WIDTH 10
+  COLUMN-LABEL "Sit"
+  ORDER 50
+  MANDATORY
+
+ADD FIELD "tipo-nota" OF "es-doc-fisico" AS integer 
+  FORMAT ">9"
+  INITIAL "1"
+  LABEL "Tipo Nota"
+  POSITION 9
+  MAX-WIDTH 4
+  VIEW-AS "view-as radio-set horizontal radio-buttons {ininc/i01in089.i 02}"
+  COLUMN-LABEL "Tp Nota"
+  HELP "Tipo de Nota Fiscal"
+  ORDER 40
+  MANDATORY
+
+ADD FIELD "char-1" OF "es-doc-fisico" AS character 
+  FORMAT "x(100)"
+  INITIAL ""
+  POSITION 10
+  MAX-WIDTH 200
+  ORDER 60
+
+ADD FIELD "char-2" OF "es-doc-fisico" AS character 
+  FORMAT "x(100)"
+  INITIAL ""
+  POSITION 11
+  MAX-WIDTH 200
+  ORDER 70
+
+ADD FIELD "dec-1" OF "es-doc-fisico" AS decimal 
+  FORMAT "->>>>>>>>>>>9.99999999"
+  INITIAL "0"
+  POSITION 12
+  MAX-WIDTH 23
+  DECIMALS 8
+  ORDER 80
+
+ADD FIELD "dec-2" OF "es-doc-fisico" AS decimal 
+  FORMAT "->>>>>>>>>>>9.99999999"
+  INITIAL "0"
+  POSITION 13
+  MAX-WIDTH 23
+  DECIMALS 8
+  ORDER 90
+
+ADD FIELD "int-1" OF "es-doc-fisico" AS integer 
+  FORMAT "->>>>>>>>>9"
+  INITIAL "0"
+  POSITION 14
+  MAX-WIDTH 4
+  ORDER 100
+
+ADD FIELD "int-2" OF "es-doc-fisico" AS integer 
+  FORMAT "->>>>>>>>>9"
+  INITIAL "0"
+  POSITION 15
+  MAX-WIDTH 4
+  ORDER 110
+
+ADD FIELD "log-1" OF "es-doc-fisico" AS logical 
+  FORMAT "Sim/NÆo"
+  INITIAL "no"
+  POSITION 16
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box"
+  ORDER 120
+
+ADD FIELD "log-2" OF "es-doc-fisico" AS logical 
+  FORMAT "Sim/NÆo"
+  INITIAL "no"
+  POSITION 17
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box"
+  ORDER 130
+
+ADD FIELD "data-1" OF "es-doc-fisico" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  POSITION 18
+  MAX-WIDTH 4
+  ORDER 140
+
+ADD FIELD "data-2" OF "es-doc-fisico" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  POSITION 19
+  MAX-WIDTH 4
+  ORDER 150
+
+ADD INDEX "documento" ON "es-doc-fisico" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "serie-docto" ASCENDING 
+  INDEX-FIELD "nro-docto" ASCENDING 
+  INDEX-FIELD "cod-emitente" ASCENDING 
+  INDEX-FIELD "tipo-nota" ASCENDING 
+
+.
+PSC
+cpstream=ibm850
+.
+0000003025

@@ -1,0 +1,1707 @@
+&ANALYZE-SUSPEND _VERSION-NUMBER UIB_v9r12
+&ANALYZE-RESUME
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _CUSTOM _DEFINITIONS Include 
+/********************************************************************************
+** Copyright DATasUL S.A. (1997)
+** Todos os Direitos Reservados.
+**
+** Este fonte e de propriedade exclusiva da DATasUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+*******************************************************************************/
+/*****************************************************************************
+**
+**       PROGRAMA:  ESMV0501.i2
+**
+**       DATA....: 01/04/2004
+**
+**       AUTOR...: Leonardo Correia - Manufatura - DATasUL S.A.
+**
+**       OBJETIVO: Programa de RP para impress∆o de Fichas de Ordem de 
+**                 Manutená∆o de Frotas para o grupo YAMANA
+**
+*****************************************************************************/
+define variable c-hora           as character format "99:99:99"     no-undo.
+define variable deKMeqptoini     as decimal                         no-undo.
+define variable deKMeqptofim     as decimal                         no-undo.
+define variable deInvertidaAtual as decimal   format "999999999999" no-undo.
+define variable i-cont-plano     as integer                         no-undo.
+define variable c-planos         as character                       no-undo.
+define variable c-sub-sist       as character                       no-undo.
+define variable cTag             as character                       no-undo.
+define variable cCCCodigo        as character                       no-undo.
+
+define buffer bfTarOm  for mmv-tar-ord-manut.
+
+
+/* {include/i-rpcab.i} */
+/* {include/i-rpout.i} */
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+
+&ANALYZE-SUSPEND _UIB-PREPROCESSOR-BLOCK 
+
+/* ********************  Preprocessor Definitions  ******************** */
+
+
+
+/* _UIB-PREPROCESSOR-BLOCK-END */
+&ANALYZE-RESUME
+
+
+
+/* *********************** Procedure Settings ************************ */
+
+&ANALYZE-SUSPEND _PROCEDURE-SETTINGS
+/* Settings for THIS-PROCEDURE
+   Type: Include
+   Allow: 
+   Frames: 0
+   Add Fields to: Neither
+   Other Settings: INCLUDE-ONLY
+ */
+&ANALYZE-RESUME _END-PROCEDURE-SETTINGS
+
+/* *************************  Create Window  ************************** */
+
+&ANALYZE-SUSPEND _CREATE-WINDOW
+/* DESIGN Window definition (used by the UIB) 
+  CREATE WINDOW Include ASSIGN
+         HEIGHT             = 19.17
+         WIDTH              = 30.86.
+/* END WINDOW DEFINITION */
+                                                                        */
+&ANALYZE-RESUME
+
+ 
+
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _CUSTOM _MAIN-BLOCK Include 
+
+
+/* ***************************  Main Block  *************************** */
+
+{abp/ab9000.i} /** Convers∆o Horas **/
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+
+/* **********************  Internal Procedures  *********************** */
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piBuscaCompon Include 
+PROCEDURE piBuscaCompon :
+/*------------------------------------------------------------------------------
+  Purpose:     piBuscaCompon
+  Parameters:  entrada pSeq  = N£mero sequencial do Componente
+               sa°da   pDesc =Descriá∆o do Componente
+  Notes:       Busca a descriá∆o do componente
+------------------------------------------------------------------------------*/
+define input  parameter pSeq  as integer   no-undo.
+define output parameter pDesc as character no-undo.
+
+if not avail mco-compon or mco-compon.num-seqcial <> pSeq then do:
+    for first mco-compon fields(num-seqcial des-model cod-model)
+        where mco-compon.num-seqcial = pSeq no-lock:
+    end.
+end.
+
+if avail mco-compon then do:
+    assign pDesc = mco-compon.des-model.
+end.
+
+return "OK":U.
+
+end procedure.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piBuscaOrdem Include 
+PROCEDURE piBuscaOrdem :
+/*------------------------------------------------------------------------------
+  Purpose:     piBuscaOrdem
+  Parameters:  <none>
+  Notes:       Nusca as Ordens de Manutená∆o que devem ser impressas
+------------------------------------------------------------------------------*/
+define variable cModeloOrdem as character no-undo.
+
+ASSIGN i-cont = 0.
+
+for each  mmv-ord-manut
+    where mmv-ord-manut.nr-ord-produ     >= tt-param.c-ord-ini
+    and   mmv-ord-manut.nr-ord-produ     <= tt-param.c-ord-fim
+    and   mmv-ord-manut.cod-ofici        >= tt-param.c-oficina-ini
+    and   mmv-ord-manut.cod-ofici        <= tt-param.c-oficina-fim
+    and   mmv-ord-manut.dat-abert        >= tt-param.c-data-ini
+    and   mmv-ord-manut.dat-abert        <= tt-param.c-data-fim
+    and   mmv-ord-manut.ep-codigo        >= tt-param.c-empresa-ini
+    and   mmv-ord-manut.ep-codigo        <= tt-param.c-empresa-fim
+    and   mmv-ord-manut.cod-eqpto        >= tt-param.c-eqpto-ini
+    and   mmv-ord-manut.cod-eqpto        <= tt-param.c-eqpto-fim
+    and   mmv-ord-manut.cod-compon       >= tt-param.c-componente-ini
+    and   mmv-ord-manut.cod-compon       <= tt-param.c-componente-fim
+    and ((mmv-ord-manut.idi-tip-ord       = 1 and tt-param.l-eqpto)
+         or   (mmv-ord-manut.idi-tip-ord  = 2 and tt-param.l-comp)
+         or   (mmv-ord-manut.idi-tip-ord  = 3 and tt-param.l-custo))
+    and ((mmv-ord-manut.estado            = 1 and tt-param.l-nIniciada)
+         or   (mmv-ord-manut.estado       = 6 and tt-param.l-iniciada)
+         or   (mmv-ord-manut.estado       = 8 and tt-param.l-terminada)) no-lock:
+
+    /** Busca Registro de Equipamento ou Componente **/
+    case mmv-ord-manut.idi-tip-ord:
+        /** Equipamentos **/
+        when 1 then do:
+            if not avail mab-eqpto or mab-eqpto.ep-codigo <> mmv-ord-manut.ep-codigo
+                                   or mab-eqpto.cod-eqpto <> mmv-ord-manut.cod-eqpto then do:
+                for first mab-eqpto 
+                    where mab-eqpto.ep-codigo = mmv-ord-manut.ep-codigo
+                    and   mab-eqpto.cod-eqpto = mmv-ord-manut.cod-eqpto no-lock:
+                end.
+            end.
+            if avail mab-eqpto then do:
+                assign c-model-eqpto = mab-eqpto.cod-model
+                       cModeloOrdem  = c-model-eqpto.
+
+                /** Busca hist¢rico do equipamento **/
+                for last mab-histor-ativid
+                    where mab-histor-ativid.ep-codigo     = mab-eqpto.ep-codigo
+                    and   mab-histor-ativid.cod-eqpto     = mab-eqpto.cod-eqpto
+                    and   mab-histor-ativid.dat-cadastro <= mmv-ord-manut.dat-entr no-lock:
+                end.
+                if avail mab-histor-ativid then do:
+                   assign cTag      = mab-histor-ativid.cd-tag
+                          cCCCodigo = mab-histor-ativid.cc-codigo.
+                end.
+                else do:
+                   for last mab-histor-ativid
+                       where mab-histor-ativid.ep-codigo = mab-eqpto.ep-codigo
+                       and mab-histor-ativid.cod-eqpto   = mab-eqpto.cod-eqpto no-lock:
+                   end.
+                   if avail mab-histor-ativid then do:
+                       assign cTag      = mab-histor-ativid.cd-tag
+                              cCCCodigo = mab-histor-ativid.cc-codigo.
+                   end.
+                   else do:
+                       assign cTag      = mab-eqpto.cd-tag
+                              cCCCodigo = mab-eqpto.cc-codigo.
+                   end.
+                end.
+            end.
+
+            if cTag < tt-param.tag-ini or cTag > tt-param.tag-fim then next.
+            if cCCCodigo < tt-param.cc-ini or cCCCodigo > tt-param.cc-fim then next.
+            
+            {utp/ut-liter.i "Ordem_Manutená∆o"}
+            run pi-Acompanhar in h-acomp (return-value + ": " + string(mmv-ord-manut.nr-ord-produ)).
+
+        end.
+/*         /** Componentes **/                                                                         */
+/*         when 2 then do:                                                                             */
+/*             if not avail mco-compon or mco-compon.num-seqcial <> mmv-ord-manut.num-seqcial then do: */
+/*                 for first mco-compon fields (num-seqcial des-model cod-model)                       */
+/*                    where  mco-compon.num-seqcial = mmv-ord-manut.num-seqcial no-lock:               */
+/*                 end.                                                                                */
+/*             end.                                                                                    */
+/*             if avail mco-compon then do:                                                            */
+/*                 assign c-des-model   = mco-compon.des-model                                         */
+/*                        c-model-compn = mco-compon.cod-model                                         */
+/*                        cModeloOrdem  = c-model-compn.                                               */
+/*             end.                                                                                    */
+/*         end.                                                                                        */
+    end case.
+
+
+
+    /** Busca descriá‰es e atualiza variaveis **/
+    run piDescricoes in this-procedure (input cModeloOrdem).
+
+    for first mmv-ofici fields (cod-ofici des-ofici) 
+        where mmv-ofici.cod-ofici = mmv-ord-manut.cod-ofici no-lock:
+        assign cCod-Ofici = mmv-ofici.cod-ofici
+               cDes-Ofici = mmv-ofici.des-ofici.
+    end.
+
+    /** Atualiza variaveis para impress∆p de dados **/
+    assign c-data-abert      = mmv-ord-manut.dat-abert
+           c-hora-abert      = if mmv-ord-manut.hra-abert <> "00:00:00":U 
+                               then substring(mmv-ord-manut.hra-abert,1,5)  
+                               else ""         /** Hora + Minuto **/
+           c-data-entrada    = mmv-ord-manut.dat-entr 
+           c-hora-entrada    = if mmv-ord-manut.hra-entr <> "" 
+                               then substring(mmv-ord-manut.hra-entr,1,5)
+                               else ""         /** Hora + Minuto **/
+           c-data-prev       = mmv-ord-manut.dat-prev     /** Ano **/  
+           c-hora-prev       = if mmv-ord-manut.hra-prev <> "" 
+                               then substring(mmv-ord-manut.hra-prev,1,5) 
+                               else ""         /** Hora + Minuto **/
+           c-data-term       = mmv-ord-manut.dat-term
+           c-hora-term       = if mmv-ord-manut.hra-term <> "" 
+                               then substring(mmv-ord-manut.hra-term,1,5) 
+                               else ""         /** Hora + Minuto **/ 
+           c-tp-om           = {frinc/i00fr072.i 4 mmv-ord-manut.idi-tip-ord} 
+           c-estado          = {ininc/i01in271.i 4 mmv-ord-manut.estado}
+           c-conta           = mmv-ord-manut.ct-ordem
+           cc-custo          = mmv-ord-manut.cc-ordem
+           iep-cod-ordem     = mmv-ord-manut.ep-codigo-ordem
+           i-cod-emp         = mmv-ord-manut.ep-codigo
+           c-cod-eqpto       = mmv-ord-manut.cod-eqpto
+           c-val-hod         = mmv-ord-manut.val-hodom-horim
+           c-cod-sub-sit     = mmv-ord-manut.cod-sub-sist
+           c-cod-comp        = mmv-ord-manut.cod-compon
+           c-tp-manut        = mmv-ord-manut.cd-tipo
+           c-plane           = mmv-ord-manut.cod-plandor
+           i-num-ord         = mmv-ord-manut.nr-ord-produ
+           c-dat-criacao     = mmv-ord-manut.dat-criacao
+           c-hr-cricao       = mmv-ord-manut.hra-criacao
+           iep-conta-desp    = mmv-ord-manut.ep-codigo-despes
+           c-cont-desp       = mmv-ord-manut.ct-codigo
+           cc-cond-desp      = mmv-ord-manut.cc-codigo
+           c-cod-usuar       = mmv-ord-manut.cod-usuar
+           c-cod-estabel     = mmv-ord-manut.cod-estabel
+           c-data-movto      = mmv-ord-manut.dat-criacao
+           c-cod-Sintoma     = SUBSTRING(mmv-ord-manut.cod-livre-1,21,8)
+           c-cod-Causa       = SUBSTRING(mmv-ord-manut.cod-livre-1,13,8).
+           
+
+
+/* leonardo */
+
+    /***Display do cabeáalho do relat¢rio***/
+    case mmv-ord-manut.idi-tip-ord:
+        /** Equipamento **/
+        when 1 then do:
+            display with frame fFrameA.
+            down with frame fFrameA.
+        end.
+        /** Componente **/
+        when 2 then do:
+            display with frame fFrameB.
+            down with frame fFrameB.
+        end.
+        /** Centro Custo **/
+        when 3 then do:
+            display with frame fFrameC.
+            down with frame fFrameC.
+        end.
+    end case.
+
+    /** Busca as tarefas da OM e imprime as mesmas **/
+    run piTarefas in this-procedure.
+
+/*     /** Imprime os materiais associados a tarefa **/                 */
+     run piMateriais in this-procedure (input cModeloOrdem). 
+     
+    /** Requisiá‰es e Solicitaá‰es **/
+    /*RUN piRequisicao IN THIS-PROCEDURE.*/
+
+    /** Centro de Custo n∆o imprime plano **/
+    if mmv-ord-manut.idi-tip-ord <> 3 and c-planos <> "":U then do:
+        /** Imprime o EPI associado as tarefas **/
+        run piEPI in this-procedure (input cModeloOrdem).
+        /** Imprime as Ferramentas associadas as tarefas **/
+        run piFerramenta in this-procedure (input cModeloOrdem).
+        /** Imprime as Fichas de MÇtodos associadas as tarefas **/
+        run piFicha in this-procedure (input cModeloOrdem).
+    end.
+
+/*     case mmv-ord-manut.idi-tip-ord:                           */
+/*         /** Equipamento **/                                   */
+/*         when 1 then do:                                       */
+/*             /** Busca Compartimentos com eventos vencidos **/ */
+/*             run piCompartimento in this-procedure.            */
+/*             /** Busca Eventos Programados **/                 */
+/*             run piEventos in this-procedure.                  */
+/*         end.                                                  */
+/*     end case. */
+
+    if mmv-ord-manut.idi-tip-ord <> 3 then
+        run piPlanos in this-procedure.
+
+    /***Imprime documentos anexos***/
+    if lAnexos then do:
+        if can-find(first mmv-arq-ord-manut
+                    where mmv-arq-ord-manut.nr-ord-produ = mmv-ord-manut.nr-ord-produ no-lock) then do:
+            display with frame fFrameM1.
+        end.
+        for each mmv-arq-ord-manut fields (cod_docto_anexo des-docto nr-ord-produ num-seq)
+            where mmv-arq-ord-manut.nr-ord-produ = mmv-ord-manut.nr-ord-produ 
+            no-lock break by mmv-arq-ord-manut.cod_docto_anexo
+                          by mmv-arq-ord-manut.num-seq:
+
+            assign  c-num-docto-3     = mmv-arq-ord-manut.cod_docto_anexo
+                    c-descricao-2     = mmv-arq-ord-manut.des-docto. 
+
+            display with frame fFrameM. 
+            down with frame fFrameM.       
+        end.
+    end.
+
+    /** Imprime as £ltima manutená‰es ocorridas **/
+    run piManutencoes in this-procedure.
+
+
+    /** Imprime Observaá∆o da Ordem **/
+    if lObs = yes and mmv-ord-manut.dsl-obs <> " " then do:
+        display with frame fFrameO1.
+        /** Cria linhas para serem impressas de 72 caracteres **/
+        run pi-print-editor (input mmv-ord-manut.dsl-obs,
+                             input 70).
+        for first tt-editor no-lock:
+            assign c-conteudo = tt-editor.conteudo.
+            display with frame fFrameO.
+            down with frame fFrameO.
+        end.
+        for each  tt-editor
+            where tt-editor.linha > 1 no-lock:
+            assign c-conteudo = tt-editor.conteudo.
+            display with frame fFrameO.
+            down with frame fFrameO.
+        end.
+        assign i-cont-linhas = 0.
+        if tt-param.l-linhas then do:
+            do i-cont-linhas = 1 to tt-param.nr-linhas:
+                put "|                                                                                  |".
+                put skip.
+                put "|                                                                                  |".
+                put skip.
+            end.
+        end.
+    end.
+    else do:
+        if tt-param.l-linhas then do:
+            display with frame fFrameO1.
+            /** Cria linhas para serem impressas de 72 caracteres **/
+            run pi-print-editor (input mmv-ord-manut.dsl-obs,
+                                 input 70).
+            for first tt-editor no-lock:
+                assign c-conteudo = tt-editor.conteudo.
+                display with frame fFrameO.
+                down with frame fFrameO.
+            end.
+            for each  tt-editor
+                where tt-editor.linha > 1 no-lock:
+                assign c-conteudo = tt-editor.conteudo.
+                display with frame fFrameO.
+                down with frame fFrameO.
+            end.
+            assign i-cont-linhas = 0.
+            do i-cont-linhas = 1 to tt-param.nr-linhas:
+                put "|                                                                                  |".
+                put skip.
+                put "|                                                                                  |".
+                put skip.
+            end.
+        end.
+    end.
+
+    display with frame fFrameP.
+    down with frame fFrameP.
+
+    if l-QuebraOM then do:
+        page.
+    end.
+    
+end.
+
+return "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piBuscaPlanos Include 
+PROCEDURE piBuscaPlanos :
+/*------------------------------------------------------------------------------
+  Purpose:     piBuscaPlanos
+  Parameters:  entrada pModelo = C¢digo do modelo do plano
+               entrada pPlano  = C¢digo do plano de prevená∆o
+               entrada pKM     = Valor da Quilometragem 
+               entrada pData   = Data de atualizaá∆o
+  Notes:       Busca os planos vencidos para o equipamento / componente
+------------------------------------------------------------------------------*/
+define input parameter pModelo as character                no-undo.
+define input parameter pPlano  as character                no-undo.
+define input parameter pKM     as decimal                  no-undo.
+define input parameter pData   as date format "99/99/9999" no-undo.
+define input-output parameter pCabec as log                no-undo.
+
+def var deReal        as dec                      no-undo.
+def var dePadrao      as dec                      no-undo.
+def var deKMMedio     as dec                      no-undo.
+def var deKMAcumulado as dec                      no-undo.
+def var dtAcumulado   as date format '99/99/9999' no-undo.
+def var dt-consulta   as date format '99/99/9999' no-undo.
+def var dt-dat-vencto as date format '99/99/9999' no-undo.
+def var lVencido      as log                      no-undo.
+def var lVencer       as log                      no-undo.
+
+DEF BUFFER bf-mmv-ord-manut FOR mmv-ord-manut.
+
+assign deKMAcumulado = pKM
+       dtAcumulado   = pData
+       dt-consulta   = today
+       deReal        = 0
+       dePadrao      = 0
+       lVencido      = no
+       lVencer       = no.
+
+if not avail mmv-plano-prevent or 
+   mmv-plano-prevent.cod-model <> pModelo or 
+   mmv-plano-prevent.cod-plano <> pPlano then do:
+   for first mmv-plano-prevent 
+        where mmv-plano-prevent.cod-model = pModelo
+          and mmv-plano-prevent.cod-plano = pPlano no-lock:
+   end.
+end.
+if not avail mmv-plano-prevent then next.
+
+if mmv-plano-prevent.val-km-padr > 0 then do:
+    if (deKMAcumulado >= mmv-plano-prevent.val-km-padr) then do:
+        lVencido = yes.
+    end.
+    if not(lVencido) then do:
+        if (deKMAcumulado < mmv-plano-prevent.val-km-padr) and
+               ((deKMAcumulado + mmv-plano-prevent.val-km-aviso) >= mmv-plano-prevent.val-km-padr) then do:
+            assign lVencer = yes.
+        end.
+    end.
+    assign deReal   = pKM
+           dePadrao = mmv-plano-prevent.val-km-padr.
+end.
+if not(lVencido) then do:
+    if mmv-plano-prevent.vli-dia > 0 and dtAcumulado < today then do:
+        if (dt-consulta - dtAcumulado >= mmv-plano-prevent.vli-dia) then do:
+            lVencido = yes.
+        end.
+        if not(lVencido) then do:
+            if (dt-consulta - dtAcumulado < mmv-plano-prevent.vli-dia) and
+                   ((dt-consulta - dtAcumulado + mmv-plano-prevent.vli-dia-aviso) >= mmv-plano-prevent.vli-dia) then do:
+                assign lVencer = yes.
+            end.
+        end.
+        assign deReal   = today - dtAcumulado
+               dePadrao = mmv-plano-prevent.vli-dia.
+    end.
+end.
+
+if not(lVencido) and not(lVencer) then next.
+
+if mmv-plano-prevent.log-gera-tar-om
+and can-find(first mmv-tar-plano
+            where mmv-tar-plano.cod-model = mmv-plano-prevent.cod-model
+            and   mmv-tar-plano.cod-plano = mmv-plano-prevent.cod-plano no-lock) then do:
+    for each  mmv-tar-plano
+        where mmv-tar-plano.cod-model = mmv-plano-prevent.cod-model
+        and   mmv-tar-plano.cod-plano = mmv-plano-prevent.cod-plano no-lock:
+
+        if can-find(first mmv-tar-ord-manut use-index mmvtrrdm-02
+                    where mmv-tar-ord-manut.ep-codigo    = mab-eqpto.ep-codigo
+                    and   mmv-tar-ord-manut.cod-eqpto    = mab-eqpto.cod-eqpto
+                    and   mmv-tar-ord-manut.cod-evento   = mmv-tar-plano.cod-evento
+                    and   mmv-tar-ord-manut.cod-sub-sist = mmv-tar-plano.cod-sub-sist
+                    AND   mmv-tar-ord-manut.estado       < 3 
+                    and   mmv-tar-ord-manut.val-dat-invrtda-term = 0 no-lock) then do:
+             NEXT.
+        end.    
+        else do:
+            FOR FIRST  mmv-tar-ord-manut use-index mmvtrrdm-02
+                      where mmv-tar-ord-manut.ep-codigo    = mab-eqpto.ep-codigo       
+                      and   mmv-tar-ord-manut.cod-eqpto    = mab-eqpto.cod-eqpto       
+                      and   mmv-tar-ord-manut.cod-evento   = mmv-tar-plano.cod-evento  
+                      and   mmv-tar-ord-manut.cod-sub-sist = mmv-tar-plano.cod-sub-sist
+                      AND   mmv-tar-ord-manut.estado       = 4 NO-LOCK:
+            END.
+            IF AVAIL mmv-tar-ord-manut THEN DO:
+                FOR FIRST bf-mmv-ord-manut 
+                    WHERE bf-mmv-ord-manut.nr-ord-produ = mmv-tar-ord-manut.nr-ord-produ
+                      AND bf-mmv-ord-manut.estado < 7 NO-LOCK:
+                      NEXT.
+                END.
+            END.
+
+            assign dtAcumulado = if dt-consulta > dtAcumulado then dt-consulta 
+                                 else dtAcumulado.
+        end.
+        if not avail mmv-setor-ofici or mmv-setor-ofici.cod-setor-ofici <> mmv-tar-plano.cod-setor-ofici then do:
+            for first mmv-setor-ofici fields(des-setor-ofici cod-setor-ofici cod-ofici)  
+                where mmv-setor-ofici.cod-setor-ofici = mmv-tar-plano.cod-setor-ofici no-lock:
+            end.
+        end.
+        assign dt-dat-vencto = dt-consulta
+               deKMAcumulado = 0
+               d-diferenca   = deReal - dePadrao
+               c-tarefa      = ''.
+
+        /**********************************************************************************/
+        /*** Eventos associados a tarefa ***/
+        if not avail mab-event or mab-event.cod-evento <> mmv-tar-plano.cod-evento then do:
+            for first mab-event fields (cod-evento des-evento idi-compon-event cod-grp-event)
+                where  mab-event.cod-evento = mmv-tar-plano.cod-evento no-lock:
+            end.
+        end.
+        if avail mab-event then
+            assign c-tarefa = mab-event.des-evento.
+
+        /*** Sub-Sistemas associados a tarefa ***/
+        if not avail mab-sub-sist or mab-sub-sist.cod-sub-sist <> mmv-tar-plano.cod-sub-sist then do:
+            for first mab-sub-sist fields (cod-sub-sist des-sub-sist idi-compon)
+                where mab-sub-sist.cod-sub-sist = mmv-tar-plano.cod-sub-sist no-lock:
+            end.
+        end.
+        if avail mab-sub-sist THEN
+            assign c-tarefa = c-tarefa + ' - ' + mab-sub-sist.des-sub-sist. 
+
+        /**********************************************************************************/
+
+        assign c-planovenc = mmv-tar-plano.cod-plano + '-' + trim(string(mmv-tar-plano.num-seq, '>>>>9')).
+        if lVencido then do:
+            {utp/ut-liter.i Vencido}
+            assign c-vencto = return-value.
+        end.
+        else do:
+            {utp/ut-liter.i ∑_Vencer}
+            assign c-vencto = return-value.
+        end.
+        ASSIGN cl-planovencav = c-vencto.
+        
+        
+
+        if not(pCabec) then do:
+            display with frame fFrameQ1.
+            assign pCabec = yes.
+        end.
+
+        display with frame fFrameQ.
+        down with frame fFrameQ.
+        
+    end.
+end.
+else do:
+    if can-find(first mmv-tar-ord-manut use-index mmvtrrdm-02
+                where mmv-tar-ord-manut.ep-codigo    = mab-eqpto.ep-codigo
+                and   mmv-tar-ord-manut.cod-eqpto    = mab-eqpto.cod-eqpto
+                and   mmv-tar-ord-manut.cod-evento   = mmv-plano-prevent.cod-evento
+                and   mmv-tar-ord-manut.cod-sub-sist = mmv-plano-prevent.cod-sub-sist
+                AND   mmv-tar-ord-manut.estado       < 3
+                and   mmv-tar-ord-manut.val-dat-invrtda-term = 0 no-lock) then do:
+            next.
+     end.
+     else do:
+        FOR FIRST  mmv-tar-ord-manut use-index mmvtrrdm-02
+                  where mmv-tar-ord-manut.ep-codigo            = mab-eqpto.ep-codigo       
+                  and   mmv-tar-ord-manut.cod-eqpto            = mab-eqpto.cod-eqpto       
+                  and   mmv-tar-ord-manut.cod-evento           = mmv-plano-prevent.cod-evento  
+                  and   mmv-tar-ord-manut.cod-sub-sist         = mmv-plano-prevent.cod-sub-sist
+                  AND   mmv-tar-ord-manut.estado               = 4 NO-LOCK:
+        END.
+        IF AVAIL mmv-tar-ord-manut THEN DO:
+            FOR FIRST bf-mmv-ord-manut 
+                WHERE bf-mmv-ord-manut.nr-ord-produ = mmv-tar-ord-manut.nr-ord-produ
+                  AND bf-mmv-ord-manut.estado < 7 NO-LOCK:
+                 NEXT.
+            END.
+        END.
+        assign dtAcumulado = if dt-consulta > dtAcumulado then dt-consulta
+                             else dtAcumulado.
+    end.
+    if not avail mmv-setor-ofici or mmv-setor-ofici.cod-setor-ofici <> mmv-plano-prevent.cod-setor-ofici then do:
+        for first mmv-setor-ofici fields(des-setor-ofici cod-setor-ofici cod-ofici)  
+            where mmv-setor-ofici.cod-setor-ofici = mmv-plano-prevent.cod-setor-ofici no-lock:
+        end.
+    end.
+    assign dt-dat-vencto = dt-consulta
+           dtAcumulado   = dt-consulta
+           deKMAcumulado = 0
+           d-diferenca   = deReal - dePadrao
+           c-tarefa      = ''.
+    /**********************************************************************************/
+    /*** Eventos associados a tarefa ***/
+    if not avail mab-event or mab-event.cod-evento <> mmv-tar-plano.cod-evento then do:
+        for first mab-event fields (cod-evento des-evento idi-compon-event cod-grp-event)
+            where  mab-event.cod-evento = mmv-tar-plano.cod-evento no-lock:
+        end.
+    end.
+    if avail mab-event then
+        assign c-tarefa = mab-event.des-evento.
+
+    /*** Sub-Sistemas associados a tarefa ***/
+    if not avail mab-sub-sist or mab-sub-sist.cod-sub-sist <> mmv-tar-plano.cod-sub-sist then do:
+        for first mab-sub-sist fields (cod-sub-sist des-sub-sist idi-compon)
+            where mab-sub-sist.cod-sub-sist = mmv-tar-plano.cod-sub-sist no-lock:
+        end.
+    end.
+    if avail mab-sub-sist THEN
+        assign c-tarefa = c-tarefa + ' - ' + mab-sub-sist.des-sub-sist. 
+
+    /**********************************************************************************/
+
+    assign c-planovenc = mmv-plano-prevent.cod-plano.
+    if lVencido then do:
+        {utp/ut-liter.i Vencido}
+        assign c-vencto = return-value.
+    end.
+    else do:
+        {utp/ut-liter.i ∑_Vencer}
+        assign c-vencto = return-value.
+    end.
+
+    if not(pCabec) then do:
+        display with frame fFrameQ1.
+        assign pCabec = yes.
+    end.
+
+    display with frame fFrameQ.
+    down with frame fFrameQ.
+    
+end.
+
+return "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piBuscaSituacao Include 
+PROCEDURE piBuscaSituacao :
+/*------------------------------------------------------------------------------
+  Purpose:     piBuscaSituacao
+  Parameters:  entrada pSituacao = C¢digo da Situaá∆o
+               sa°da   pDescSit  = Descriá∆o da Situaá∆o.
+  Notes:       Busca a situaá∆o do Componente
+------------------------------------------------------------------------------*/
+define input  parameter pSituacao as character no-undo.
+define output parameter pDescSit  as character no-undo.
+
+if not avail mab-sit-eqpto or mab-sit-eqpto.cod-sit-eqpto <> pSituacao then do:
+    for first mab-sit-eqpto fields(cod-sit-eqpto des-sit-eqpto)
+        where mab-sit-eqpto.cod-sit-eqpto = pSituacao no-lock:
+    end.
+end.
+if avail mab-sit-eqpto then do:
+    assign pDescSit = mab-sit-eqpto.des-sit-eqpto.
+end.
+
+return "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piCompartimento Include 
+PROCEDURE piCompartimento :
+/*------------------------------------------------------------------------------
+  Purpose:     piCompartimento
+  Parameters:  <none>
+  Notes:       Imprime os Eventos vencidos para os compartimentos
+------------------------------------------------------------------------------*/
+define variable l-cabec as logical no-undo.
+
+/****Imprime compartimentos com eventos vencidos**/
+if lCompartimento then do:
+   for each mab-period-manut fields (ep-codigo cod-eqpto cod-comptmento cod-evento val-km-padr val-km-real val-km-estimad )
+       where mab-period-manut.ep-codigo = mmv-ord-manut.ep-codigo 
+       and   mab-period-manut.cod-eqpto = mmv-ord-manut.cod-eqpto no-lock
+       break by mab-period-manut.cod-comptmento
+             by mab-period-manut.cod-evento:
+         if mab-period-manut.val-km-padr <=  mab-period-manut.val-km-real +  mab-period-manut.val-km-estimad then do:
+             for first mab-comptmento fields (cod-comptmento des-comptmento)
+                 where mab-comptmento.cod-comptmento =  mab-period-manut.cod-comptmento no-lock:
+                 assign c-cod-compto      = mab-period-manut.cod-comptmento
+                        c-des-compto      = mab-comptmento.des-comptmento.
+             end.
+             for first mab-event fields (cod-evento des-evento idi-compon-event cod-grp-event)
+                 where mab-event.cod-evento =  mab-period-manut.cod-evento no-lock:
+                 assign c-evento-1          = mab-period-manut.cod-evento
+                        c-des-evento-1      = mab-event.des-evento.       
+             end.
+
+             if not(l-cabec) then do:
+                 display with frame fFrameK1.
+                 assign l-cabec = yes.
+             end.
+
+             display with frame fFrameK.
+             down with frame fFrameK.
+         end.        
+   end.
+end.
+
+return "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piDescricoes Include 
+PROCEDURE piDescricoes :
+/*------------------------------------------------------------------------------
+  Purpose:     piDescricoes
+  Parameters:  <none>
+  Notes:       Busca as descriá‰es de campos
+------------------------------------------------------------------------------*/
+define input parameter  pModelo as character no-undo.
+
+/**** Modelo ****/
+if not avail mab-model or mab-model.cod-model <> pModelo then do:
+    for first mab-model fields (cod-model des-model un)
+       where mab-model.cod-model = pModelo no-lock:
+    end. 
+end.
+if avail mab-model then do:
+   assign c-model           =  mab-model.des-model
+          c-un              =  mab-model.un
+          c-un-garantia     =  mab-model.un
+          c-un-estimativa   =  mab-model.un.
+end.
+
+/**** Sub-Sistema da Ordem ***/
+if not avail mab-sub-sist or mab-sub-sist.cod-sub-sist <> mmv-ord-manut.cod-sub-sist then do:
+    for first mab-sub-sist fields (cod-sub-sist des-sub-sist idi-compon)
+       where mab-sub-sist.cod-sub-sist = mmv-ord-manut.cod-sub-sist no-lock:
+    end. 
+end.
+if avail mab-sub-sist then do:
+    assign c-des-sub-sist = mab-sub-sist.des-sub-sist.
+end.
+
+/**** Tipo de manutená∆o ***/
+if not avail tipo-manut or tipo-manut.cd-tipo <> mmv-ord-manut.cd-tipo then do:
+    for first tipo-manut fields (cd-tipo descricao)
+       where tipo-manut.cd-tipo = mmv-ord-manut.cd-tipo no-lock:
+    end. 
+end.
+if avail tipo-manut then do:
+    assign c-descricao = tipo-manut.descricao. 
+end.
+
+/**** Planejador ***/
+if not avail mmv-plandor or mmv-plandor.cod-plandor <> mmv-ord-manut.cod-plandor then do:
+    for first mmv-plandor fields (cod-plandor mmv-plandor.nom-plandor)
+       where  mmv-plandor.cod-plandor = mmv-ord-manut.cod-plandor no-lock:
+    end. 
+end.
+if avail mmv-plandor then do:
+   assign c-nome = mmv-plandor.nom-plandor.
+end.
+
+
+/****** Sintoma ********/
+
+FOR FIRST sint-padrao
+    WHERE sint-padrao.cd-sint-padr = SUBSTRING(mmv-ord-manut.cod-livre-1,21,8) NO-LOCK:
+
+    ASSIGN c-cod-sintoma  = SUBSTRING(mmv-ord-manut.cod-livre-1,21,8)
+           c-sintoma-desc = sint-padrao.descricao.
+           
+END.
+
+/***** Causa *******/
+
+FOR FIRST causa-padr
+    WHERE causa-padr.cd-causa-padr = SUBSTRING(mmv-ord-manut.cod-livre-1,13,8) NO-LOCK:
+        
+    ASSIGN  c-causa      = SUBSTRING(mmv-ord-manut.cod-livre-1,13,8)
+            c-causa-desc = causa-padr.descricao.
+END.
+
+
+
+
+return "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piEPI Include 
+PROCEDURE piEPI :
+/*------------------------------------------------------------------------------
+  Purpose:     piEPI
+  Parameters:  entrada pModelo = C¢digo do Modelo
+  Notes:       Imprime o EPI associado a tarefa da OM
+------------------------------------------------------------------------------*/
+define input parameter pModelo as character no-undo.
+
+define variable l-cabec as logical no-undo.
+
+/****Imprime EPI para a tarefa***/
+if lEpi then  do:
+    do i-cont-plano = 1 to num-entries(c-planos):
+       for each  mmv-tar-plano-epi fields (cod-model cod-plano num-seq cd-epi qtd-epi)
+           where mmv-tar-plano-epi.cod-model    =  pModelo                    
+           and   mmv-tar-plano-epi.cod-plano    =  entry(i-cont-plano,c-planos) no-lock 
+           break by mmv-tar-plano-epi.num-seq:
+
+           if not(l-cabec) then do:
+               display with frame fFrameH1.
+               assign l-cabec = yes.
+           end.
+
+           assign  c-epi    = mmv-tar-plano-epi.cd-epi 
+                   c-qtde-2 = mmv-tar-plano-epi.qtd-epi.
+
+           for first epi fields (descricao cd-epi)
+                where epi.cd-epi = mmv-tar-plano-epi.cd-epi no-lock:
+                assign c-des-epi = epi.descricao.
+           end. 
+
+           display c-epi c-qtde-2 with frame fFrameH.
+           down with frame fFrameH.
+       end.
+    end.
+end.
+
+return "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piEventos Include 
+PROCEDURE piEventos :
+/*------------------------------------------------------------------------------
+  Purpose:     piEventos
+  Parameters:  <none>
+  Notes:       Imprime os eventos programados e atrasados
+------------------------------------------------------------------------------*/
+define variable l-cabec as logical no-undo.
+
+/***Imprime Eventos Programados que ainda n∆o foram disparados***/
+if lEventos then do:
+    /** Verifica apenas para OMs de Equipamento **/
+    if mmv-ord-manut.idi-tip-ord = 1 then do:
+        for each  mab-movto-event fields (ep-codigo cod-eqpto log-disparad dat-final cod-evento cod-sub-sist num-docto dsl-obs)
+            where mab-movto-event.ep-codigo     = mmv-ord-manut.ep-codigo                                              
+            and   mab-movto-event.cod-eqpto     = mmv-ord-manut.cod-eqpto                                              
+            and   mab-movto-event.log-disparad  = false                                                                
+            and   mab-movto-event.dat-final     = ? no-lock
+            break by mab-movto-event.cod-evento
+                  by mab-movto-event.cod-sub-sist
+                  by mab-movto-event.num-docto:    
+                for first mab-sub-sist fields (cod-sub-sist des-sub-sist)
+                     where mab-sub-sist.cod-sub-sist = mab-movto-event.cod-sub-sist no-lock:
+                     assign  c-sub-sist-2            = mab-movto-event.cod-sub-sist
+                             c-des-sub-sist-2        = mab-sub-sist.des-sub-sist.                                                 
+                end.
+                for first mab-event fields (cod-evento des-evento cod-grp-event idi-compon-event)
+                    where mab-event.cod-evento = mab-movto-event.cod-evento no-lock:
+                end.
+                if avail mab-event then do:
+                    /** Verifica se Grupo do Evento Ç de custos **/
+                    if not avail mab-grp-event or mab-grp-event.cod-grp-event <> mab-event.cod-grp-event then do:
+                        for first mab-grp-event fields(cod-grp-event idi-tip)
+                            where mab-grp-event.cod-grp-event = mab-event.cod-grp-event no-lock:
+                        end.
+                    end.
+                    /** N∆o devem ser listados eventos de custos **/
+                    if avail mab-grp-event then
+                        if mab-grp-event.idi-tip = 5 then next.
+
+                    assign c-evento-2          = mab-movto-event.cod-evento
+                           c-des-evento-2      = mab-event.des-evento.
+                end.
+                if not(l-cabec) then do:
+                    display with frame fFrameL1.
+                    assign l-cabec = yes.
+                end.
+                assign i-num-docto-2 = mab-movto-event.num-docto.
+                display with frame fFrameL.
+                down with frame fFrameL.
+
+                /** Imprime Narrativa **/
+                run piNarrativa in this-procedure (input mab-movto-event.dsl-obs).
+ 
+        end.  /*for  */
+    end.
+end.
+
+return "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piFerramenta Include 
+PROCEDURE piFerramenta :
+/*------------------------------------------------------------------------------
+  Purpose:     piFerramenta
+  Parameters:  entrada pModelo = C¢digo do Modelo
+  Notes:       Imprime as ferramentas associadas as tarefas da OM
+------------------------------------------------------------------------------*/
+define input parameter pModelo as character no-undo.
+
+define variable l-cabec as logical no-undo.
+
+/***Imprime ferramentas para a tarefa***/
+if lFerramentas then do:
+    do i-cont-plano = 1 to num-entries(c-planos):
+        for each mmv-tar-plano-ferram fields (cod-model cod-plano num-seq cd-tp-ferr)    
+            where mmv-tar-plano-ferram.cod-model    =  pModelo                   
+            and   mmv-tar-plano-ferram.cod-plano    =  entry(i-cont-plano,c-planos) no-lock
+            break by mmv-tar-plano-ferram.num-seq:
+
+            if not(l-cabec) then do:
+                display with frame fFrameI1.
+                assign l-cabec = yes.
+            end.
+
+            assign  c-cod-ferr = mmv-tar-plano-ferram.cd-tp-ferr.  
+
+            for first tp-ferr fields (cd-tp-ferr descricao)                        
+                where tp-ferr.cd-tp-ferr = mmv-tar-plano-ferram.cd-tp-ferr no-lock:
+                assign  c-desc-ferr       = tp-ferr.descricao.                     
+            end.  
+
+            display c-cod-ferr c-desc-ferr with frame fFrameI.
+            down with frame fFrameI.
+        end.
+    end.
+end.
+
+return "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piFicha Include 
+PROCEDURE piFicha :
+/*------------------------------------------------------------------------------
+  Purpose:     piFicha
+  Parameters:  entrada pModelo = C¢digo do Modelo
+  Notes:       Imprime a ficha de mÇtodo das tarefas
+------------------------------------------------------------------------------*/
+define input parameter pModelo as character no-undo.
+
+define variable l-cabec as logical no-undo.
+
+/****Imprime ficha de metodo para a tarefa***/
+if lFicha then do:
+    do i-cont-plano = 1 to num-entries(c-planos):
+        for each mmv-tar-plano-ficha fields (cod-model cod-plano num-seq fi-codigo cod-plano)
+            where mmv-tar-plano-ficha.cod-model    =  pModelo
+            and   mmv-tar-plano-ficha.cod-plano    =  entry(i-cont-plano,c-planos) no-lock
+            break by mmv-tar-plano-ficha.num-seq:
+
+            /*if not(l-cabec) then do:*/
+                
+            /*    assign l-cabec = yes.
+            end.*/
+
+            assign c-ficha = mmv-tar-plano-ficha.fi-codigo
+                   c-plano = mmv-tar-plano-ficha.cod-plano.
+
+            FOR EACH mnt-ficha-metodo WHERE 
+                     mnt-ficha-metodo.fi-codigo = mmv-tar-plano-ficha.fi-codigo NO-LOCK:
+                ASSIGN c-des-ficha       = mnt-ficha-metodo.descricao.
+                
+                DISPLAY WITH FRAME fFrameJ1.
+
+                DISPLAY c-ficha 
+                        c-des-ficha 
+                        c-plano with frame fFrameJ.
+                DOWN WITH FRAME fFrameJ.
+
+                RUN piNarrativa IN THIS-PROCEDURE (INPUT mnt-ficha-metodo.narrativa).
+
+            end.   
+
+        end.
+    end.
+end.
+
+return "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piKmEqpto Include 
+PROCEDURE piKmEqpto :
+/*------------------------------------------------------------------------------
+  Purpose:     buscaKM
+  Parameters:  entrada pEmp       = C¢digo da Empresa
+               entrada pEqpto     = C¢digo do Equipamento
+               entrada pInvertida = Data/Hora Invertida
+               entrada pTipo      = Qual campo retornar (1 = Percurso / 2 = Contador)
+               sa°da   pKM        = Valor da Quilometragem na data
+  Notes:       Busca a quilometragem do equipamento em uma data
+------------------------------------------------------------------------------*/
+define input  parameter pEmp       as character no-undo.
+define input  parameter pEqpto     as character no-undo.
+define input  parameter pInvertida as decimal   no-undo.
+define input  parameter pTipo      as integer   no-undo.
+define output parameter pKM        as decimal   no-undo.
+
+/** Busca Quilometragem do Hist¢rico **/
+if can-find(first mab-movto-km-eqpto
+            where mab-movto-km-eqpto.ep-codigo             = pEmp
+            and   mab-movto-km-eqpto.cod-eqpto             = pEqpto
+            and   mab-movto-km-eqpto.val-dat-hora-invrtda <= pInvertida no-lock) then do:
+    for last  mab-movto-km-eqpto fields(val-km-real val-hodom-horim val-dat-hora-invrtda)
+        where mab-movto-km-eqpto.ep-codigo             = pEmp
+        and   mab-movto-km-eqpto.cod-eqpto             = pEqpto
+        and   mab-movto-km-eqpto.val-dat-hora-invrtda <= pInvertida no-lock:
+        case pTipo:
+            when 1 then do:
+                assign pKM = mab-movto-km-eqpto.val-km-real.
+            end.
+            when 2 then do:
+                assign pKM = mab-movto-km-eqpto.val-hodom-horim.
+            end.
+        end case.
+    end.
+end.
+else do:
+    /** Utiliza Quilometragem Inicial **/
+    case pTipo:
+        when 1 then do:
+            assign pKM = mab-eqpto.val-km-inicial.
+        end.
+        when 2 then do:
+            assign pKM = mab-eqpto.val-hodom-horim-inicial.
+        end.
+    end case.
+end.
+
+return "OK":U.
+
+end procedure.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piManutencoes Include 
+PROCEDURE piManutencoes :
+/*------------------------------------------------------------------------------
+  Purpose:     piManutencoes
+  Parameters:  <none>
+  Notes:       Imprime as £ltimas manutená‰es ocorridas
+------------------------------------------------------------------------------*/
+define variable l-cabec as logical   no-undo.
+define variable c-horas as character no-undo.
+
+assign i-cont = 0.
+
+/***Imprime £ltimas manutená‰es***/
+if lUltima then do:
+    for each  bfTarefa no-lock
+        where bfTarefa.ep-codigo            = mmv-ord-manut.ep-codigo
+        and   bfTarefa.cod-eqpto            = mmv-ord-manut.cod-eqpto
+        and   bfTarefa.val-dat-invrtda-term < mmv-ord-manut.val-dat-invrtda-abert
+        and   bfTarefa.val-dat-invrtda-term > 0
+        break by bfTarefa.val-dat-invrtda-term DESCENDING:
+
+        if tt-param.c-sub-sist <> "":U and bfTarefa.cod-sub-sist <> tt-param.c-sub-sist then next.
+
+        for first mab-event fields (cod-evento des-evento idi-compon-event cod-grp-event)
+            where  mab-event.cod-evento = bfTarefa.cod-evento no-lock:
+            assign c-des-event-3        = mab-event.des-evento.
+        end.
+        for first mab-sub-sist fields (cod-sub-sist des-sub-sist idi-compon)
+            where mab-sub-sist.cod-sub-sist = bfTarefa.cod-sub-sist no-lock:
+            assign c-des-sub-sist-3  = mab-sub-sist.des-sub-sist .
+        end.
+        for first tipo-manut fields (cd-tipo descricao)
+            where tipo-manut.cd-tipo = bfTarefa.cd-tipo no-lock:
+            assign c-des-tp-manut-3  = tipo-manut.descricao. 
+        end. 
+
+        FOR FIRST sint-padrao
+            WHERE sint-padrao.cd-sint-padr = SUBSTRING(mmv-ord-manut.cod-livre-1,9,8) NO-LOCK:
+            
+            ASSIGN c-sintoma      = SUBSTRING(mmv-ord-manut.cod-livre-1,9,8)
+                   c-sintoma-desc = sint-padrao.descrica.
+
+        END.
+
+
+        /** Busca Data da Manutená∆o **/
+        run converteInvertidaParaNormal in this-procedure (input  bfTarefa.val-dat-invrtda-term,
+                                                           output c-data-movto,
+                                                           output c-horas).
+        
+        if not(l-cabec) then do:
+            display with frame fFrameN1.
+            assign l-cabec = yes.
+        end.
+
+        /***Contador para a Quantidade de Manutená‰es def. em tela***/
+        IF i-cont < tt-param.i-num-ficha THEN DO:
+            display with frame fFrameN.
+            down with frame fFrameN.
+            ASSIGN i-cont = i-cont + 1.
+        END.
+
+        if i-cont > tt-param.i-num-ficha then return "OK":U.
+
+    end.
+end.
+
+return "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piMateriais Include 
+PROCEDURE piMateriais :
+/*------------------------------------------------------------------------------
+  Purpose:     piMateriais
+  Parameters:  entrada pModelo = C¢digo do Modelo
+  Notes:       Imprime os materiais
+------------------------------------------------------------------------------*/
+define input parameter pModelo as character no-undo.
+
+/****Imprime Materiais para a tarefa**/
+if lMateriais then do:
+    empty temp-table tt-materiais.
+    do i-cont-plano = 1 to num-entries(c-planos):
+       /** Busca os materiais que est∆o alocadaos para as tarefas do plano **/
+       for each mmv-tar-plano-item  fields (cod-model cod-plano num-seq it-codigo qtd-item)
+           where mmv-tar-plano-item.cod-model    =  pModelo           
+           and   mmv-tar-plano-item.cod-plano    =  entry(i-cont-plano,c-planos) no-lock:
+           if not can-find(first tt-materiais
+                           where tt-materiais.nr-ord-produ = mmv-ord-manut.nr-ord-produ  
+                           and   tt-materiais.it-codigo    = mmv-tar-plano-item.it-codigo no-lock) then do:
+               create tt-materiais.
+               assign tt-materiais.nr-ord-produ = mmv-ord-manut.nr-ord-produ
+                      tt-materiais.it-codigo    = mmv-tar-plano-item.it-codigo
+                      tt-materiais.qt-item      = mmv-tar-plano-item.qtd-item
+                      tt-materiais.qt-atend     = 0
+                      tt-materiais.tarefa       = mmv-tar-plano-item.num-seq
+                      .
+           end.
+           else do:
+               for first tt-materiais
+                   where tt-materiais.nr-ord-produ = mmv-ord-manut.nr-ord-produ  
+                   and   tt-materiais.it-codigo    = mmv-tar-plano-item.it-codigo exclusive-lock:
+                   assign tt-materiais.qt-item = tt-materiais.qt-item + mmv-tar-plano-item.qtd-item.
+               end.
+           end.
+        end.
+    end.
+    
+    /** Busca os materiais que foram requisitados **/
+    for each  mmv-movto-mater fields(it-codigo qtd-item num-seq)
+        where mmv-movto-mater.nr-ord-produ = mmv-ord-manut.nr-ord-produ no-lock:
+        if not can-find(first tt-materiais
+                        where tt-materiais.nr-ord-produ = mmv-ord-manut.nr-ord-produ  
+                        and   tt-materiais.it-codigo    = mmv-movto-mater.it-codigo no-lock) then do:
+           create tt-materiais.
+           assign tt-materiais.nr-ord-produ = mmv-ord-manut.nr-ord-produ
+                  tt-materiais.it-codigo    = mmv-movto-mater.it-codigo
+                  tt-materiais.qt-item      = 0
+                  tt-materiais.qt-atend     = mmv-movto-mater.qtd-item
+                  tt-materiais.tarefa       = mmv-movto-mater.num-seq
+                  
+                  .
+        end.
+        else do:
+           for first tt-materiais
+               where tt-materiais.nr-ord-produ = mmv-ord-manut.nr-ord-produ  
+               and   tt-materiais.it-codigo    = mmv-movto-mater.it-codigo exclusive-lock:
+               assign tt-materiais.qt-atend = tt-materiais.qt-atend + mmv-movto-mater.qtd-item.
+           end.
+        end.
+    end.    
+
+    /** T°tulos **/
+    if can-find(first tt-materiais no-lock) then
+        display with frame fFrameG1.
+    /** Percorre os Materias da OM **/
+    for each tt-materiais no-lock:
+        assign c-item   = tt-materiais.it-codigo
+               i-num-tarefa = tt-materiais.tarefa
+               c-qtde-1 = tt-materiais.qt-item
+               c-qtde-2 = tt-materiais.qt-atend.
+        for first item fields (desc-item it-codigo)
+            where item.it-codigo = tt-materiais.it-codigo no-lock:
+            assign c-des-item = item.desc-item.
+        end.
+        display 
+        c-item
+        i-num-tarefa
+        c-qtde-1
+        c-qtde-2
+        with frame fFrameG.
+        down with frame fFrameG.
+    end.
+end.
+
+
+return "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piNarrativa Include 
+PROCEDURE piNarrativa :
+/*------------------------------------------------------------------------------
+  Purpose:     piNarrativa
+  Parameters:  entrada pNarrativa = Narrativa a ser passada
+  Notes:       Imprime narrativas da OM, Eventos, Fichas de MÇtodos
+------------------------------------------------------------------------------*/
+define input parameter pNarrativa as character no-undo.
+
+/** Cria linhas para serem impressas de 72 caracteres **/
+run pi-print-editor (input pNarrativa,
+                     input 70).
+for first tt-editor no-lock:
+    assign c-conteudo = tt-editor.conteudo.
+    display with frame fFrameJ2.
+    down with frame fFrameJ2.
+end.
+for each  tt-editor
+    where tt-editor.linha > 1 no-lock:
+    assign c-conteudo = tt-editor.conteudo.
+    display with frame fFrameJ2.
+    down with frame fFrameJ2.
+end.
+
+return "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piPlanos Include 
+PROCEDURE piPlanos :
+/*------------------------------------------------------------------------------
+  Purpose:     
+  Parameters:  <none>
+  Notes:       
+------------------------------------------------------------------------------*/
+def var l-cabec as log no-undo.
+
+def buffer bf-mab-eqpto for mab-eqpto.
+if l-planovenc         AND 
+   AVAIL mmv-ord-manut and 
+   mmv-ord-manut.estado < 7 then do:
+   
+    assign l-cabec = no.
+    /** Valida o tipo de Ordens, Somente Ordens de Equipamento e Componente podem conter planos **/    
+    case mmv-ord-manut.idi-tip-ord:
+        /* Equipamento **/
+        when 1 then do:
+            for each  mmv-eqpto-plano
+                where mmv-eqpto-plano.ep-codigo = mmv-ord-manut.ep-codigo
+                and   mmv-eqpto-plano.cod-eqpto = mmv-ord-manut.cod-eqpto no-lock:
+                run piBuscaPlanos in this-procedure (input mab-eqpto.cod-model,
+                                                     input mmv-eqpto-plano.cod-plano,
+                                                     input mmv-eqpto-plano.val-km-real,
+                                                     input mmv-eqpto-plano.dat-atualiz,
+                                                     input-output l-cabec).
+            end.
+        end.
+        /** Componente **/
+        when 2 then do:
+            for each  mco-plano-compon
+                where mco-plano-compon.num-seqcial = mmv-ord-manut.num-seqcial no-lock:
+                run piBuscaPlanos in this-procedure (input mco-plano-compon.cod-model,
+                                                     input mco-plano-compon.cod-plano,
+                                                     input mco-plano-compon.val-km-real,
+                                                     input mco-plano-compon.dat-atualiz,
+                                                     input-output l-cabec).
+            end.
+        end.
+    end case.
+end.
+return "OK":U.
+
+END procedure.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piRequisicao Include 
+PROCEDURE piRequisicao :
+/*------------------------------------------------------------------------------
+  Purpose: piRequisicao
+  Parameters: pOrdem = n£mero da ordem de produá∆o
+  Notes: Busca os dados referentes a requisiá∆o, item da requisiá∆o, ordem compra, etc...
+------------------------------------------------------------------------------*/
+DEFINE VARIABLE l-prim-encontrado AS LOGICAL INITIAL YES  NO-UNDO.
+
+IF tt-param.l-Compras OR tt-param.l-estoque THEN DO:
+    /************************************************************
+    *** Buscar as solicitaá‰es de compra da ordem de manutená∆o**
+    ************************************************************/
+    blk-requisicao:
+    for each  req-ord-produc fields (nr-ord-produ nr-requisicao sequencia tp-requis dat-trans)
+        where req-ord-produc.nr-ord-produ = mmv-ord-manut.nr-ord-produ no-lock:
+        /** Valida se là a requisiá∆o de Estoque ou de Compras **/
+        IF req-ord-produc.tp-requis = 1 AND NOT(tt-param.l-estoque) THEN NEXT.
+        IF req-ord-produc.tp-requis = 2 AND NOT(tt-param.l-compras) THEN NEXT.
+        /**********************************************************
+        *** Buscar item da Requisiá∆o da ordem de manutená∆o ******
+        **********************************************************/
+        for FIRST it-requisicao fields(sequencia nr-requisicao estado situacao it-codigo nome-abrev numero-ordem qt-requisitada) use-index item-req
+            where it-requisicao.nr-requisicao = req-ord-produc.nr-requisicao
+            and   it-requisicao.sequencia     = req-ord-produc.sequencia no-lock:
+            /** Valida estado da requisicao **/
+            if  (it-requisicao.estado = 1 and tt-param.l-Aprovado  = no) then NEXT blk-requisicao. /*** Aprovada ****/
+            if  (it-requisicao.estado = 2 and tt-param.l-Reprovado = no) then NEXT blk-requisicao. /*** N∆o aprovada ***/
+            /*** Valida situacao da it-requisicao***/
+            if  (it-requisicao.situacao = 1 and tt-param.l-Aberta   = no) then NEXT blk-requisicao. /***Aberta***/ 
+            if  (it-requisicao.situacao = 2 and tt-param.l-Fechada  = no) then NEXT blk-requisicao. /***Fechada***/
+            if  (it-requisicao.situacao = 3 and tt-param.l-Pendente = no) then NEXT blk-requisicao. /***Pendente***/ 
+            if  (it-requisicao.situacao = 4 and tt-param.l-ComOrdem = no) then NEXT blk-requisicao. /***Com OM****/
+
+            IF l-prim-encontrado THEN DO:
+                /*mostra cabeáalho*/
+                DISPLAY /* c-liter-req-solicit 
+                           c-liter-nr      
+                           c-liter-seq    
+                           c-liter-item       
+                           c-liter-data      
+                           c-liter-tipo       
+                           c-liter-situacao   
+                           c-liter-estado */
+                        WITH FRAME fCabecRecSolicit.
+                ASSIGN l-prim-encontrado = NO.
+            END.
+
+            case req-ord-produc.tp-requis:
+                when 1 then do:
+                    {utp/ut-liter.i Estoque *}
+                end.
+                when 2 then do:
+                    {utp/ut-liter.i Compras *}
+                end.
+                when 3 then do:
+                    {utp/ut-liter.i Cotaá∆o *}
+                end.                                
+            end case.
+            assign c-tp-requis = trim(RETURN-VALUE).
+
+            RUN utp/ut-liter.p (trim({ininc/i01in385.i 04 it-requisicao.situacao}), "*", "").
+            assign c-situacao = substring(RETURN-VALUE,1,11). 
+
+            if it-requisicao.estado = 1 then do:
+                 {utp/ut-liter.i Aprovada *}
+            end.
+            else do:
+                 {utp/ut-liter.i Reprovada *}
+            end.
+            assign c-estado-req = return-value.
+            
+            assign i-nr-requisicao = req-ord-produc.nr-requisicao
+                   i-sequencia     = req-ord-produc.sequencia
+                   c-it-codigo     = it-requisicao.it-codigo
+                   d-dat-trans     = req-ord-produc.dat-trans.
+
+            DISPLAY i-nr-requisicao
+                    i-sequencia
+                    c-it-codigo
+                    d-dat-trans
+                    c-tp-requis
+                    c-situacao
+                    c-estado-req
+                WITH FRAME fRecSolicit. /*down with frame fRecSolicit.*/
+            DOWN WITH FRAME fRecSolicit.
+
+        END. /* for FIRST it-requisicao */
+    END. /* for each  req-ord-produc */
+END.
+
+RETURN "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piTarefas Include 
+PROCEDURE piTarefas :
+/*------------------------------------------------------------------------------
+  Purpose:     piTarefas
+  Parameters:  <none>
+  Notes:       Busca as tarefas da OM
+------------------------------------------------------------------------------*/
+define variable i-linhaAux as integer no-undo.
+DEFINE VARIABLE l-entrou AS LOGICAL    NO-UNDO.
+DEFINE VARIABLE i-cont2 AS INTEGER    NO-UNDO.
+DEFINE VARIABLE i AS INTEGER    NO-UNDO.
+
+ASSIGN l-entrou = NO.
+
+if can-find(first mmv-tar-ord-manut use-index mmvtrrdm-02
+            where mmv-tar-ord-manut.nr-ord-produ = mmv-ord-manut.nr-ord-produ)
+    and tt-param.l-tarefas then do:
+    IF l-durabilidade THEN DO:
+        display with frame fFrameD1.
+
+    END.
+    ELSE DO:
+        DISPLAY WITH FRAME fFrameD1sDurabilidade. 
+
+    END.
+    assign i-linhaAux = tt-param.nr-linhas + 1.
+END.
+else do:
+    if tt-param.l-linhas then do:
+        assign i-linhaAux = tt-param.nr-linhas.
+        IF l-durabilidade THEN DO:
+            display with frame fFrameD1.
+
+        END.
+        ELSE DO:
+            DISPLAY WITH FRAME fFrameD1sDurabilidade.
+
+        END.
+/*         put skip.                                                                               */
+/*         put "|                                                                              |". */
+/*         put skip.                                                                               */
+/*         put "|                                                                              |". */
+/*         put skip.                                                                               */
+    END.
+END.
+
+assign cCodPlano = "":U
+       c-planos  = "":U.
+
+/** Busca as tarefas se a ordem tiver tarefas associadas a ela **/
+for each  mmv-tar-ord-manut
+    where mmv-tar-ord-manut.nr-ord-produ = mmv-ord-manut.nr-ord-produ no-lock:
+
+
+        put skip.
+            put "|------|------------------------------------|--------------------------------------|".
+
+    ASSIGN l-entrou = YES.
+    
+
+    /** Veriffica todos os planos das tarefas da OM **/
+    if mmv-tar-ord-manut.cod-plano <> "":U then do:
+        if lookup(mmv-tar-ord-manut.cod-plano,c-planos) = 0 then do:
+            assign c-planos = if c-planos = "":U then mmv-tar-ord-manut.cod-plano
+                                                 else c-planos + "," + mmv-tar-ord-manut.cod-plano.
+        END.
+    END.
+    /** Imprime tarefas apenas se estiver parametrizado **/
+    if tt-param.l-tarefas then do:
+        assign cCodPlano        = mmv-tar-ord-manut.cod-plano
+               cCodSubSist      = mmv-tar-ord-manut.cod-sub-sist
+               cCodEvento       = mmv-tar-ord-manut.cod-evento
+               iTpManut         = mmv-tar-ord-manut.cd-tipo
+               i-num-eq         = mmv-tar-ord-manut.num-seq
+               c-cod-evento1    = mmv-tar-ord-manut.cod-evento  
+               c-sub-sit1       = mmv-tar-ord-manut.cod-sub-sist
+               c-plano          = mmv-tar-ord-manut.cod-plano
+               c-reformado      = mmv-tar-ord-manut.cod-compon-reformad
+               c-sit-1          = mmv-tar-ord-manut.cod-sit-reformad
+               c-retirado       = mmv-tar-ord-manut.cod-compon-retir
+               c-sit-2          = mmv-tar-ord-manut.cod-sit-retir
+               c-colocada       = mmv-tar-ord-manut.cod-compon-colocada
+               c-sit-3          = mmv-tar-ord-manut.cod-sit-colocada
+               c-localizacao    = mmv-tar-ord-manut.cod-localiz-compon
+               i-num-dias-1     = mmv-tar-ord-manut.num-dias-gartia
+               c-val-garantia   = mmv-tar-ord-manut.val-km-hora-gartia
+               i-num-dias-2     = mmv-tar-ord-manut.num-dias-estimad
+               c-val-estimativa = mmv-tar-ord-manut.val-uso-estimad
+               c-dsl-obs        = mmv-tar-ord-manut.dsl-obs.
+
+/*
+        FOR FIRST causa-padr
+            WHERE causa-padr.cd-causa-padr = SUBSTRING(mmv-tar-ord-manut.cod-livre-1,1,8) NO-LOCK:
+
+            ASSIGN  c-causa      = SUBSTRING(mmv-tar-ord-manut.cod-livre-1,1,8)
+                    c-causa-desc = causa-padr.descricao.
+        END.
+
+        FOR FIRST sint-padrao
+            WHERE sint-padrao.cd-sint-padr = SUBSTRING(mmv-tar-ord-manut.cod-livre-1,9,8) NO-LOCK:
+
+            ASSIGN c-sintoma      = SUBSTRING(mmv-tar-ord-manut.cod-livre-1,9,8)
+                   c-sintoma-desc = sint-padrao.descricao.
+
+        END.
+*/
+        /** Situaá∆o do Equipamento **/
+        case mmv-ord-manut.idi-tip-ord:
+            when 1 then do: /** Equipamento **/
+                /** Retirado **/
+                run piBuscaSituacao in this-procedure (input  mmv-tar-ord-manut.cod-sit-retir,
+                                                       output cDescSitEqpto).
+                run piBuscaCompon   in this-procedure (input  mmv-tar-ord-manut.num-seqcial-retir,
+                                                       output c-des-model3).
+                /** Colocado **/
+                run piBuscaSituacao in this-procedure (input  mmv-tar-ord-manut.cod-sit-colocada,
+                                                       output cDescSitEqpto1).
+                run piBuscaCompon   in this-procedure (input  mmv-tar-ord-manut.num-seqcial-colocada,
+                                                       output c-des-model4).
+            END.
+
+        end case.
+
+        /** Eventos associados a tarefa **/
+        if not avail mab-event or mab-event.cod-evento <> mmv-tar-ord-manut.cod-evento then do:
+            for first mab-event fields (cod-evento des-evento idi-compon-event cod-grp-event)
+                where  mab-event.cod-evento = mmv-tar-ord-manut.cod-evento no-lock:
+            END.
+        END.
+        if avail mab-event then do:
+            assign c-des-event1 = mab-event.des-evento
+                   iCompon      = mab-event.idi-compon-event.
+        END.
+        /** Sub-Sistemas associados a tarefa **/
+        if not avail mab-sub-sist
+                  or mab-sub-sist.cod-sub-sist <> cCodSubSist then do:
+            for first mab-sub-sist fields (cod-sub-sist des-sub-sist idi-compon)
+                where mab-sub-sist.cod-sub-sist =  cCodSubSist no-lock:
+            END.
+        END.
+        if avail mab-sub-sist then do:
+            assign iComSubSist      = mab-sub-sist.idi-compon
+                   c-des-sub-sist1  = mab-sub-sist.des-sub-sist.
+        END.
+
+        if mmv-ord-manut.idi-tip-ord = 1 then do:
+            /*****************************************************************************************************/
+            /** Calcula a durabilidade atual do sub-sistema da tarefa, para que seja impresso junto as tarefas. **/
+
+            IF l-durabilidade THEN DO:
+                /** Busca a Data/hora Invertida Atual para o C†lculo **/
+                run piFormataSegundoParaHora (input  time,
+                                              output c-hora).
+                
+                run converteParaHoraInvertida (input  string(today,'99/99/9999'),
+                                               input  c-hora,
+                                               output deInvertidaAtual).
+    
+                /** Buscar £ltima troca deste sub-sistema **/
+                for last bfTarOm USE-INDEX mmvtrrdm-02
+                    where bfTarOm.ep-codigo            = mmv-tar-ord-manut.ep-codigo
+                    and   bfTarOm.cod-eqpto            = mmv-tar-ord-manut.cod-eqpto
+                    and   bfTarOm.cod-evento           = mmv-tar-ord-manut.cod-evento
+                    and   bfTarOm.cod-sub-sist         = mmv-tar-ord-manut.cod-sub-sist
+                    AND   bfTarOm.estado               = 4 /* Tarefa terminada */
+                    and   bfTarOm.val-dat-invrtda-term < mmv-tar-ord-manut.val-dat-invrtda-term no-lock:
+    
+                    /** Busca as Quilometragens do equipamento nas datas do percurso **/
+                    run piKmEqpto in this-procedure (input  mab-eqpto.ep-codigo,
+                                                     input  mab-eqpto.cod-eqpto,
+                                                     input  bfTarOm.val-dat-invrtda-term,
+                                                     input  1,  /* km acumulado */
+                                                     output deKMeqptoini).
+                END.
+    
+                if not avail bfTarOm then do:
+                    FOR EACH  mab-relac-eqpto-sub-sist
+                        WHERE mab-relac-eqpto-sub-sist.ep-codigo    = mmv-tar-ord-manut.ep-codigo 
+                        AND   mab-relac-eqpto-sub-sist.cod-eqpto    = mmv-tar-ord-manut.cod-eqpto 
+                        and   mab-relac-eqpto-sub-sist.cod-sub-sist = mmv-tar-ord-manut.cod-sub-sist NO-LOCK:
+                    end.
+                    if avail mab-relac-eqpto-sub-sist then do:
+                        assign deKMeqptoini = mab-relac-eqpto-sub-sist.val-km-inicial.
+                    END.
+                    else do:
+                        /** Busca as Quilometragens do equipamento nas datas do percurso **/
+                        run piKmEqpto in this-procedure (input  mab-eqpto.ep-codigo,
+                                                         input  mab-eqpto.cod-eqpto,
+                                                         input  0,
+                                                         input  1,  /* km acumulado */
+                                                         output deKMeqptoini).
+                    END.
+                END.
+    
+                IF mmv-ord-manut.val-dat-invrtda-entr = 0 THEN DO:
+                    ASSIGN deInvertidaAtual = mmv-ord-manut.val-dat-invrtda-abert.
+                END.
+                ELSE DO:
+                    ASSIGN deInvertidaAtual = mmv-ord-manut.val-dat-invrtda-entr.
+                END.
+    
+                /** Buscar vida atual do Equipamento **/
+                run piKmEqpto in this-procedure (input mab-eqpto.ep-codigo,
+                                                 input mab-eqpto.cod-eqpto,
+                                                 input deInvertidaAtual,
+                                                 input 1,  /* km acumulado */
+                                                 output deKMeqptofim).
+    
+                /* Grava durabilidade atual do Sub-Sistema */
+                assign d-durabilidade = deKMeqptofim - deKMeqptoini.   /* durabilidade hoje */
+                IF d-durabilidade < 0 THEN DO:
+                    ASSIGN d-durabilidade = 0.
+                END.
+            END.
+            else do:
+                assign d-durabilidade = 0.
+            END.
+        END.
+
+        /*****************************************************************************************************/
+        assign c-descricao1 = trim(c-des-event1 + " - " + c-des-sub-sist1).
+
+        IF l-durabilidade THEN DO:
+            /** Imprime as Tarefas **/
+            display with frame fFrameD.
+            put skip.
+        put "|                                     |".
+            down with frame fFrameD.
+            put skip.
+        put "|                                     |".
+        
+        END.
+        ELSE DO:
+            DISPLAY WITH FRAME fFrameDsDurabilidade.
+            DOWN WITH FRAME fFrameDsDurabilidade.
+        END.
+
+
+    END.
+
+
+    ASSIGN i       = 1
+           i-cont2 = 1.
+
+
+/*     DO WHILE (i <= 5):                                                                                                    */
+/*        PUT "|      |" SUBSTRING(c-dsl-obs, i-cont2, 36) FORMAT "x(36)"  "|            |        |       |        |" SKIP.  */
+/*                                                                                                                           */
+/*        ASSIGN i       = i + 1                                                                                             */
+/*               i-cont2 = i-cont2 + 36.                                                                                     */
+/*     END.                                                                                                                  */
+
+   find msg-ord-man where
+            msg-ord-man.nr-ord-produ = ord-manut.nr-ord-produ no-lock no-error.
+   if  avail mmv-tar-ord-manut then do:
+       run pi-print-editor (mmv-tar-ord-manut.dsl-obs, 36).
+       for each tt-editor:
+           PUT "|      |" tt-editor.conteudo FORMAT "x(36)" "|            |        |       |        |" SKIP.
+/*            PUT "|      |                                    |            |        |       |        |" SKIP. */
+
+       END.
+   END. 
+END.
+
+IF l-entrou THEN DO:
+/*     put skip.                                                                                 */
+/*     put "|      |                                    |            |        |       |     |".  */
+END.
+
+return "OK":U.
+
+end procedure.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+

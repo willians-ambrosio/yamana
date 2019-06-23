@@ -1,0 +1,76 @@
+
+                Thu Aug 30 12:10:52 2018
+[2018/08/30@12:10:52.026-0300] P-19784      T-19164 I DBUTIL   : (451)   Sess„o prostrct create iniciada por peque em CON:. 
+[2018/08/30@12:10:52.033-0300] P-19784      T-19164 I DBUTIL   : (12862) Arquivo de estrutura  F:\Projetos\Yamana\database\ems5_esp.st usado para criar banco de dados com tamanho de bloco  4096. 
+[2018/08/30@12:10:52.061-0300] P-19784      T-19164 I DBUTIL   : (334)   Fim de sess„o prostrct create. 
+[2018/08/30@12:10:52.073-0300] P-19784      T-19164 I DBUTIL   : (451)   Sess„o procopy iniciada por peque em CON:. 
+[2018/08/30@12:10:52.393-0300] P-19784      T-19164 I DBUTIL   : (334)   Fim de sess„o procopy. 
+
+                Thu Aug 30 12:10:52 2018
+[2018/08/30@12:10:52.404-0300] P-19784      T-19164 I          : (451)   Sess„o procopy get default SQL DBA iniciada por peque em CON:. 
+[2018/08/30@12:10:52.876-0300] P-19784      T-19164 I          : (334)   Fim de sess„o procopy get default SQL DBA. 
+
+                Thu Aug 30 12:10:59 2018
+[2018/08/30@12:10:59.679-0300] P-20720      T-23512 I          : (451)   Sess∆o Single-user iniciada por peque em CON:. 
+[2018/08/30@12:10:59.680-0300] P-20720      T-23512 I          : (5326)  Iniciando Fase de Physical Redo em 0 . 
+[2018/08/30@12:10:59.680-0300] P-20720      T-23512 I          : (7161)  Fase de Redo f°sico conclu°da em blk 0 off 919 upd 0. 
+[2018/08/30@12:10:59.680-0300] P-20720      T-23512 I          : (13547) At end of Physical redo, transaction table size is 1. 
+[2018/08/30@12:10:59.682-0300] P-20720      T-23512 I          : (12699) Banco de dados ems5_esp Opá‰es:  
+
+                Fri Aug 31 20:07:40 2018
+[2018/08/31@20:07:40.885-0300] P-20720      T-23512 I          : (334)   Fim de sess∆o Single-user. 
+
+                Sun Nov 11 15:46:32 2018
+[2018/11/11@15:46:32.979-0200] P-13168      T-9188  I          : (451)   Sess∆o Single-user iniciada por peque em CON:. 
+[2018/11/11@15:46:33.047-0200] P-13168      T-9188  I          : (5326)  Iniciando Fase de Physical Redo em 0 . 
+[2018/11/11@15:46:33.062-0200] P-13168      T-9188  I          : (7161)  Fase de Redo f°sico conclu°da em blk 7 off 1496 upd 0. 
+[2018/11/11@15:46:33.062-0200] P-13168      T-9188  I          : (13547) At end of Physical redo, transaction table size is 1. 
+[2018/11/11@15:46:33.083-0200] P-13168      T-9188  I          : (12699) Banco de dados ems5_esp Opá‰es:  
+
+                Mon Nov 12 17:13:21 2018
+[2018/11/12@17:13:21.181-0200] P-7700       T-10952 I          : (451)   Sess∆o Single-user iniciada por peque em CON:. 
+[2018/11/12@17:13:21.181-0200] P-7700       T-10952 I          : (5326)  Iniciando Fase de Physical Redo em 0 . 
+[2018/11/12@17:13:21.538-0200] P-7700       T-10952 I          : (7161)  Fase de Redo f°sico conclu°da em blk 42 off 5879 upd 2468. 
+[2018/11/12@17:13:21.538-0200] P-7700       T-10952 I          : (13547) At end of Physical redo, transaction table size is 1. 
+[2018/11/12@17:13:21.614-0200] P-7700       T-10952 I          : (12699) Banco de dados ems5_esp Opá‰es:  
+
+                Tue Nov 13 20:53:47 2018
+[2018/11/13@20:53:47.026-0200] P-7700       T-10952 I          : (334)   Fim de sess∆o Single-user. 
+
+                Tue Dec 04 10:48:12 2018
+[2018/12/04@10:48:12.295-0200] P-59144      T-39632 I          : (451)   Sess∆o Single-user iniciada por peque em CON:. 
+[2018/12/04@10:48:12.303-0200] P-59144      T-39632 I          : (5326)  Iniciando Fase de Physical Redo em 0 . 
+[2018/12/04@10:48:12.325-0200] P-59144      T-39632 I          : (7161)  Fase de Redo f°sico conclu°da em blk 42 off 5919 upd 0. 
+[2018/12/04@10:48:12.325-0200] P-59144      T-39632 I          : (13547) At end of Physical redo, transaction table size is 1. 
+[2018/12/04@10:48:12.337-0200] P-59144      T-39632 I          : (12699) Banco de dados ems5_esp Opá‰es:  
+
+                Thu Dec 06 13:41:34 2018
+[2018/12/06@13:41:34.269-0200] P-59144      T-39632 I          : (334)   Fim de sess∆o Single-user. 
+
+                Wed Dec 19 22:25:50 2018
+[2018/12/19@22:25:50.129-0200] P-23972      T-29768 I          : (451)   Sess∆o Single-user iniciada por peque em CON:. 
+[2018/12/19@22:25:50.142-0200] P-23972      T-29768 I          : (5326)  Iniciando Fase de Physical Redo em 0 . 
+[2018/12/19@22:25:50.188-0200] P-23972      T-29768 I          : (7161)  Fase de Redo f°sico conclu°da em blk 42 off 7104 upd 0. 
+[2018/12/19@22:25:50.188-0200] P-23972      T-29768 I          : (13547) At end of Physical redo, transaction table size is 1. 
+[2018/12/19@22:25:50.212-0200] P-23972      T-29768 I          : (12699) Banco de dados ems5_esp Opá‰es:  
+
+                Thu Dec 20 01:34:17 2018
+[2018/12/20@01:34:17.452-0200] P-23972      T-29768 I          : (334)   Fim de sess∆o Single-user. 
+
+                Wed May 29 08:02:24 2019
+[2019/05/29@08:02:24.908-0300] P-5048       T-2908  I          : (451)   Sess∆o Single-user iniciada por peque em CON:. 
+[2019/05/29@08:02:24.931-0300] P-5048       T-2908  I          : (5326)  Iniciando Fase de Physical Redo em 0 . 
+[2019/05/29@08:02:24.990-0300] P-5048       T-2908  I          : (7161)  Fase de Redo f°sico conclu°da em blk 57 off 2842 upd 0. 
+[2019/05/29@08:02:24.990-0300] P-5048       T-2908  I          : (13547) At end of Physical redo, transaction table size is 1. 
+[2019/05/29@08:02:25.015-0300] P-5048       T-2908  I          : (12699) Banco de dados ems5_esp Opá‰es:  
+
+                Fri May 31 09:36:28 2019
+[2019/05/31@09:36:28.641-0300] P-5048       T-2908  I          : (334)   Fim de sess∆o Single-user. 
+
+                Tue Jun 18 11:42:07 2019
+[2019/06/18@11:42:07.725-0300] P-12964      T-5584  I          : (451)   Sess∆o Single-user iniciada por peque em CON:. 
+[2019/06/18@11:42:07.746-0300] P-12964      T-5584  I          : (5326)  Iniciando Fase de Physical Redo em 0 . 
+[2019/06/18@11:42:07.775-0300] P-12964      T-5584  I          : (7161)  Fase de Redo f°sico conclu°da em blk 59 off 7641 upd 0. 
+[2019/06/18@11:42:07.775-0300] P-12964      T-5584  I          : (13547) At end of Physical redo, transaction table size is 1. 
+[2019/06/18@11:42:07.788-0300] P-12964      T-5584  I          : (12699) Banco de dados ems5_esp Opá‰es:  
+[2019/06/18@11:43:35.614-0300] P-12964      T-5584  I          : (334)   Fim de sess∆o Single-user. 

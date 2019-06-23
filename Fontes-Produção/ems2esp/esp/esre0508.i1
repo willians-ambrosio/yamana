@@ -1,0 +1,236 @@
+/***************************************************************************
+**
+**  re0508.i1 - Define as frames, temp-tables e variaveis do relat¢rio
+**
+***************************************************************************/
+{esp/esre0508.i4}
+{cdp/cdcfgmat.i}
+
+/* Defini‡Æo e Prepara‡Æo dos Parƒmetros */
+/* Defini‡Æo das vari veis para tradu‡Æo */
+def var c-estabel          as char format "x(20)" no-undo.
+def var c-ato              as char format "x(20)" no-undo.
+def var c-preco            as char format "x(20)" no-undo.
+def var c-emis-relat       as char format "x(20)" no-undo.
+def var c-lb-preco-medio-i as char format "x(20)" no-undo.
+def var c-lb-preco-medio-m as char format "x(20)" no-undo.
+def var c-lb-emitente      as char format "x(20)" no-undo.
+def var c-lb-nro-docto     as char format "x(20)" no-undo.
+def var c-lb-serie-docto   as char format "x(20)" no-undo.
+def var c-lb-nat-operacao  as char format "x(20)" no-undo.
+def var c-lb-item          as char format "x(20)" no-undo.
+def var c-lb-sequencia     as char format "x(20)" no-undo.
+def var c-lb-periodo       as char format "x(20)" no-undo.
+def var c-lb-preco-medio   as char format "x(20)" no-undo.
+def var c-lb-saldo-zerado  as char format "x(20)" no-undo.
+def var c-lb-tipo          as char format "x(20)" no-undo.
+def var c-lb-ent-ben       as char format "x(20)" no-undo.
+def var c-lb-sai-ben       as char format "x(20)" no-undo.
+def var c-lb-drawback      as char format "x(20)" no-undo.
+def var c-lb-transf        as char format "x(20)" no-undo.
+def var c-lb-ent-fut       as char format "x(20)" no-undo.
+def var c-lb-ent-cons      as char format "x(20)" no-undo.
+def var c-lb-sai-cons      as char format "x(20)" no-undo.
+def var c-lb-tit-sel       as char format "x(20)" no-undo.
+def var c-lb-tit-cla       as char format "x(20)" no-undo.
+def var c-lb-tit-par       as char format "x(20)" no-undo.
+def var c-lb-tit-imp       as char format "x(20)" no-undo.
+def var c-lb-tit-dig       as char format "x(20)" no-undo.
+def var c-lb-inicial       as char no-undo.
+def var c-lb-final         as char no-undo.
+def var c-lb-destino       as char no-undo.
+def var c-lb-usuario       as char no-undo.
+def var c-lb-emis-relat    as char format "x(20)" no-undo.
+&IF {&bf_mat_versao_ems} >= 2.062 &THEN
+    def var c-lb-lista-narra  as char format "x(20)" no-undo.
+&ENDIF
+
+
+
+def new shared var c-it-descricao as char format 'x(36)'.
+
+def var c-traco        as char    format "x(132)"          no-undo.
+def var da-data        as date    format "99/99/9999"      no-undo.
+def var de-saldo       as decimal format ">>>>>,>>9.9999" no-undo.
+def var de-qtd-orig    as decimal format "->>>>>,>>9.9999" no-undo.
+def var de-quantidade  like de-saldo                       no-undo.
+def var de-preco       like saldo-terc.valor-mat-m extent 0.
+def var l-existe       as logical.
+def var c-mens         as char format "x(7)"               no-undo.
+def var c-mens-1       as char format "x(10)"              no-undo.
+def var c-rem-ret      as char format "x(3)" extent 2      no-undo.
+def var de-saldo-valor as decimal format "->>>>>,>>9.99".
+def var vi-seq         as int                              no-undo.
+def var c-narra        as char format "x(2000)" view-as editor size 60 by 1 no-undo.
+
+&IF DEFINED(bf_mat_versao_ems) &THEN
+    &IF {&bf_mat_versao_ems} >= 2.062 &THEN
+        form saldo-terc.cod-estabel                           at 1   
+             saldo-terc.cod-emitente                          at 6 
+             saldo-terc.it-codigo    format "x(16)"           at 17   
+             saldo-terc.dt-retorno   format "99/99/99"        at 33    
+             saldo-terc.sequencia    format ">>>>9"           at 43    
+             saldo-terc.serie-docto                           at 49    
+             saldo-terc.nro-docto    format "x(15)"           at 55    
+             saldo-terc.nat-operacao                          at 72    
+             componente.quantidade   format ">>>>>,>>9.9999"  at 81   
+             de-saldo                format "->>>>>,>>9.9999" at 95 
+             de-saldo-valor          format "->>>>>,>>9.99"   at 111    
+             c-mens                                           at 126 skip
+             with stream-io down no-box width 132 frame f-movtos.
+        {utp/ut-liter.i Est * R}
+        assign saldo-terc.cod-estabel:label in frame f-movtos = trim(return-value).
+    &ELSE
+    &IF {&bf_mat_versao_ems} >= 2.03 &THEN
+            form saldo-terc.cod-estabel                           at 1
+                 saldo-terc.cod-emitente                          at 4
+                 saldo-terc.it-codigo    format "x(16)"           at 14
+                 saldo-terc.dt-retorno   format "99/99/99"        at 31
+                 saldo-terc.sequencia    format ">>>>9"           at 41
+                 saldo-terc.serie-docto                           at 47 
+                 saldo-terc.nro-docto    format "x(15)"           at 53
+                 saldo-terc.nat-operacao                          at 70
+                 componente.quantidade   format ">>>>>,>>9.9999"  at 79
+                 de-saldo                format "->>>>>,>>9.9999" at 94
+                 de-saldo-valor          format "->>>>>,>>9.99"   at 110
+                 c-mens                                           at 125    
+                 with stream-io down no-box width 132 frame f-movtos.
+        
+            {utp/ut-liter.i Est * R}
+            assign saldo-terc.cod-estabel:label in frame f-movtos = trim(return-value).
+        &ELSE
+            form saldo-terc.cod-emitente                          at 5
+                 saldo-terc.it-codigo    format "x(16)"           at 15
+                 saldo-terc.dt-retorno   format "99/99/99"        at 32
+                 saldo-terc.sequencia    format ">>>>9"           at 42
+                 saldo-terc.serie-docto                           at 48 
+                 saldo-terc.nro-docto    format "x(15)"           at 54
+                 saldo-terc.nat-operacao                          at 71
+                 componente.quantidade   format ">>>>>,>>9.9999"  at 80
+                 de-saldo                format "->>>>>,>>9.9999" at 95
+                 de-saldo-valor          format "->>>>>,>>9.99"   at 111
+                 c-mens                                           at 126    
+                 with stream-io down no-box width 132 frame f-movtos.
+        &ENDIF
+    &ENDIF
+    &ELSE
+    form saldo-terc.cod-emitente                          at 5
+         saldo-terc.it-codigo    format "x(16)"           at 15
+         saldo-terc.dt-retorno   format "99/99/99"        at 32
+         saldo-terc.sequencia    format ">>>>9"           at 42
+         saldo-terc.serie-docto                           at 48 
+         saldo-terc.nro-docto    format "x(15)"           at 54
+         saldo-terc.nat-operacao                          at 71
+         componente.quantidade   format ">>>>>,>>9.9999"  at 80
+         de-saldo                format "->>>>>,>>9.9999" at 95
+         de-saldo-valor          format "->>>>>,>>9.99"   at 111
+         c-mens                                           at 126    
+         with stream-io down no-box width 132 frame f-movtos.
+&ENDIF
+
+{utp/ut-liter.i Emit. * R}
+assign saldo-terc.cod-emitente:label in frame f-movtos = trim(return-value). 
+{utp/ut-liter.i Ser * R}
+assign saldo-terc.serie-docto:label in frame f-movtos = trim(return-value).
+{utp/ut-liter.i Numero * R}                                      
+assign saldo-terc.nro-docto:label in frame f-movtos = trim(return-value).
+{utp/ut-liter.i Natur * R}
+assign saldo-terc.nat-operacao:label in frame f-movtos = trim(return-value).
+{utp/ut-liter.i Seq * R}
+assign saldo-terc.sequencia:label in frame f-movtos = trim(return-value).
+{utp/ut-liter.i Item * R}
+assign saldo-terc.it-codigo:label in frame f-movtos = trim(return-value).
+{utp/ut-liter.i Data * R}                               
+assign saldo-terc.dt-retorno:label in frame f-movtos = trim(return-value).
+{utp/ut-liter.i Saldo * L}                                      
+assign de-saldo:label in frame f-movtos = " " + return-value.
+{utp/ut-liter.i Valor * L}
+assign de-saldo-valor:label in frame f-movtos = "        " + return-value.
+{utp/ut-liter.i Mens * R}
+assign c-mens:label in frame f-movtos = trim(return-value). 
+
+{utp/ut-liter.i Emitente * r}                                      
+assign c-lb-emitente = trim(return-value).
+{utp/ut-liter.i Docto * r}                                      
+assign c-lb-nro-docto = trim(return-value).
+{utp/ut-liter.i Serie * r}                                      
+assign c-lb-serie-docto = trim(return-value).
+{utp/ut-liter.i Nat_Operacao * r}                                      
+assign c-lb-nat-operacao = trim(return-value).
+{utp/ut-liter.i Item * r}                                      
+assign c-lb-item = trim(return-value).
+{utp/ut-liter.i Periodo * r}                                      
+assign c-lb-periodo = trim(return-value).
+{utp/ut-liter.i Ato_Concess¢rio * r}                                      
+assign c-ato = trim(return-value).
+{utp/ut-liter.i Estabelecimento * r}                                      
+assign c-estabel = trim(return-value).
+
+{utp/ut-liter.i SELE€ÇO * r}                                      
+assign c-lb-tit-sel = trim(return-value).
+{utp/ut-liter.i CLASSIFICA€ÇO * r}                                      
+assign c-lb-tit-cla = trim(return-value).
+{utp/ut-liter.i PAR¶METROS * r}                                      
+assign c-lb-tit-par = trim(return-value).
+{utp/ut-liter.i IMPRESSÇO * r}                                      
+assign c-lb-tit-imp = trim(return-value).
+{utp/ut-liter.i DIGITA€ÇO * r}                                      
+assign c-lb-tit-dig = trim(return-value).
+{utp/ut-liter.i INICIAL * r}                                      
+assign c-lb-inicial = trim(return-value).
+{utp/ut-liter.i FINAL * r}                                      
+assign c-lb-final = trim(return-value).
+
+{utp/ut-liter.i Destino * r}                                      
+assign c-lb-destino = trim(return-value).
+{utp/ut-liter.i Usu rio * r}                                      
+assign c-lb-usuario = trim(return-value).
+{utp/ut-liter.i Per¡odo_para_Saldo * r}                                      
+assign c-lb-periodo = trim(return-value).
+
+{utp/ut-liter.i M‚dio * r}                                      
+assign c-lb-preco-medio-m = trim(return-value).
+{utp/ut-liter.i Informado * r}                                      
+assign c-lb-preco-medio-i = trim(return-value).
+{utp/ut-liter.i Saldo_Zerado * r}                                      
+assign c-lb-saldo-zerado = trim(return-value).
+&IF {&bf_mat_versao_ems} >= 2.062 &THEN
+    {utp/ut-liter.i Lista_Narrativa * r}                                      
+    assign c-lb-lista-narra = trim(return-value).
+&ENDIF
+{utp/ut-liter.i M‚dio/Informado * r}                                      
+assign c-lb-preco-medio = trim(return-value).
+{utp/ut-liter.i Tipo_Movto * r}                                      
+assign c-lb-tipo = trim(return-value).
+{utp/ut-liter.i Nat.Opera‡Æo * r}
+assign c-lb-nat-operacao = trim(return-value).
+{utp/ut-liter.i Drawback * r}                                      
+assign c-lb-drawback = trim(return-value).
+{utp/ut-liter.i EmissÆo_Relat¢rio * r}                                      
+assign c-lb-emis-relat = trim(return-value).
+
+{utp/ut-liter.i Sem_Movto * r}
+assign c-mens-1 = trim(return-value).
+
+{utp/ut-liter.i Entrada_Beneficiamento * R}
+assign c-lb-ent-ben = trim(return-value).
+{utp/ut-liter.i Sa¡da_Beneficiamento * R}
+assign c-lb-sai-ben = trim(return-value).
+{utp/ut-liter.i Transferˆncia * R}
+assign c-lb-transf = trim(return-value).
+{utp/ut-liter.i Entrega_Futura * R}
+assign c-lb-ent-fut = trim(return-value).
+{utp/ut-liter.i Entrada_Consigna‡Æo * R}
+assign c-lb-ent-cons = trim(return-value).
+{utp/ut-liter.i Sa¡da_Consigna‡Æo * R}
+assign c-lb-sai-cons = trim(return-value).
+
+{utp/ut-liter.i Rem * R}
+assign c-rem-ret[1] = trim(return-value).
+{utp/ut-liter.i Ret * R}
+assign c-rem-ret[2] = trim(return-value).
+
+def temp-table tt-raw-digita no-undo
+    field raw-digita as raw.
+
+/* fim do include */

@@ -1,0 +1,80 @@
+ADD TABLE "es-cfa"
+  AREA "Schema Area"
+  DUMP-NAME "es-cfa"
+
+ADD FIELD "descricao" OF "es-cfa" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  POSITION 3
+  MAX-WIDTH 80
+  ORDER 20
+
+ADD FIELD "classe" OF "es-cfa" AS character 
+  FORMAT "x(4)"
+  INITIAL ""
+  POSITION 4
+  MAX-WIDTH 8
+  ORDER 30
+
+ADD INDEX "pku" ON "es-cfa" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "classe" ASCENDING 
+
+ADD INDEX "e" ON "es-cfa" 
+  AREA "Schema Area"
+  INDEX-FIELD "descricao" ASCENDING 
+
+ADD TABLE "es-cfa-emp"
+  AREA "Schema Area"
+  DUMP-NAME "es-cfa-emp"
+
+ADD FIELD "ep-codigo" OF "es-cfa-emp" AS character 
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Empresa"
+  POSITION 2
+  MAX-WIDTH 6
+  COLUMN-LABEL "Emp"
+  ORDER 30
+
+ADD FIELD "credita-piscofins" OF "es-cfa-emp" AS logical 
+  FORMAT "yes/no"
+  INITIAL "no"
+  POSITION 4
+  MAX-WIDTH 1
+  ORDER 50
+
+ADD FIELD "credita-icms" OF "es-cfa-emp" AS logical 
+  FORMAT "yes/no"
+  INITIAL "no"
+  POSITION 5
+  MAX-WIDTH 1
+  ORDER 60
+
+ADD FIELD "cod-estabel" OF "es-cfa-emp" AS character 
+  FORMAT "x(5)"
+  INITIAL ""
+  LABEL "Estabelecimento"
+  POSITION 6
+  MAX-WIDTH 10
+  ORDER 70
+
+ADD FIELD "classe" OF "es-cfa-emp" AS character 
+  FORMAT "x(4)"
+  INITIAL ""
+  POSITION 7
+  MAX-WIDTH 8
+  ORDER 80
+
+ADD INDEX "D" ON "es-cfa-emp" 
+  AREA "Schema Area"
+  PRIMARY
+  INDEX-FIELD "credita-piscofins" ASCENDING 
+
+.
+PSC
+cpstream=ibm850
+.
+0000001419

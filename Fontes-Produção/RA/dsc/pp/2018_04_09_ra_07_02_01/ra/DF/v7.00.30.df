@@ -1,0 +1,41 @@
+ADD TABLE "nfe-ref-nota-fisc-rec"
+  AREA "Schema Area"
+  LABEL "Nota Fiscal de Referencia"
+  DESCRIPTION "Nota Fiscal de Referencia"
+  DUMP-NAME "nfe-ref-nota-fisc-rec"
+
+ADD FIELD "chave-acesso-nfe" OF "nfe-ref-nota-fisc-rec" AS character 
+  DESCRIPTION "Chave de Acesso Pai"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave de Acesso Pai"
+  POSITION 2
+  MAX-WIDTH 100
+  ORDER 10
+
+ADD FIELD "nfe-ref" OF "nfe-ref-nota-fisc-rec" AS character 
+  DESCRIPTION "Chave de Acesso da NF Referenciada"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "NF Referenciada"
+  POSITION 3
+  MAX-WIDTH 100
+  ORDER 20
+
+ADD INDEX "idx-chave-ref" ON "nfe-ref-nota-fisc-rec" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  DESCRIPTION "Chave de acesso NF PAI x Filho"
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+  INDEX-FIELD "nfe-ref" ASCENDING 
+
+ADD INDEX "idx-chave" ON "nfe-ref-nota-fisc-rec" 
+  AREA "Schema Area"
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+
+.
+PSC
+cpstream=ibm850
+.
+0000000962

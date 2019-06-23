@@ -1,0 +1,390 @@
+
+/******************************************************************************
+***
+*** esp/esap0749rp.i6 Em CSV - Classifica‡Æo 1 e 2.
+***
+******************************************************************************/
+
+output to value(tt-param.c-arquivo-csv).
+For each tt-mov-ap 
+    break by {1}
+          by {2}
+          by tt-mov-ap.cod_tit_ap:
+
+    if first({1}) then 
+        put 
+        "Dt-Trans"
+        ";"
+        "Est"
+        ";"
+        "Gr"
+        ";"
+        "Descri‡Æo"
+        ";"
+        "Fornec"
+        ";"
+        "Nom-Abrev"
+        ";"
+        "Esp"
+        ";"
+        "Ser"
+        ";"
+        "Docto"
+        ";"
+        "/P"
+        ";"
+        "Dt-Emis"
+        ";"
+        "Dt-Venc"
+        ";"
+        "Refer"
+        ";"
+        "Tr"
+        ";"
+        "Dt-Maq"
+        ";"
+        "Or"
+        ";"
+        "Vl-Movto"
+        ";"
+        "Vl Liquido"
+        skip.
+
+    assign v-num-reg-lidos = v-num-reg-lidos + 1.
+
+    run pi-acompanhar in h-acomp(input string(v-num-reg-lidos)).
+
+    if  first-of({1}) then do:
+       assign de-tot-dia = 0
+              de-tot-liquido = 0
+              l-display  = no.
+    end.
+    
+    find first ems5.fornecedor no-lock where
+               ems5.fornecedor.cdn_fornecedor = tt-mov-ap.cdn_fornecedor no-error.
+    if avail ems5.fornecedor then
+        assign tt-mov-ap.nom_abrev = ems5.fornecedor.nom_abrev.
+
+    /*find tit-ap
+        where tit-ap.cod_empresa  = tt-mov-ap.ep-codigo
+        and   tit-ap.cdn_fornecedor = tt-mov-ap.cod-fornec
+        and   tit-ap.cod-estab  = tt-mov-ap.cod-estabel
+        and   tit-ap.cod-esp    = tt-mov-ap.cod-esp
+        and   tit-ap.serie      = tt-mov-ap.serie
+        and   tit-ap.nr-docto   = tt-mov-ap.nr-docto
+        and   tit-ap.parcela    = tt-mov-ap.parcela
+        no-lock no-error.
+    if  avail tit-ap then do:
+        assign i-tipo = tit-ap.tipo.
+        if  tit-ap.tipo = 3 then
+            assign tt-mov-ap.nome-abrev = tit-ap.nome-abrev.
+    end.
+    else 
+        assign i-tipo = 0.*/
+
+    if l-vl-liq-impto then do:
+
+        assign de-vl-liquido = 0.
+        
+        for each movto_tit_ap no-lock where
+                 movto_tit_ap.cod_estab           = tt-mov-ap.cod_estab           and
+                 movto_tit_ap.num_id_tit_ap       = tt-mov-ap.num_id_tit_ap       and
+                 movto_tit_ap.num_id_movto_tit_ap = tt-mov-ap.num_id_movto_tit_ap and
+                (movto_tit_ap.ind_trans_ap        = "Acerto Valor a Maior" or
+                 movto_tit_ap.ind_trans_ap        = "Acerto Valor a Menor"):
+            
+            if de-vl-liquido = 0 then
+                assign de-vl-liquido = tt-mov-ap.val_movto_ap.
+
+            assign de-vl-liquido = de-vl-liquido - movto_tit_ap.val_movto_ap.
+
+        END.
+        
+        if de-vl-liquido = 0 then
+            assign de-vl-liquido = tt-mov-ap.val_movto_ap.
+
+        /*for each mov-ap
+            where mov-ap.ep-codigo    = tt-mov-ap.ep-codigo  
+            and   mov-ap.cod-fornec   = tt-mov-ap.cod-fornec 
+            and   mov-ap.cod-estabel  = tt-mov-ap.cod-estabel
+            and   mov-ap.cod-esp      = tt-mov-ap.cod-esp    
+            and   mov-ap.serie        = tt-mov-ap.serie      
+            and   mov-ap.nr-docto     = tt-mov-ap.nr-docto   
+            and   mov-ap.parcela      = tt-mov-ap.parcela
+            and   mov-ap.referencia   = tt-mov-ap.referencia
+            and   mov-ap.dt-transacao = tt-mov-ap.dt-transacao
+            and   mov-ap.transacao    = 5   /* AVA */
+            and   mov-ap.impostos     = yes /* Reten‡Æo de Impostos */ no-lock:
+
+            if de-vl-liquido = 0 then
+                assign de-vl-liquido = tt-mov-ap.valor-mov.
+            assign de-vl-liquido = de-vl-liquido - mov-ap.valor-mov.
+
+        end.
+        if de-vl-liquido = 0 then
+            assign de-vl-liquido = tt-mov-ap.valor-mov.*/
+    END.
+
+    if  i-tipo <> 1
+    and i-tipo <> 2
+    and i-tipo <> 3
+    and i-tipo <> 4
+    and i-tipo <> 5
+    and i-tipo <> 6
+    and i-tipo <> 8 then do:
+        if  last-of({1}) 
+        and de-tot-dia > 0 
+        and l-display = yes then do:
+        
+           /*put  
+           ";"
+           ";"
+           ";"
+           ";"
+           ";"
+           ";"
+           ";"
+           ";"
+           ";"
+           ";"
+           " -------------" skip .*/ 
+           /*if not l-vl-liq-impto then*/
+            /* put c-total 
+                   ";" 
+                   de-tot-dia format "->>>>>>,>>>,>>9.99"  skip.*/
+                   
+           /*else do:
+               put  
+                ";"
+                ";"
+                ";"
+                ";"
+                ";"
+                ";"
+                ";"
+                ";"
+                ";"
+                ";"
+               " -------------"  skip. 
+               put c-total           
+                    ";"
+                   de-tot-dia format "->>>>>>,>>>,>>9.99" 
+                   ";"
+                   de-tot-liquido format "->>>>>>>>>,>>9.99" skip.
+
+           end. */
+           /*next.*/
+        end.
+        /*else next.*/
+    end.
+
+    assign l-display = yes.
+
+    if not l-vl-liq-impto then do:
+        FIND FIRST ems5.fornecedor
+             WHERE ems5.fornecedor.cdn_fornecedor = tt-mov-ap.cdn_fornecedor
+             NO-LOCK NO-ERROR.
+        IF AVAIL ems5.fornecedor THEN DO:
+            FIND FIRST grp_fornec
+                 where grp_fornec.cod_grp_fornec = ems5.fornecedor.cod_grp_fornec
+                 NO-LOCK NO-ERROR.
+            IF AVAIL grp_fornec THEN DO:
+                
+                ASSIGN i-cod-gr-forn    = grp_fornec.cod_grp_fornec
+                       c-descricao      = grp_fornec.des_grp_fornec
+                       .
+            END.
+        END.
+        
+        PUT tt-mov-ap.dat_transacao
+            ";"
+             tt-mov-ap.cod_estab
+             ";"
+             i-cod-gr-forn             
+             ";"
+             c-descricao  
+             ";"
+             tt-mov-ap.cdn_fornecedor
+             ";"
+             tt-mov-ap.nom_abrev
+             ";"
+             tt-mov-ap.cod_espec_docto
+             ";"
+             tt-mov-ap.cod_ser_docto
+             ";"
+             "'" string(tt-mov-ap.cod_tit_ap) format "x(15)"
+             ";"
+             tt-mov-ap.cod_parcela
+             ";"
+             tt-mov-ap.dat_emis_docto
+             ";"
+             tt-mov-ap.dat_vencto_tit_ap
+             ";"
+             tt-mov-ap.cod_refer
+             ";"
+             tt-mov-ap.ind_trans_ap
+             ";"
+             tt-mov-ap.dat_gerac_movto
+             ";"
+             tt-mov-ap.ind_origin_tit_ap
+             ";"
+             tt-mov-ap.val_movto_ap
+             SKIP.
+             
+       
+    end.
+    else do:
+        FIND FIRST ems5.fornecedor
+             WHERE ems5.fornecedor.cdn_fornecedor = tt-mov-ap.cdn_fornecedor
+             NO-LOCK NO-ERROR.
+        IF AVAIL ems5.fornecedor THEN DO:
+            FIND FIRST grp_fornec
+                 where grp_fornec.cod_grp_fornec = ems5.fornecedor.cod_grp_fornec NO-LOCK NO-ERROR.
+            IF AVAIL grp_fornec THEN DO:
+                
+                ASSIGN i-cod-gr-forn    = grp_fornec.cod_grp_fornec
+                       c-descricao      = grp_fornec.des_grp_fornec
+                       .
+            END.
+        END.
+    
+        PUT  tt-mov-ap.dat_transacao
+             ";"
+             tt-mov-ap.cod_estab
+             ";"
+             i-cod-gr-forn             
+             ";"
+             c-descricao  
+             ";"
+             tt-mov-ap.cdn_fornecedor
+             ";"
+             tt-mov-ap.nom_abrev
+             ";"
+             tt-mov-ap.cod_espec_docto
+             ";"
+             tt-mov-ap.cod_ser_docto
+             ";"   
+             "'" string(tt-mov-ap.cod_tit_ap) format "x(15)"
+             ";"
+             tt-mov-ap.cod_parcela
+             ";"
+             tt-mov-ap.dat_emis_docto
+             ";"
+             tt-mov-ap.dat_vencto_tit_ap
+             ";"
+             tt-mov-ap.cod_refer
+             ";"
+             tt-mov-ap.ind_trans_ap
+             ";"
+             tt-mov-ap.dat_gerac_movto
+             ";"
+             tt-mov-ap.ind_origin_tit_ap
+             ";"
+             tt-mov-ap.val_movto_ap
+             ";"
+             de-vl-liquido
+             SKIP.
+             
+    END.
+
+
+    assign de-valor-mov-tt-001 = de-valor-mov-tt-001 + tt-mov-ap.val_movto_ap
+           de-tot-geral        = de-tot-geral + tt-mov-ap.val_movto_ap
+           de-tot-dia          = de-tot-dia + tt-mov-ap.val_movto_ap
+           de-tot-liquido      = de-tot-liquido     + de-vl-liquido
+           de-tot-liquido-ger  = de-tot-liquido-ger + de-vl-liquido.
+
+    /*if  last-of({1}) then do:
+       put 
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        " -------------"  . 
+       if not l-vl-liq-impto then
+           put c-total        
+           ";"
+             de-tot-dia format "->>>>>>,>>>,>>9.99"  skip.
+       else do:
+           put
+             ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        " -------------" skip .
+           put c-total  
+           ";"       
+               de-tot-dia format "->>>>>>,>>>,>>9.99"    
+               ";"
+               de-tot-liquido format "->>>>>>>>>,>>9.99"  skip.
+       end.
+    end.*/
+end.
+
+/*put
+";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";" " -------------"  skip .
+if not l-vl-liq-impto then
+    put c-tot-ger  
+    ";" 
+        de-valor-mov-tt-001 format "->>>>>>,>>>,>>9.99"  skip.
+else do:
+    put  
+    ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        ";"
+        " -------------" skip.
+    put c-tot-ger
+        ";"
+        de-valor-mov-tt-001
+        ";"
+        de-tot-liquido-ger  format "->>>>>>>>>,>>9.99"   skip.
+                                   
+end.  */
+

@@ -1,0 +1,39 @@
+/**** pe4000.i1 *************/
+if i-qtd-hrs > 0 then do:
+   find movto_ptoelet where
+        movto_ptoelet.cdn_empresa       = bfunc-ponto.cdn_empresa and
+        movto_ptoelet.cdn_estab         = bfunc-ponto.cdn_estab and
+        movto_ptoelet.cdn_funcionario   = bfunc-ponto.cdn_funcionario and
+        movto_ptoelet.num_ano_refer_fp  = bcontrole-catponto.num_ano_primei_calc_ptoelet and
+        movto_ptoelet.num_mes_refer_fp  = bcontrole-catponto.num_mes_primei_calc_realzdo and
+        movto_ptoelet.idi_tip_fp_calcul = 1 and
+        movto_ptoelet.num_parc_calc_movto_ptoelet = 9 and
+        movto_ptoelet.cdn_efp           = i-ev-codigo exclusive-lock no-error.
+   if not available movto_ptoelet then do:
+            
+      create movto_ptoelet.
+      assign movto_ptoelet.cdn_empresa           = bfunc-ponto.cdn_empresa
+             movto_ptoelet.cdn_estab             = bfunc-ponto.cdn_estab
+             movto_ptoelet.cdn_funcionario       = bfunc-ponto.cdn_funcionario
+             movto_ptoelet.num_ano_refer_fp      = bcontrole-catponto.num_ano_primei_calc_ptoelet
+             movto_ptoelet.num_mes_refer_fp      = bcontrole-catponto.num_mes_primei_calc_realzdo
+             movto_ptoelet.idi_tip_fp_calcul     = 1
+             movto_ptoelet.num_parc_calc_movto_ptoelet = 9
+             movto_ptoelet.cdn_efp               = i-ev-codigo
+             movto_ptoelet.qtd_movto_ptoelet     = round(i-qtd-hrs,3)
+             movto_ptoelet.idi_tip_movto_ptoelet = 1
+             movto_ptoelet.log_livre_1           = v_log_movto_extra.
+      &if "{&dthrtma_dbtype}" <> "progress" &then
+          validate movto_ptoelet no-error.
+      &endif
+      assign v_num_erro = v_num_erro + 1.
+      create tt_erro.
+      assign tt_erro.num_erro = v_num_erro
+             tt_erro.des_erro = ""
+             tt_erro.log_erro = no.
+   end.
+   
+   else 
+       assign movto_ptoelet.qtd_movto_ptoelet = round(movto_ptoelet.qtd_movto_ptoelet + i-qtd-hrs,3).
+end. 
+/**** fim ******************************/

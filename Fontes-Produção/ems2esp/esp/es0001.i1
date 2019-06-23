@@ -1,0 +1,523 @@
+    IF NOT CAN-FIND(FIRST emitente
+                    WHERE emitente.cod-emitente = doc-orig-nfe.cod-emitente) THEN DO:
+        
+        PUT STREAM s-csv-req UNFORMATTED
+            doc-orig-nfe.cod-estabel ";"
+            doc-orig-nfe.cod-emitente ";"
+            doc-orig-nfe.serie-docto ";"
+            doc-orig-nfe.nro-docto ";"
+            "- ;"
+            "- ;"
+            "Emitente ;" 
+            "Sim;".
+        PUT STREAM s-csv-req SKIP.
+        ASSIGN l-imprimiu = YES.
+    END.
+        
+    IF trim(doc-orig-nfe.serie) = "" THEN DO:
+        PUT STREAM s-csv-req UNFORMATTED
+            doc-orig-nfe.cod-estabel ";"
+            doc-orig-nfe.cod-emitente ";"
+            doc-orig-nfe.serie-docto ";"
+            doc-orig-nfe.nro-docto ";"
+            "-;"
+            "-;"
+            "S‚rie;"
+            "Sim;".
+        PUT STREAM s-csv-req SKIP.
+        ASSIGN l-imprimiu = YES.
+    END.
+        
+    ELSE DO:
+        IF NOT CAN-FIND(FIRST serie
+                        WHERE serie.serie = doc-orig-nfe.serie) THEN DO:
+            PUT STREAM s-csv-req UNFORMATTED
+                doc-orig-nfe.cod-estabel ";"
+                doc-orig-nfe.cod-emitente ";"
+                doc-orig-nfe.serie-docto ";"
+                doc-orig-nfe.nro-docto ";"
+                "-;"
+                "-;"
+                "S‚rie;"
+                "Sim;".
+            PUT STREAM s-csv-req SKIP.
+            ASSIGN l-imprimiu = YES.
+        END.
+    END.
+        
+    IF trim(doc-orig-nfe.cod-estabel) = "" THEN DO:
+        PUT STREAM s-csv-req UNFORMATTED
+            doc-orig-nfe.cod-estabel ";"
+            doc-orig-nfe.cod-emitente ";"
+            doc-orig-nfe.serie-docto ";"
+            doc-orig-nfe.nro-docto ";"
+            "-;"
+            "-;"
+            "Estabelecimento;"
+            "Sim;".
+        PUT STREAM s-csv-req SKIP.
+        ASSIGN l-imprimiu = YES.
+    END.
+        
+    ELSE DO:
+        IF NOT CAN-FIND(FIRST estabelec
+                        WHERE estabelec.cod-estabel = doc-orig-nfe.cod-estabel) THEN DO:
+            PUT STREAM s-csv-req UNFORMATTED
+                doc-orig-nfe.cod-estabel ";"
+                doc-orig-nfe.cod-emitente ";"
+                doc-orig-nfe.serie-docto ";"
+                doc-orig-nfe.nro-docto ";"
+                "-;"
+                "-;"
+                "Estabelecimento;"
+                "Sim;".
+            PUT STREAM s-csv-req SKIP.
+            ASSIGN l-imprimiu = YES.
+        END.
+    END.
+        
+    IF doc-orig-nfe.dt-transacao < doc-orig-nfe.dt-emissao THEN DO:
+        PUT STREAM s-csv-req UNFORMATTED
+            doc-orig-nfe.cod-estabel ";"
+            doc-orig-nfe.cod-emitente ";"
+            doc-orig-nfe.serie-docto ";"
+            doc-orig-nfe.nro-docto ";"
+            "-;"
+            "-;"
+            "Data de Transa‡Æo;"
+            "Sim;".
+        PUT STREAM s-csv-req SKIP.
+        ASSIGN l-imprimiu = YES.
+    END.
+    
+    IF trim(doc-orig-nfe.nat-oper-comp) = "" THEN DO:
+        IF NOT tt-param.obrigatorios THEN DO:
+            PUT STREAM s-csv-req UNFORMATTED
+                doc-orig-nfe.cod-estabel ";"
+                doc-orig-nfe.cod-emitente ";"
+                doc-orig-nfe.serie-docto ";"
+                doc-orig-nfe.nro-docto ";"
+                "-;"
+                "-;"
+                "Natureza Complementar;"
+                "NÆo;".
+            PUT STREAM s-csv-req SKIP.
+            ASSIGN l-imprimiu = YES.
+        END.
+    END.
+    ELSE DO:
+        IF NOT CAN-FIND(FIRST natur-oper
+                        WHERE natur-oper.nat-operacao = doc-orig-nfe.nat-oper-comp) AND
+            NOT tt-param.obrigatorios THEN DO:
+            PUT STREAM s-csv-req UNFORMATTED
+                doc-orig-nfe.cod-estabel ";"
+                doc-orig-nfe.cod-emitente ";"
+                doc-orig-nfe.serie-docto ";"
+                doc-orig-nfe.nro-docto ";"
+                "-;"
+                "-;"
+                "Natureza;"
+                "NÆo;".
+            PUT STREAM s-csv-req SKIP.
+            ASSIGN l-imprimiu = YES.
+        END.
+    END.
+        
+    FOR EACH item-doc-orig-nfe
+       WHERE item-doc-orig-nfe.ch-acesso-comp-nfe = doc-orig-nfe.ch-acesso-comp-nfe
+        AND  item-doc-orig-nfe.idi-orig-trad      = 2 NO-LOCK:
+        
+        IF trim(item-doc-orig-nfe.nat-operacao) = "" THEN DO:
+            PUT STREAM s-csv-req UNFORMATTED
+                doc-orig-nfe.cod-estabel ";"
+                doc-orig-nfe.cod-emitente ";"
+                doc-orig-nfe.serie-docto ";"
+                doc-orig-nfe.nro-docto ";"
+                item-doc-orig-nfe.seq-item ";"
+                item-doc-orig-nfe.it-codigo ";"
+                "Natureza;"
+                "Sim;".
+            PUT STREAM s-csv-req SKIP.
+            ASSIGN l-imprimiu = YES.
+        END.
+    
+        ELSE DO:
+            IF NOT CAN-FIND(FIRST natur-oper
+                            WHERE natur-oper.nat-operacao = item-doc-orig-nfe.nat-operacao) THEN DO:
+                
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Natureza;"
+                    "Sim;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+        
+        IF item-doc-orig-nfe.num-pedido = 0 THEN DO:
+            IF NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Pedido de Compra;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+        ELSE DO:
+            IF NOT CAN-FIND(FIRST pedido-compr
+                            WHERE pedido-compr.num-pedido   = item-doc-orig-nfe.num-pedido
+                             AND  pedido-compr.cod-emitente = doc-orig-nfe.cod-emitente) AND
+                NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Pedido de Compra;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+        
+        IF item-doc-orig-nfe.numero-ordem = 0 THEN DO:
+            IF NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Ordem de Compra;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+        ELSE DO:
+            IF NOT CAN-FIND(FIRST ordem-compra
+                            WHERE ordem-compra.numero-ordem = item-doc-orig-nfe.numero-ordem
+                             AND  ordem-compra.cod-emitente = doc-orig-nfe.cod-emitente) AND
+                NOT tt-param.obrigatorios THEN DO:
+                
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Ordem de Compra;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+            
+        IF item-doc-orig-nfe.qtd-interna = 0 THEN DO:
+            IF NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Quantidade;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+        IF item-doc-orig-nfe.preco-unit = 0 THEN DO:
+            IF NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Pre‡o Unit rio;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+        
+        IF item-doc-orig-nfe.preco-total = 0 THEN DO:
+            IF NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Pre‡o Total;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+    
+        IF trim(item-doc-orig-nfe.class-fiscal) = "" THEN DO:
+            PUT STREAM s-csv-req UNFORMATTED
+                doc-orig-nfe.cod-estabel ";"
+                doc-orig-nfe.cod-emitente ";"
+                doc-orig-nfe.serie-docto ";"
+                doc-orig-nfe.nro-docto ";"
+                item-doc-orig-nfe.seq-item ";"
+                item-doc-orig-nfe.it-codigo ";"
+                "Classifica‡Æo Fiscal;"
+                "Sim;".
+            PUT STREAM s-csv-req SKIP.
+            ASSIGN l-imprimiu = YES.
+        END.
+        ELSE DO:
+            IF NOT CAN-FIND(FIRST classif-fisc
+                            WHERE classif-fisc.class-fiscal = item-doc-orig-nfe.class-fiscal) THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Classifica‡Æo Fiscal;"
+                    "Sim;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+        
+        IF trim(item-doc-orig-nfe.conta-contabil) = "" THEN DO:
+            FOR FIRST ITEM
+                WHERE ITEM.it-codigo = item-doc-orig-nfe.it-codigo:
+                IF ITEM.tipo-contr = 1 OR
+                   ITEM.tipo-contr = 4 THEN DO:
+                    PUT STREAM s-csv-req UNFORMATTED
+                        doc-orig-nfe.cod-estabel ";"
+                        doc-orig-nfe.cod-emitente ";"
+                        doc-orig-nfe.serie-docto ";"
+                        doc-orig-nfe.nro-docto ";"
+                        item-doc-orig-nfe.seq-item ";"
+                        item-doc-orig-nfe.it-codigo ";"
+                        "Conta Cont bil;"
+                        "Sim;".
+                    PUT STREAM s-csv-req SKIP.
+                    ASSIGN l-imprimiu = YES.
+                END.
+                ELSE DO:
+                    IF NOT tt-param.obrigatorios THEN DO:
+                        PUT STREAM s-csv-req UNFORMATTED
+                            doc-orig-nfe.cod-estabel ";"
+                            doc-orig-nfe.cod-emitente ";"
+                            doc-orig-nfe.serie-docto ";"
+                            doc-orig-nfe.nro-docto ";"
+                            item-doc-orig-nfe.seq-item ";"
+                            item-doc-orig-nfe.it-codigo ";"
+                            "Conta Cont bil;"
+                            "NÆo;".
+                        PUT STREAM s-csv-req SKIP.
+                        ASSIGN l-imprimiu = YES.
+                    END.
+                END.
+            END.
+        END.
+        ELSE DO:
+            IF NOT CAN-FIND(FIRST cta_ctbl no-lock
+                            where cta_ctbl.cod_plano_cta_ctbl = "CONTSOC"
+                              and cta_ctbl.cod_cta_ctbl       = item-doc-orig-nfe.ct-codigo) AND /* item-doc-orig-nfe.conta-contabil */
+                NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Conta Cont bil;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+        IF item-doc-orig-nfe.nr-ord-produ = 0 AND
+            NOT tt-param.obrigatorios THEN DO:
+            PUT STREAM s-csv-req UNFORMATTED
+                doc-orig-nfe.cod-estabel ";"
+                doc-orig-nfe.cod-emitente ";"
+                doc-orig-nfe.serie-docto ";"
+                doc-orig-nfe.nro-docto ";"
+                item-doc-orig-nfe.seq-item ";"
+                item-doc-orig-nfe.it-codigo ";"
+                "Ordem de Produ‡Æo;"
+                "NÆo;".
+            PUT STREAM s-csv-req SKIP.
+            ASSIGN l-imprimiu = YES.
+        END.
+        ELSE DO:
+            IF NOT CAN-FIND(FIRST ord-prod
+                            WHERE ord-prod.nr-ord-produ = item-doc-orig-nfe.nr-ord-produ) AND
+                NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Ordem de Produ‡Æo;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+            
+        IF trim(item-doc-orig-nfe.cod-refer) = "" THEN DO:
+            IF NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Referˆncia;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+        ELSE DO:
+            IF NOT CAN-FIND(FIRST referencia
+                            WHERE referencia.cod-refer = item-doc-orig-nfe.cod-refer) AND
+                NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Referˆncia;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+        
+        IF trim(item-doc-orig-nfe.cod-depos) = "" THEN DO:
+            IF NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Dep¢sito;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+        ELSE DO:
+            IF NOT CAN-FIND(FIRST deposito
+                            WHERE deposito.cod-depos = item-doc-orig-nfe.cod-depos) AND
+                NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Dep¢sito"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+        IF trim(item-doc-orig-nfe.cod-localiz) = "" THEN DO:
+            IF NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Localiza‡Æo;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+            
+        ELSE DO:
+            IF NOT CAN-FIND(FIRST localizacao
+                            WHERE localizacao.cod-estabel = doc-orig-nfe.cod-estabel
+                             AND  localizacao.cod-depos   = item-doc-orig-nfe.cod-depos
+                             AND  localizacao.cod-localiz = item-doc-orig-nfe.cod-localiz) AND
+                NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Localiza‡Æo;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+        IF trim(item-doc-orig-nfe.lote-serie) = "" THEN DO:
+            IF NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Lote;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+        IF item-doc-orig-nfe.dt-vali-lote = ? THEN DO:
+            IF NOT tt-param.obrigatorios THEN DO:
+                PUT STREAM s-csv-req UNFORMATTED
+                    doc-orig-nfe.cod-estabel ";"
+                    doc-orig-nfe.cod-emitente ";"
+                    doc-orig-nfe.serie-docto ";"
+                    doc-orig-nfe.nro-docto ";"
+                    item-doc-orig-nfe.seq-item ";"
+                    item-doc-orig-nfe.it-codigo ";"
+                    "Data de Validade;"
+                    "NÆo;".
+                PUT STREAM s-csv-req SKIP.
+                ASSIGN l-imprimiu = YES.
+            END.
+        END.
+    END.
+    

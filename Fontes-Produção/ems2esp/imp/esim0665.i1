@@ -1,0 +1,946 @@
+
+/********************************************************************************
+** Copyright DATASUL S.A. (1997)
+** Todos os Direitos Reservados.
+**
+** Este fonte e de propriedade exclusiva da DATASUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+*******************************************************************************/
+/******************************************************************************
+**
+**     Include ..: esim0665.i 
+**     Objetivo .: Cont‚m os as forms e vari veis do programa esIM0665.
+**
+*******************************************************************************/
+def var valor-total-despesa as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var valor-total-imposto as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var tot-est-importado   as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-est-mercado     as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-est-despesa     as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-est-imposto     as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-est-ii          as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-est-ipi         as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-est-pis         as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-est-cofins      as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-est-icms        as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-est-frete       as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-est-embalagem   as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-est-seguro      as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-est-outras      as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var per-est-mercado     as decimal format ">>9.99"            no-undo. 
+def var per-est-despesa     as decimal format ">>9.99"            no-undo. 
+def var per-est-imposto     as decimal format ">>9.99"            no-undo. 
+def var per-est-ii          as decimal format ">>9.99"            no-undo. 
+def var tot-ger-importado   as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-ger-mercado     as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-ger-despesa     as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-ger-imposto     as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-ger-ii          as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-ger-ipi         as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-ger-pis         as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-ger-cofins      as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-ger-icms        as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-ger-frete       as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-ger-embalagem   as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-ger-seguro      as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var tot-ger-outras      as decimal format ">>>,>>>,>>9.99999" no-undo. 
+def var per-ger-mercado     as decimal format ">>9.99"            no-undo. 
+def var per-ger-despesa     as decimal format ">>9.99"            no-undo. 
+def var per-ger-imposto     as decimal format ">>9.99"            no-undo. 
+def var per-ger-ii          as decimal format ">>9.99"            no-undo. 
+def var tot-exp-importado   as decimal format ">>>,>>>,>>9.99"    no-undo. 
+def var tot-exp-mercado     as decimal format ">>>,>>>,>>9.99"    no-undo. 
+def var tot-exp-despesa     as decimal format ">>>,>>>,>>9.99"    no-undo. 
+def var tot-exp-imposto     as decimal format ">>>,>>>,>>9.99"    no-undo. 
+def var tot-exp-ii          as decimal format ">>>,>>>,>>9.99"    no-undo. 
+def var tot-exp-ipi         as decimal format ">>>,>>>,>>9.99"    no-undo. 
+def var tot-exp-icms        as decimal format ">>>,>>>,>>9.99"    no-undo. 
+def var tot-exp-pis         as decimal format ">>>,>>>,>>9.99"    no-undo. 
+def var tot-exp-cofins      as decimal format ">>>,>>>,>>9.99"    no-undo. 
+def var tot-exp-frete       as decimal format ">>>,>>>,>>9.99"    no-undo. 
+def var tot-exp-embalagem   as decimal format ">>>,>>>,>>9.99"    no-undo. 
+def var tot-exp-seguro      as decimal format ">>>,>>>,>>9.99"    no-undo. 
+def var tot-exp-outras      as decimal format ">>>,>>>,>>9.99"    no-undo. 
+def var per-exp-mercado     as decimal format ">>9.99"            no-undo. 
+def var per-exp-despesa     as decimal format ">>9.99"            no-undo. 
+def var per-exp-imposto     as decimal format ">>9.99"            no-undo. 
+def var per-exp-ii          as decimal format ">>9.99"            no-undo. 
+def var tot-item-importado  as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var tot-item-mercado    as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var tot-item-despesa    as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var tot-item-imposto    as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var tot-item-ii         as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var tot-item-ipi        as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var tot-item-icms       as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var tot-item-pis        as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var tot-item-cofins     as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var tot-item-frete      as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var tot-item-embalagem  as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var tot-item-seguro     as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var tot-item-outras     as decimal format ">>>,>>>,>>9.99999" no-undo.
+def var per-item-mercado    as decimal format ">>9.99"            no-undo.
+def var per-item-despesa    as decimal format ">>9.99"            no-undo.
+def var per-item-imposto    as decimal format ">>9.99"            no-undo.
+def var per-item-ii         as decimal format ">>9.99"            no-undo.
+def var c-desc-item         like item.desc-item                   no-undo.
+
+form
+   "Sele‡Æo:"                   colon 1   skip(1)
+   tt-param.c-cod-estabel-ini   colon 35   "|<   >|" at 55 space " "  tt-param.c-cod-estabel-fim  no-label 
+   tt-param.c-embarque-ini      colon 35   "|<   >|" at 55 space " "  tt-param.c-embarque-fim     no-label 
+   tt-param.c-it-codigo-ini     colon 35   "|<   >|" at 55 space " "  tt-param.c-it-codigo-fim    no-label 
+   tt-param.i-ge-codigo-ini     colon 35   "|<   >|" at 55 space " "  tt-param.i-ge-codigo-fim    no-label 
+   tt-param.c-fm-codigo-ini     colon 35   "|<   >|" at 55 space " "  tt-param.c-fm-codigo-fim    no-label 
+   tt-param.i-cod-emitente-ini  colon 35   "|<   >|" at 55 space " "  tt-param.i-cod-emitente-fim no-label 
+   tt-param.c-nr-proc-imp-ini   colon 35   "|<   >|" at 55 space " "  tt-param.c-nr-proc-imp-fim  no-label 
+   tt-param.i-cod-itiner-ini    colon 35   "|<   >|" at 55 space " "  tt-param.i-cod-itiner-fim   no-label 
+   tt-param.da-dt-nac-ini       colon 35   "|<   >|" at 55 space " "  tt-param.da-dt-nac-fim      no-label SKIP(1)
+
+   "Classifica‡Æo:"             colon 1  skip(1)
+   tt-param.desc-classifica     no-label colon 20 skip(1)
+                           
+   "Parƒmetros:"                colon 1  skip(1)
+   tt-param.moeda               colon 35 " - " c-desc-moeda no-label 
+   tt-param.da-dt-conv          colon 35
+   tt-param.l-dt-nacional       colon 35 
+   tt-param.l-orc-real          colon 35 
+   tt-param.l-desp-imposto      colon 35
+   tt-param.l-itens             colon 35
+   c-custo-item                 colon 35
+   c-desp-imposto               colon 35
+   tt-param.l-desemb-parc       colon 35 
+   tt-param.l-nf-compl          colon 35 skip(1)
+   
+   "ImpressÆo:"                 colon 1  skip(1)
+   c-destino                    colon 35 " - ":U
+   tt-param.arquivo             colon 55  no-label format "x(60)":U skip
+   tt-param.usuario             colon 35  skip(4)     
+   with down no-box side-labels width 132 stream-io frame f-parametros.
+
+
+form 
+    tt-embarque-cabec.cod-estabel        COLON 24 LABEL "Estabelecimento........" 
+    " - " tt-embarque-cabec.desc-estab   NO-LABEL format "x(34)"
+    tt-embarque-cabec.embarque           COLON 92 LABEL "Embarque..............."
+    tt-embarque-cabec.cod-emitente       COLON 24 LABEL "Exportador............." 
+    " - " tt-embarque-cabec.desc-emit    NO-LABEL
+    tt-embarque-cabec.pais               COLON 92 LABEL "Pa¡s de Origem........."
+    tt-embarque-cabec.cod-incoterm       COLON 24 LABEL "Incoterm..............."
+    tt-embarque-cabec.cod-via-transp     COLON 92 LABEL "Via de Transporte......"
+    tt-embarque-cabec.pto-embarque       COLON 24 LABEL "Ponto de Embarque......"
+    tt-embarque-cabec.data-embarque      COLON 92 LABEL "Data Embarque.........."
+    tt-embarque-cabec.pto-nacional       COLON 24 LABEL "Ponto de Nacionaliza‡Æo"
+    tt-embarque-cabec.data-nacional      COLON 92 LABEL "Data Nacionaliza‡Æo...."
+    tt-embarque-cabec.data-chegada       COLON 24 LABEL "Data Chegada na F brica"
+    tt-embarque-cabec.data-cotacao       COLON 24 LABEL "Data Cota‡Æo Nacionaliz"
+    tt-embarque-cabec.desc-moeda         COLON 92 LABEL "Moeda/Taxa/Dt ConversÆo" format "x(06)"
+    "-" tt-embarque-cabec.mo-taxa        NO-LABEL 
+    "-" tt-embarque-cabec.data-convercao NO-LABEL skip(1)
+    with DOWN no-box SIDE-LABELS WIDTH 132 stream-io frame f-cabec-embarque.
+
+FORM
+    tt-embarque-fatura.nr-fatura   COLUMN-LABEL "Nr Fatura"
+    tt-embarque-fatura.parcela     COLUMN-LABEL "PA"
+    tt-embarque-fatura.dt-venc-fat COLUMN-LABEL "Dt Vencto"
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-fatura.
+
+FORM
+    1 tt-embarque-corpo.nr-nota-fis   COLUMN-LABEL "Nr Nota Fiscal"
+    tt-embarque-corpo.dt-emissao    COLUMN-LABEL "Dt EmissÆo"
+    tt-embarque-corpo.nr-di         COLUMN-LABEL "N£mero DI"
+    tt-embarque-corpo.dt-di        
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-nota-fiscal.
+    
+FORM
+    2 tt-embarque-corpo.nr-nota-fis   no-label
+    tt-embarque-corpo.dt-emissao    no-label
+    tt-embarque-corpo.nr-di         no-label
+    tt-embarque-corpo.dt-di         no-label
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-nota-fiscal-3.
+    
+form 
+     3 tt-embarque-nota-mae.nr-nota-fis COLUMN-LABEL "Nr Nota Fiscal"
+     tt-embarque-nota-mae.dt-emissao  COLUMN-LABEL "Dt EmissÆo"    
+     tt-embarque-nota-mae.nr-di       COLUMN-LABEL "N£mero DI"     
+     tt-embarque-nota-mae.dt-di       
+     WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-nota-fiscal-2.      
+
+FORM 
+    tt-nf-comp.nr-nf-comp    COLUMN-LABEL "NF Complementar"
+    tt-nf-comp.dt-emis-comp  COLUMN-LABEL "Dt EmissÆo"
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-nf-compl.
+
+FORM
+    tt-embarque-rel.embarque-rel COLUMN-LABEL "Embarques Relacionados"
+    tt-embarque-rel.nr-nota-rel  COLUMN-LABEL "Nr Nota Fiscal"
+    tt-embarque-rel.dt-emis-rel  COLUMN-LABEL "Dt EmissÆo"
+    tt-embarque-rel.nr-di-rel    COLUMN-LABEL "N£mero DI"
+    tt-embarque-rel.dt-di-rel
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-embarq-rel.
+
+
+/************* Defini‡Æo das forms necess rias para a tabela or‡ado X real dos embarques ************/
+
+FORM
+    "Or‡ado"                                    AT 45
+    "Realizado"                                 AT 71
+    "-----------------------"                   AT 45
+    "-----------------------"                   AT 71
+    "Descri‡Æo"                                 AT 01
+    "Valor"                                     AT 45
+    "%"                                         AT 62
+    "Valor"                                     AT 71
+    "%"                                         AT 88
+    "------------------------------"            AT 01
+    "--------------"                            AT 45
+    "------"                                    AT 62
+    "--------------"                            AT 71
+    "------"                                    AT 88
+    "Valor Merc"                                AT 01
+    tt-embarque-corpo.vl-ger-mercado-orc        AT 45 NO-LABEL
+    tt-embarque-corpo.per-ger-mercado-orc       AT 62 NO-LABEL
+    tt-embarque-corpo.vl-ger-mercado-rea        AT 71 NO-LABEL
+    tt-embarque-corpo.per-ger-mercado-rea       AT 88 NO-LABEL SKIP(1)
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-cab-orc-real.
+
+FORM
+    "II"                             AT 01
+    tt-embarque-corpo.vl-ger-ii-orc  AT 45 NO-LABEL
+    tt-embarque-corpo.per-ger-ii-orc AT 62 NO-LABEL
+    tt-embarque-corpo.vl-ger-ii-rea  AT 71 NO-LABEL
+    tt-embarque-corpo.per-ger-ii-rea AT 88 NO-LABEL
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-imposto. /*II Or‡ado e Realizado*/
+
+FORM
+    "II"                              AT 01
+    tt-embarque-corpo.vl-ger-ii2-orc  AT 45 NO-LABEL
+    tt-embarque-corpo.per-ger-ii2-orc AT 62 NO-LABEL
+    tt-embarque-corpo.vl-ger-ii2-rea  AT 71 NO-LABEL
+    tt-embarque-corpo.per-ger-ii2-rea AT 88 NO-LABEL
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-despesa. /*Despesas logo ap¢s II*/
+
+FORM
+    "IPI"                                AT 01
+    tt-embarque-corpo.vl-ger-ipi-orc     AT 45 NO-LABEL
+    tt-embarque-corpo.per-ger-ipi-orc    AT 62 NO-LABEL
+    tt-embarque-corpo.vl-ger-ipi-rea     AT 71 NO-LABEL
+    tt-embarque-corpo.per-ger-ipi-rea    AT 88 NO-LABEL
+    "PIS"                                AT 01
+    tt-embarque-corpo.vl-ger-pis-orc     AT 45 NO-LABEL
+    tt-embarque-corpo.per-ger-pis-orc    aT 62 NO-LABEL
+    tt-embarque-corpo.vl-ger-pis-rea     AT 71 NO-LABEL
+    tt-embarque-corpo.per-ger-pis-rea    AT 88 NO-LABEL
+    "COFINS"                             AT 01                  
+    tt-embarque-corpo.vl-ger-cofins-orc  AT 45 NO-LABEL  
+    tt-embarque-corpo.per-ger-cofins-orc AT 62 NO-LABEL  
+    tt-embarque-corpo.vl-ger-cofins-rea  AT 71 NO-LABEL  
+    tt-embarque-corpo.per-ger-cofins-rea AT 88 NO-LABEL  
+    "ICMS"                               AT 01
+    tt-embarque-corpo.vl-ger-icms-orc    AT 45 NO-LABEL
+    tt-embarque-corpo.per-ger-icms-orc   AT 62 NO-LABEL
+    tt-embarque-corpo.vl-ger-icms-rea    AT 71 NO-LABEL
+    tt-embarque-corpo.per-ger-icms-rea   AT 88 NO-LABEL
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-ipi-icms.
+
+FORM    
+    "Total de Imposto"                          AT 01
+    tt-embarque-corpo.vl-ger-tot-imp-orc        AT 45 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-imp-orc       AT 62 NO-LABEL
+    tt-embarque-corpo.vl-ger-tot-imp-rea        AT 71 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-imp-rea       AT 88 NO-LABEL SKIP(1)
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-tot-imp.
+
+FORM
+    "Despesas"                           AT 01
+    tt-embarque-corpo.vl-ger-des-orc     AT 45 NO-LABEL
+    tt-embarque-corpo.per-ger-des-orc    AT 62 NO-LABEL
+    tt-embarque-corpo.vl-ger-des-rea     AT 71 NO-LABEL
+    tt-embarque-corpo.per-ger-des-rea    AT 88 NO-LABEL
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-det-desp.
+    
+
+     
+
+FORM
+    "Total das Despesas"                                AT 01
+    tt-embarque-corpo.vl-ger-tot-des-orc                AT 45 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-des-orc               AT 62 NO-LABEL
+    tt-embarque-corpo.vl-ger-tot-des-rea                AT 71 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-des-rea               AT 88 NO-LABEL SKIP(1)
+    "Total Impostos/Despesas"                           AT 01
+    tt-embarque-corpo.vl-ger-tot-imp-des-orc            AT 45 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-imp-des-orc           AT 62 NO-LABEL
+    tt-embarque-corpo.vl-ger-tot-imp-des-rea            AT 71 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-imp-des-rea           AT 88 NO-LABEL
+    "Total Geral "                                      AT 01
+    tt-embarque-corpo.vl-ger-tot-com-ipi-icms-orc       AT 45 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-com-ipi-icms-orc      AT 62 NO-LABEL
+    tt-embarque-corpo.vl-ger-tot-com-ipi-icms-merc-rea  AT 71 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-com-ipi-icms-rea      AT 88 NO-LABEL
+    "Total Geral s/ IPI, PIS, COFINS e ICMS"            AT 01
+    tt-embarque-corpo.vl-ger-tot-sem-ipi-icms-orc       AT 45 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-sem-ipi-icms-orc      AT 62 NO-LABEL
+    tt-embarque-corpo.vl-ger-tot-sem-ipi-icms-merc-rea  AT 71 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-sem-ipi-icms-rea      AT 88 NO-LABEL skip(1)
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-tot-orc-real.
+
+/********* Fim or‡ado X Real ***********/
+
+FORM
+    tt-detalha-item.it-codigo 
+    tt-detalha-item.descricao   
+    tt-detalha-item.quantidade  COLUMN-LABEL "Quantidade"
+    tt-detalha-item.un          
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-det-item.
+
+/************* Defini‡Æo das forms necess rias para a tabela or‡ado X real dos itens ************/
+
+FORM
+    "Or‡ado"                            AT 45
+    "Realizado"                         AT 71
+    "-----------------------"           AT 45
+    "-----------------------"           AT 71
+    "Descri‡Æo"                         AT 01
+    "Valor"                             AT 45
+    "%"                                 AT 62
+    "Valor"                             AT 71
+    "%"                                 AT 88
+    "------------------------------"    AT 01
+    "--------------"                    AT 45
+    "------"                            AT 62
+    "--------------"                    AT 71
+    "------"                            AT 88
+    "Valor Merc"                        AT 01
+    tt-detalha-item.vl-mercado-orc      to 58 NO-LABEL 
+    tt-detalha-item.per-mercado-orc     to 67 NO-LABEL
+    tt-detalha-item.vl-mercado-rea      to 84 NO-LABEL 
+    tt-detalha-item.per-mercado-rea     to 92 NO-LABEL SKIP(1)
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-cab-orc-real-i.
+
+FORM
+    "II"                          AT 01 " - " 
+    tt-detalha-item.aliquota-ii   NO-LABEL
+    tt-detalha-item.vl-ii-orc     to 58 NO-LABEL 
+    tt-detalha-item.per-ii-orc    to 67 NO-LABEL
+    tt-detalha-item.vl-ii-rea     to 84 NO-LABEL 
+    tt-detalha-item.per-ii-rea    to 92 NO-LABEL
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-imposto-i.
+
+FORM
+    "II"                          AT 01 " - " 
+    tt-detalha-item.aliquota-ii2  NO-LABEL
+    tt-detalha-item.vl-ii2-orc    to 58 NO-LABEL 
+    tt-detalha-item.per-ii2-orc   to 67 NO-LABEL
+    tt-detalha-item.vl-ii2-rea    to 84 NO-LABEL 
+    tt-detalha-item.per-ii2-rea   to 92 NO-LABEL
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-despesa-i.
+    
+FORM                         
+    "IPI"                          AT 01 " - " 
+    tt-detalha-item.aliquota-ipi   NO-LABEL 
+    tt-detalha-item.vl-ipi-orc     to 58 NO-LABEL 
+    tt-detalha-item.per-ipi-orc    to 67 NO-LABEL
+    tt-detalha-item.vl-ipi-rea     to 84 NO-LABEL 
+    tt-detalha-item.per-ipi-rea    to 92 NO-LABEL
+    "PIS"                          AT 01 " - " 
+    tt-detalha-item.aliquota-pis   NO-LABEL
+    tt-detalha-item.vl-pis-orc     to 58 NO-LABEL 
+    tt-detalha-item.per-pis-orc    to 67 NO-LABEL
+    tt-detalha-item.vl-pis-rea     to 84 NO-LABEL 
+    tt-detalha-item.per-pis-rea    to 92 NO-LABEL
+    "COFINS"                       AT 01 " - " 
+    tt-detalha-item.aliquota-COFINS NO-LABEL
+    tt-detalha-item.vl-COFINS-orc  to 58 NO-LABEL 
+    tt-detalha-item.per-COFINS-orc to 67 NO-LABEL
+    tt-detalha-item.vl-COFINS-rea  to 84 NO-LABEL 
+    tt-detalha-item.per-COFINS-rea to 92 NO-LABEL
+    "ICMS"                        AT 01 " - " 
+    tt-detalha-item.aliquota-icms NO-LABEL
+    tt-detalha-item.vl-icms-orc   to 58 NO-LABEL 
+    tt-detalha-item.per-icms-orc  to 67 NO-LABEL
+    tt-detalha-item.vl-icms-rea   to 84 NO-LABEL 
+    tt-detalha-item.per-icms-rea  to 92 NO-LABEL
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-ipi-icm-i.
+
+form    
+    "Total de Imposto"               AT 01
+    tt-detalha-item.vl-tot-imp-orc   to 58 NO-LABEL
+    tt-detalha-item.per-tot-imp-orc  to 67 NO-LABEL
+    tt-detalha-item.vl-tot-imp-rea   to 84 NO-LABEL
+    tt-detalha-item.per-tot-imp-rea  to 92 NO-LABEL SKIP(1)
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-tot-imp-i.
+
+FORM
+    tt-detalha-despesa.desc-despesa AT 01 NO-LABEL
+    tt-detalha-despesa.vl-des-orc   to 58 NO-LABEL 
+    tt-detalha-despesa.per-des-orc  to 67 NO-LABEL
+    tt-detalha-despesa.vl-des-rea   to 84 NO-LABEL 
+    tt-detalha-despesa.per-des-rea  to 92 NO-LABEL
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-det-desp-i.
+    
+FORM
+    "Total das Despesas"                                AT 01
+    tt-detalha-item.vl-tot-des-orc                      to 58 NO-LABEL
+    tt-detalha-item.per-tot-des-orc                     to 67 NO-LABEL
+    tt-detalha-item.vl-tot-des-rea                      to 84 NO-LABEL
+    tt-detalha-item.per-tot-des-rea                     to 92 NO-LABEL SKIP(1)
+    "Total Impostos/Despesas"                           AT 01
+    tt-detalha-item.vl-tot-imp-des-orc                  to 58 NO-LABEL
+    tt-detalha-item.per-tot-imp-des-orc                 to 67 NO-LABEL
+    tt-detalha-item.vl-tot-imp-des-rea                  to 84 NO-LABEL
+    tt-detalha-item.per-tot-imp-des-rea                 to 92 NO-LABEL
+    "Total Geral"                                       AT 01
+    tt-detalha-item.vl-tot-com-ipi-icms-orc-total       to 58 NO-LABEL
+    tt-detalha-item.per-tot-com-ipi-icms-orc            to 67 NO-LABEL
+    tt-detalha-item.vl-tot-com-ipi-icms-dsp-merc-rea    to 84 NO-LABEL
+    tt-detalha-item.per-tot-com-ipi-icms-rea            to 92 NO-LABEL
+    "Total Geral s/ IPI, PIS, COFINS e ICMS"            AT 01
+    tt-detalha-item.vl-tot-sem-ipi-icms-orc-total       to 58 NO-LABEL
+    tt-detalha-item.per-tot-sem-ipi-icms-orc            to 67 NO-LABEL
+    tt-detalha-item.vl-tot-sem-ipi-icms-dsp-merc-rea    to 84 NO-LABEL
+    tt-detalha-item.per-tot-sem-ipi-icms-rea            to 92 NO-LABEL
+    WITH DOWN NO-BOX WIDTH 132 STREAM-IO FRAME f-tot-orc-real-i.
+
+/********* Fim or‡ado X Real Item ***********/
+
+form
+    tt-embarque-corpo.cod-estabel  colon 53 " - " 
+    tt-embarque-corpo.desc-estabel no-label skip(1)
+    with down no-box side-labels width 132 stream-io frame f-estabel.
+
+form
+    tt-embarque-corpo.embarque                         to 18  column-label "Embarque" format "X(12)"
+    tt-embarque-corpo.cod-emitente                     to 29  column-label "Exportador" 
+    tt-embarque-corpo.vl-ger-tot-com-ipi-icms-merc-rea to 43  column-label "Vl Embarque" 
+    tt-embarque-corpo.vl-ger-mercado-rea               to 58  column-label "Merc" format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.vl-ger-tot-des-rea               to 73  column-label "Tot Desp" format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.vl-ger-tot-imp-rea               to 88  column-label "Impostos" format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.per-mercado                      to 97  column-label "%Merc" format ">>9.99"
+    tt-embarque-corpo.per-despesa                      to 106 column-label "%Desp" format ">>9.99"
+    tt-embarque-corpo.per-imposto                      to 117 column-label "%Impt" format ">>9.99"
+    tt-embarque-corpo.per-ii                           to 125 column-label "%II" format ">>9.99" skip
+    tt-embarque-corpo.vl-ger-ii-rea                    to 14  column-label "II" format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.vl-ger-ipi-rea                   to 29  column-label "IPI" format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.vl-ger-icms-rea                  to 43  column-label "ICMS" format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.vl-ger-pis-rea                   to 58  column-label "PIS" format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.vl-ger-cofins-rea                to 73  column-label "COFINS" format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.total-vl-frete                   to 88  column-label "Frete" format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.total-vl-embalagem               to 102 column-label "Embalagem" format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.total-vl-seguro                  to 117 column-label "Seguro" format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.total-vl-outras                  to 132 column-label "Outras" format ">>>,>>>,>>9.99"
+    with down no-box width 132 stream-io frame f-embarq-resum-1.
+
+form
+    tt-embarque-corpo.embarque                         to 16  column-label "Embarque"
+    tt-embarque-corpo.cod-emitente                     to 37  column-label "Exportador"
+    tt-embarque-corpo.vl-ger-tot-com-ipi-icms-merc-rea to 54  column-label "Vl Embarque"
+    tt-embarque-corpo.vl-ger-mercado-rea               to 71  column-label "Merc"
+    tt-embarque-corpo.vl-ger-tot-des-rea               to 88  column-label "Tot Desp"
+    tt-embarque-corpo.vl-ger-tot-imp-rea               to 105 column-label "Impostos"
+    tt-embarque-corpo.per-mercado                      to 112 column-label "%Merc"
+    tt-embarque-corpo.per-despesa                      to 118 column-label "%Desp"
+    tt-embarque-corpo.per-imposto                      to 124 column-label "%Impt" skip
+    tt-embarque-corpo.total-vl-frete                   to 16  column-label "Frete"
+    tt-embarque-corpo.total-vl-embalagem               to 37  column-label "Embalagem"
+    tt-embarque-corpo.total-vl-seguro                  to 54  column-label "Seguro"
+    tt-embarque-corpo.total-vl-outras                  to 71  column-label "Outras"
+    with down no-box width 132 stream-io frame f-embarq-resum-2.
+
+form
+    tt-detalha-item.it-codigo                          to 16  
+    tt-detalha-item.quantidade                         to 31  column-label "Quantidade" format ">>>,>>>,>>9.99"
+    tt-detalha-item.un                                 to 34  Column-label "Un" 
+    c-desc-item                                        to 96  Column-label "Descri‡Æo" skip  
+    tt-detalha-item.vl-tot-com-ipi-icms-dsp-merc-rea   to 17  column-label "Tot Item"   
+    tt-detalha-item.vl-mercado-rea                     to 34  column-label "Merc"       
+    valor-total-despesa                                to 51  column-label "Tot Desp"   
+    valor-total-imposto                                to 68  column-label "Impostos"   
+    tt-detalha-item.per-mercado-rea                    to 74  column-label "%Merc" 
+    tt-detalha-item.per-tot-des-rea                    to 82  column-label "%Desp" 
+    tt-detalha-item.per-tot-imp-rea                    to 89  column-label "%Impt" 
+    tt-detalha-item.per-ii-rea                         to 99  column-label "%II Aliq:"   
+    tt-detalha-item.aliquota-ii                        to 106 column-label "II"         
+    tt-detalha-item.aliquota-ipi                       to 120 column-label "IPI"        
+    tt-detalha-item.aliquota-pis                       to 127 column-label "PIS" skip   
+    tt-detalha-item.aliquota-cofins                    to 6   column-label "COFINS"
+    tt-detalha-item.aliquota-icms                      to 13  column-label "ICMS"    /* skip  */
+    tt-detalha-item.vl-ii-rea                          to 31  column-label "II"        
+    tt-detalha-item.vl-ipi-rea                         to 49  column-label "IPI"       
+    tt-detalha-item.vl-pis-rea                         to 67  column-label "PIS"       
+    tt-detalha-item.vl-cofins-rea                      to 85  column-label "COFINS"    
+    tt-detalha-item.vl-icms-rea                        to 103 column-label "ICMS"     
+    tt-detalha-item.vl-des-frete                       to 123 column-label "Frete"    skip
+    tt-detalha-item.vl-des-embalagem                   to 19  column-label "Embalagem" 
+    tt-detalha-item.vl-des-seguro                      to 39  column-label "Seguro"    
+    tt-detalha-item.vl-des-outras                      to 58  column-label "Outras"    
+    skip(1)                                             
+    with down no-box width 132 stream-io frame f-item-resum.
+
+form
+    tt-detalha-item.it-codigo                          to 17  
+    tt-detalha-item.vl-tot-com-ipi-icms-dsp-merc-rea   to 35  column-label "Tot Item"
+    tt-detalha-item.vl-mercado-rea                     to 53  column-label "Merc"  
+    valor-total-despesa                                to 71  column-label "Tot Desp"
+    valor-total-imposto                                to 89  column-label "Impostos"
+    tt-detalha-item.per-mercado-rea                    to 96  column-label "%Merc"
+    tt-detalha-item.per-tot-des-rea                    to 110 column-label "%Desp"
+    tt-detalha-item.per-tot-imp-rea                    to 117 column-label "%Impt" skip
+    tt-detalha-item.quantidade                         to 14  column-label "Quantidade" format ">>>,>>>,>>9.99"
+    tt-detalha-item.un                                 to 17
+    tt-detalha-item.vl-des-frete                       to 37  column-label "Frete"      
+    tt-detalha-item.vl-des-embalagem                   to 57  column-label "Embalagem"  
+    tt-detalha-item.vl-des-seguro                      to 77  column-label "Seguro"     
+    tt-detalha-item.vl-des-outras                      to 97  column-label "Outras"     
+    skip(1)                                             
+    with down no-box width 132 stream-io frame f-item-resum-1.
+    
+form
+    tot-est-importado     to 17  column-label "Vl Unit M‚dio"     
+    tot-est-mercado       to 35  column-label "Merc"              
+    tot-est-despesa       to 53  column-label "Tot Desp"          
+    tot-est-imposto       to 71  column-label "Impostos"          
+    per-est-mercado       to 77  column-label "%Merc"             format ">>9.99"
+    per-est-despesa       to 83  column-label "%Desp"             format ">>9.99"
+    per-est-imposto       to 90  column-label "%Impt"             format ">>9.99"
+    per-est-ii            to 97  column-label "%II"               format ">>9.99" skip     
+    tot-est-ii            to 17  column-label "II"                  
+    tot-est-ipi           to 35  column-label "IPI"                 
+    tot-est-pis           to 53  column-label "PIS"                 
+    tot-est-cofins        to 71  column-label "COFINS"              
+    tot-est-icms          to 89  column-label "ICMS"                
+    tot-est-frete         to 106 column-label "Frete"               
+    tot-est-embalagem     to 123 column-label "Embalagem" skip          
+    tot-est-seguro        to 17  column-label "Seguro"              
+    tot-est-outras        to 35  column-label "Outras"              
+    with down no-box width 132 stream-io frame f-tot-gerais. 
+
+form
+    tot-ger-importado    to 17  column-label "Vl Importado"
+    tot-ger-mercado      to 35  column-label "Merc"
+    tot-ger-despesa      to 53  column-label "Tot Desp"
+    tot-ger-imposto      to 71  column-label "Impostos"
+    per-ger-mercado      to 78  column-label "%Merc" 
+    per-ger-despesa      to 85 column-label "%Desp" 
+    per-ger-imposto      to 92 column-label "%Impt" 
+    per-ger-ii           to 99 column-label "%II" skip 
+    tot-ger-ii           to 17  column-label "II"        
+    tot-ger-ipi          to 35  column-label "IPI"       
+    tot-ger-pis          to 53  column-label "PIS"       
+    tot-ger-cofins       to 71  column-label "COFINS"       
+    tot-ger-icms         to 89  column-label "ICMS"      
+    tot-ger-frete        to 107  column-label "Frete"      
+    tot-ger-embalagem    to 124  column-label "Embalagem"  skip
+    tot-ger-seguro       to 17 column-label "Seguro"      
+    tot-ger-outras       to 35 column-label "Outras"      
+    skip(1)
+    with down no-box width 132 stream-io frame f-tot-geral-1.
+
+form
+    tot-ger-importado     to 20  column-label "Vl Importado"
+    tot-ger-mercado       to 41  column-label "Merc"
+    tot-ger-despesa       to 58  column-label "Tot Desp"
+    tot-ger-imposto       to 75  column-label "Impostos"
+    per-ger-mercado       to 92  column-label "%Merc"
+    per-ger-despesa       to 109 column-label "%Desp"
+    per-ger-imposto       to 119 column-label "%Impt"
+    tot-ger-frete         to 20  column-label "Frete"     format ">>>,>>>,>>9.99"
+    tot-ger-embalagem     to 41  column-label "Embalagem" format ">>>,>>>,>>9.99"
+    tot-ger-seguro        to 58  column-label "Seguro"    format ">>>,>>>,>>9.99"
+    tot-ger-outras        to 75  column-label "Outras"    format ">>>,>>>,>>9.99"
+    skip(1)
+    with down no-box width 132 stream-io frame f-tot-geral-2.
+
+form
+    tt-embarque-corpo.cod-emitente  colon 48 label "Exportador" " - " 
+    tt-embarque-corpo.desc-emitente no-label skip(1)
+    with down no-box side-labels width 132 stream-io frame f-export.
+
+form
+    tt-embarque-corpo.cod-estabel                      to 05  column-label "Est"
+    tt-embarque-corpo.embarque                         to 21  column-label "Embarque"
+    tt-embarque-corpo.vl-ger-tot-com-ipi-icms-merc-rea to 43  column-label "Vl Embarque" 
+    tt-embarque-corpo.vl-ger-mercado-rea               to 58  column-label "Merc"
+    tt-embarque-corpo.vl-ger-tot-des-rea               to 73  column-label "Tot Desp"
+    tt-embarque-corpo.vl-ger-tot-imp-rea               to 88  column-label "Impostos"
+    tt-embarque-corpo.per-mercado                      to 97  column-label "%Merc"
+    tt-embarque-corpo.per-despesa                      to 106 column-label "%Desp"
+    tt-embarque-corpo.per-imposto                      to 116 column-label "%Impt"
+    tt-embarque-corpo.per-ii                           to 125 column-label "%II" skip
+    tt-embarque-corpo.vl-ger-ii-rea                    to 14  column-label "II" format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.vl-ger-ipi-rea                   to 29  column-label "IPI"
+    tt-embarque-corpo.vl-ger-icms-rea                  to 43  column-label "ICMS"
+    tt-embarque-corpo.vl-ger-pis-rea                   to 58  column-label "PIS"
+    tt-embarque-corpo.vl-ger-cofins-rea                to 73  column-label "COFINS"
+    tt-embarque-corpo.total-vl-frete                   to 88  column-label "Frete"       format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.total-vl-embalagem               to 102 column-label "Embalagem"   format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.total-vl-seguro                  to 116 column-label "Seguro"      format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.total-vl-outras                  to 132 column-label "Outras"      format ">>>,>>>,>>9.99"
+    with down no-box width 132 stream-io frame f-export-resum-1.
+
+form
+    tt-embarque-corpo.cod-estabel                      to 05  column-label "Est"
+    tt-embarque-corpo.embarque                         to 21  column-label "Embarque"
+    tt-embarque-corpo.vl-ger-tot-com-ipi-icms-merc-rea to 43  column-label "Vl Embarque"
+    tt-embarque-corpo.vl-ger-mercado-rea               to 58  column-label "Merc"
+    tt-embarque-corpo.vl-ger-tot-des-rea               to 73  column-label "Tot Desp"
+    tt-embarque-corpo.vl-ger-tot-imp-rea               to 88  column-label "Impostos"
+    tt-embarque-corpo.per-mercado                      to 97 column-label "%Merc"
+    tt-embarque-corpo.per-despesa                      to 106 column-label "%Desp"
+    tt-embarque-corpo.per-imposto                      to 116 column-label "%Impt"
+    tt-embarque-corpo.total-vl-frete                   to 16  column-label "Frete"      format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.total-vl-embalagem               to 33  column-label "Embalagem"  format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.total-vl-seguro                  to 50  column-label "Seguro"     format ">>>,>>>,>>9.99"
+    tt-embarque-corpo.total-vl-outras                  to 67  column-label "Outras"     format ">>>,>>>,>>9.99"
+    with down no-box width 132 stream-io frame f-export-resum-2.
+
+form
+    skip(1)
+    tt-detalha-item.it-codigo   colon 42 " - " 
+    tt-detalha-item.descricao   no-label format "x(32)" skip(1)
+    with down no-box side-labels width 132 stream-io frame f-item.
+
+form
+    tt-detalha-item.cod-estabel                       to 05  column-label "Est"
+    tt-detalha-item.embarque                          to 19  column-label "Embarque"    format "x(12)"
+    tt-detalha-item.un                                to 21  format "x(2)" 
+    tt-detalha-item.quantidade                        to 36  column-label "Quantidade"  format ">>>>>>,>>9.9999" 
+    tt-detalha-item.vl-tot-com-ipi-icms-dsp-merc-rea  to 52  column-label "Tot Item"    format ">>>>>>,>>9.99999"  
+    tt-detalha-item.vl-mercado-rea                    to 68  column-label "Merc"        format ">>>>>>,>>9.99999"    
+    tt-detalha-item.vl-tot-des-rea                    to 84  column-label "Tot Desp"    format ">>>>>>,>>9.99999"  
+    tt-detalha-item.vl-tot-imp-rea                    to 101 column-label "Impostos"    format ">>>>>>,>>9.99999"  
+    tt-detalha-item.per-mercado-rea                   to 108 column-label "%Merc"
+    tt-detalha-item.per-tot-des-rea                   to 116 column-label "%Desp"
+    tt-detalha-item.per-tot-imp-rea                   to 124 column-label "%Impt"
+    tt-detalha-item.per-ii-rea                        to 132 column-label "%II" skip
+    tt-detalha-item.aliquota-ii                       to 7   column-label "Aliq II"     format ">>9.99"
+    tt-detalha-item.aliquota-ipi                      to 17  column-label "Aliq IPI"    format ">>9.99"   
+    tt-detalha-item.aliquota-pis                      to 27  column-label "Aliq PIS"    format ">>9.99"   
+    tt-detalha-item.aliquota-cofins                   to 40  column-label "Aliq COFINS" format ">>9.99"   
+    tt-detalha-item.aliquota-icms                     to 51  column-label "Aliq ICMS"   format ">>9.99"
+    tt-detalha-item.vl-ii-rea                         to 67  column-label "II"          format ">>>>>>,>>9.99999"  
+    tt-detalha-item.vl-ipi-rea                        to 84  column-label "IPI"         format ">>>>>>,>>9.99999"   
+    tt-detalha-item.vl-pis-rea                        to 100 column-label "PIS"         format ">>>>>>,>>9.99999"   
+    tt-detalha-item.vl-cofins-rea                     to 116 column-label "COFINS"      format ">>>>>>,>>9.99999"   
+    tt-detalha-item.vl-icms-rea                       to 132 column-label "ICMS"        format ">>>>>>,>>9.99999"   
+    tt-detalha-item.vl-des-frete                      to 19  column-label "Frete"       
+    tt-detalha-item.vl-des-embalagem                  to 40  column-label "Embalagem"   
+    tt-detalha-item.vl-des-seguro                     to 60  column-label "Seguro"       
+    tt-detalha-item.vl-des-outras                     to 79  column-label "Outras"       
+    with down no-box width 132 stream-io frame f-item-resumido-1.
+    
+form
+    tt-detalha-item.cod-estabel                      to 05  column-label "Est"
+    tt-detalha-item.embarque                         to 19  column-label "Embarque"
+    tt-detalha-item.un                               to 21
+    tt-detalha-item.quantidade                       to 36  column-label "Quantidade" format ">>>>>>,>>9.99"  
+    tt-detalha-item.vl-tot-com-ipi-icms-dsp-merc-rea to 52  column-label "Tot Item"   format ">>>>>>,>>9.99999"
+    tt-detalha-item.vl-mercado-rea                   to 68  column-label "Merc"       format ">>>>>>,>>9.99999"  
+    tt-detalha-item.vl-tot-des-rea                   to 84  column-label "Tot Desp"   format ">>>>>>,>>9.99999"  
+    tt-detalha-item.vl-tot-imp-rea                   to 101  column-label "Impostos"   format ">>>>>>,>>9.99999"  
+    tt-detalha-item.per-mercado-rea                  to 108 column-label "%Merc"
+    tt-detalha-item.per-tot-des-rea                  to 116 column-label "%Desp"
+    tt-detalha-item.per-tot-imp-rea                  to 124 column-label "%Impt"
+    with down no-box width 132 stream-io frame f-item-resumido-2.
+
+form
+    tot-item-importado    to 20  column-label "Vl Unit M‚dio"
+    tot-item-mercado      to 41  column-label "Merc"
+    tot-item-despesa      to 58  column-label "Tot Desp"
+    tot-item-imposto      to 75  column-label "Impostos"
+    per-item-mercado      to 92  column-label "%Merc"
+    per-item-despesa      to 109 column-label "%Desp"
+    per-item-imposto      to 119 column-label "%Impt"
+    with down no-box width 132 stream-io frame f-tot-gerais-item.
+
+form
+    tot-ger-importado     to 20  column-label "Vl Importado"
+    tot-ger-mercado       to 41  column-label "Vl Merc"
+    tot-ger-despesa       to 58  column-label "Tot Desp"
+    tot-ger-imposto       to 75  column-label "Impostos"
+    per-ger-mercado       to 92  column-label "%Merc"
+    per-ger-despesa       to 109 column-label "%Desp"
+    per-ger-imposto       to 119 column-label "%Impt"
+    with down no-box width 132 stream-io frame f-tot-geral-item.
+    
+form
+
+    tt-detalha-despesa-aux.desc-despesa AT 01 NO-LABEL
+    tt-detalha-despesa-aux.vl-des-orc   to 58 NO-LABEL 
+    tt-detalha-despesa-aux.per-des-orc  to 67 NO-LABEL
+    tt-detalha-despesa-aux.vl-des-rea   to 84 NO-LABEL 
+    tt-detalha-despesa-aux.per-des-rea  to 93 NO-LABEL
+    with down no-box width 132 stream-io frame f-det-desp-i2.
+
+form 
+    skip(2)
+    "Despesas/Impostos Realizado"                        AT 05 SKIP(1)
+    "Descri‡Æo"                                          AT 01 
+    "Valor"                                              AT 41
+    "%"                                                  AT 59
+    "------------------------------"                     AT 01
+    "--------------"                                     AT 41  
+    "-------"                                            AT 59
+    "Valor Merc"                                         AT 01
+    tt-embarque-corpo.vl-ger-mercado-rea                 AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-mercado-rea                AT 60 NO-LABEL skip(1)
+    with down no-box width 132 stream-io frame f-cab-realizado.
+    
+form
+    "IPI"                                AT 01
+    tt-embarque-corpo.vl-ger-ipi-rea     AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-ipi-rea    AT 59 NO-LABEL
+    "PIS"                                at 01
+    tt-embarque-corpo.vl-ger-pis-rea     AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-pis-rea    AT 59 NO-LABEL
+    "COFINS"                             at 01
+    tt-embarque-corpo.vl-ger-cofins-rea  AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-cofins-rea AT 59 NO-LABEL
+    "ICMS"                               AT 01
+    tt-embarque-corpo.vl-ger-icms-rea    AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-icms-rea   AT 59 NO-LABEL
+    with down no-box width 132 stream-io frame f-ipi-icms-realizado.
+    
+
+form
+    "II"                                 AT 01
+    tt-embarque-corpo.vl-ger-ii-rea      AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-ii-rea     AT 59 NO-LABEL
+    "IPI"                                AT 01
+    tt-embarque-corpo.vl-ger-ipi-rea     AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-ipi-rea    AT 59 NO-LABEL
+    "PIS"                                AT 01
+    tt-embarque-corpo.vl-ger-pis-rea     AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-pis-rea    AT 59 NO-LABEL
+    "COFINS"                             AT 01
+    tt-embarque-corpo.vl-ger-cofins-rea  AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-cofins-rea AT 59 NO-LABEL
+    "ICMS "                              AT 01
+    tt-embarque-corpo.vl-ger-icms-rea    AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-icms-rea   AT 59 NO-LABEL
+    with down no-box width 132 stream-io frame f-ipi-icms-realizado2.
+    
+form
+    "II"                               AT 01
+    tt-embarque-corpo.vl-ger-ii2-rea   AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-ii2-rea  AT 59 NO-LABEL
+    with down no-box width 132 stream-io frame f-despesa-realizado.
+    
+form
+    "Total de Imposto"                          AT 01
+    tt-embarque-corpo.vl-ger-tot-imp-rea        AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-imp-rea       AT 59 NO-LABEL SKIP(1)
+    with down no-box width 132 stream-io frame f-tot-imp-realizado.
+
+form
+    tt-detalha-despesa-aux.desc-despesa         AT 01 NO-LABEL
+    tt-detalha-despesa-aux.vl-des-rea           AT 41 NO-LABEL 
+    tt-detalha-despesa-aux.per-des-rea          AT 59 NO-LABEL
+    with down no-box width 132 stream-io frame f-det-desp-imp.
+    
+form
+    "Total das Despesas"                                AT 01
+    tt-embarque-corpo.vl-ger-tot-des-rea                AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-des-rea               AT 59 NO-LABEL SKIP(1)
+    "Total Impostos/Despesas"                           AT 01
+    tt-embarque-corpo.vl-ger-tot-imp-des-rea            AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-imp-des-rea           AT 59 NO-LABEL
+    "Total Geral "                                      AT 01
+    tt-embarque-corpo.vl-ger-tot-com-ipi-icms-merc-rea  AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-com-ipi-icms-rea      AT 59 NO-LABEL
+    "Total Geral s/ IPI, PIS, COFINS e ICMS"            AT 01
+    tt-embarque-corpo.vl-ger-tot-sem-ipi-icms-merc-rea  AT 41 NO-LABEL
+    tt-embarque-corpo.per-ger-tot-sem-ipi-icms-rea      AT 59 NO-LABEL skip(1)
+    with down no-box width 132 stream-io frame f-tot-realizado.
+
+
+PROCEDURE zera-variaveis:
+    assign valor-total-despesa = 0
+           valor-total-imposto = 0
+           tot-est-importado   = 0 
+           tot-est-mercado     = 0 
+           tot-est-despesa     = 0 
+           tot-est-imposto     = 0 
+           tot-est-ii          = 0 
+           tot-est-ipi         = 0 
+           tot-est-pis         = 0 
+           tot-est-cofins      = 0 
+           tot-est-icms        = 0 
+           tot-est-frete       = 0 
+           tot-est-embalagem   = 0 
+           tot-est-seguro      = 0 
+           tot-est-outras      = 0 
+           per-est-mercado     = 0 
+           per-est-despesa     = 0 
+           per-est-imposto     = 0 
+           per-est-ii          = 0 
+           tot-ger-importado   = 0 
+           tot-ger-mercado     = 0 
+           tot-ger-despesa     = 0 
+           tot-ger-imposto     = 0 
+           tot-ger-ii          = 0 
+           tot-ger-ipi         = 0 
+           tot-ger-pis         = 0 
+           tot-ger-cofins      = 0 
+           tot-ger-icms        = 0 
+           tot-ger-frete       = 0 
+           tot-ger-embalagem   = 0 
+           tot-ger-seguro      = 0 
+           tot-ger-outras      = 0 
+           per-ger-mercado     = 0 
+           per-ger-despesa     = 0 
+           per-ger-imposto     = 0 
+           per-ger-ii          = 0 
+           tot-exp-importado   = 0 
+           tot-exp-mercado     = 0 
+           tot-exp-despesa     = 0 
+           tot-exp-imposto     = 0 
+           tot-exp-ii          = 0 
+           tot-exp-ipi         = 0 
+           tot-exp-icms        = 0 
+           tot-exp-pis         = 0 
+           tot-exp-cofins      = 0 
+           tot-exp-frete       = 0 
+           tot-exp-embalagem   = 0 
+           tot-exp-seguro      = 0 
+           tot-exp-outras      = 0 
+           per-exp-mercado     = 0 
+           per-exp-despesa     = 0 
+           per-exp-imposto     = 0 
+           per-exp-ii          = 0 
+           tot-item-importado  = 0
+           tot-item-mercado    = 0
+           tot-item-despesa    = 0
+           tot-item-imposto    = 0
+           tot-item-ii         = 0
+           tot-item-ipi        = 0
+           tot-item-icms       = 0
+           tot-item-cofins     = 0
+           tot-item-pis        = 0
+           tot-item-frete      = 0
+           tot-item-embalagem  = 0
+           tot-item-seguro     = 0
+           tot-item-outras     = 0
+           per-item-mercado    = 0
+           per-item-despesa    = 0
+           per-item-imposto    = 0
+           per-item-ii         = 0.
+END PROCEDURE.
+
+PROCEDURE pi-altera-formato:
+    ASSIGN tt-detalha-item.vl-mercado-orc:FORMAT IN FRAME f-cab-orc-real-i     = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-mercado-rea:FORMAT IN FRAME f-cab-orc-real-i     = ">>>,>>>,>>9.99"
+           
+           tt-detalha-item.vl-ii-orc:FORMAT      IN FRAME f-imposto-i          = ">>>,>>>,>>9.99"  
+           tt-detalha-item.vl-ii-rea:FORMAT      IN FRAME f-imposto-i          = ">>>,>>>,>>9.99"
+           
+           tt-detalha-item.vl-ipi-orc:FORMAT     IN FRAME f-ipi-icm-i          = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-ipi-rea:FORMAT     IN FRAME f-ipi-icm-i          = ">>>,>>>,>>9.99"   
+           tt-detalha-item.vl-pis-orc:FORMAT     IN FRAME f-ipi-icm-i          = ">>>,>>>,>>9.99"     
+           tt-detalha-item.vl-pis-rea:FORMAT     IN FRAME f-ipi-icm-i          = ">>>,>>>,>>9.99"     
+           tt-detalha-item.vl-COFINS-orc:FORMAT  IN FRAME f-ipi-icm-i          = ">>>,>>>,>>9.99"   
+           tt-detalha-item.vl-COFINS-rea:FORMAT  IN FRAME f-ipi-icm-i          = ">>>,>>>,>>9.99"   
+           tt-detalha-item.vl-icms-orc:FORMAT    IN FRAME f-ipi-icm-i          = ">>>,>>>,>>9.99" 
+           tt-detalha-item.vl-icms-rea:FORMAT    IN FRAME f-ipi-icm-i          = ">>>,>>>,>>9.99"
+           
+           tt-detalha-item.vl-tot-imp-orc:FORMAT IN FRAME f-tot-imp-i          = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-tot-imp-rea:FORMAT IN FRAME f-tot-imp-i          = ">>>,>>>,>>9.99"
+           
+           tt-detalha-item.vl-ii2-orc:FORMAT     IN FRAME f-despesa-i          = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-ii2-rea:FORMAT     IN FRAME f-despesa-i          = ">>>,>>>,>>9.99"
+           
+           tt-detalha-despesa.vl-des-orc:FORMAT  IN FRAME f-det-desp-i         = ">>>,>>>,>>9.99"
+           tt-detalha-despesa.vl-des-rea:FORMAT  IN FRAME f-det-desp-i         = ">>>,>>>,>>9.99"
+           
+           tt-detalha-item.vl-tot-des-orc:FORMAT                   IN FRAME f-tot-orc-real-i = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-tot-des-rea:FORMAT                   IN FRAME f-tot-orc-real-i = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-tot-imp-des-orc:FORMAT               IN FRAME f-tot-orc-real-i = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-tot-imp-des-rea:FORMAT               IN FRAME f-tot-orc-real-i = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-tot-com-ipi-icms-orc-total:FORMAT    IN FRAME f-tot-orc-real-i = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-tot-com-ipi-icms-dsp-merc-rea:FORMAT IN FRAME f-tot-orc-real-i = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-tot-sem-ipi-icms-orc-total:FORMAT    IN FRAME f-tot-orc-real-i = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-tot-sem-ipi-icms-dsp-merc-rea:FORMAT IN FRAME f-tot-orc-real-i = ">>>,>>>,>>9.99"
+           
+           tt-detalha-item.vl-tot-com-ipi-icms-dsp-merc-rea:FORMAT IN FRAME f-item-resum = ">>>,>>>,>>9.99"      
+           tt-detalha-item.vl-mercado-rea:FORMAT                   IN FRAME f-item-resum = ">>>,>>>,>>9.99"                        
+           valor-total-despesa:FORMAT                              IN FRAME f-item-resum = ">>>,>>>,>>9.99"                                   
+           valor-total-imposto:FORMAT                              IN FRAME f-item-resum = ">>>,>>>,>>9.99"                                   
+           tt-detalha-item.vl-ii-rea:FORMAT                        IN FRAME f-item-resum = ">>>,>>>,>>9.99"                             
+           tt-detalha-item.vl-ipi-rea:FORMAT                       IN FRAME f-item-resum = ">>>,>>>,>>9.99"                            
+           tt-detalha-item.vl-pis-rea:FORMAT                       IN FRAME f-item-resum = ">>>,>>>,>>9.99"                            
+           tt-detalha-item.vl-cofins-rea:FORMAT                    IN FRAME f-item-resum = ">>>,>>>,>>9.99"                         
+           tt-detalha-item.vl-icms-rea:FORMAT                      IN FRAME f-item-resum = ">>>,>>>,>>9.99"                           
+           tt-detalha-item.vl-des-frete:FORMAT                     IN FRAME f-item-resum = ">>>,>>>,>>9.99"                          
+           tt-detalha-item.vl-des-embalagem:FORMAT                 IN FRAME f-item-resum = ">>>,>>>,>>9.99"                      
+           tt-detalha-item.vl-des-seguro:FORMAT                    IN FRAME f-item-resum = ">>>,>>>,>>9.99"                         
+           tt-detalha-item.vl-des-outras:FORMAT                    IN FRAME f-item-resum = ">>>,>>>,>>9.99"   
+                                 
+           tt-detalha-item.vl-tot-com-ipi-icms-dsp-merc-rea:FORMAT IN FRAME f-item-resum-1 = ">>>,>>>,>>9.99"      
+           tt-detalha-item.vl-mercado-rea:FORMAT                   IN FRAME f-item-resum-1 = ">>>,>>>,>>9.99"                        
+           valor-total-despesa:FORMAT                              IN FRAME f-item-resum-1 = ">>>,>>>,>>9.99"                                   
+           valor-total-imposto:FORMAT                              IN FRAME f-item-resum-1 = ">>>,>>>,>>9.99"                                   
+           tt-detalha-item.vl-des-frete:FORMAT                     IN FRAME f-item-resum-1 = ">>>,>>>,>>9.99"                          
+           tt-detalha-item.vl-des-embalagem:FORMAT                 IN FRAME f-item-resum-1 = ">>>,>>>,>>9.99"                      
+           tt-detalha-item.vl-des-seguro:FORMAT                    IN FRAME f-item-resum-1 = ">>>,>>>,>>9.99"                         
+           tt-detalha-item.vl-des-outras:FORMAT                    IN FRAME f-item-resum-1 = ">>>,>>>,>>9.99"
+           
+           tot-ger-importado:FORMAT  IN FRAME f-tot-geral-item = ">>>,>>>,>>9.99"
+           tot-ger-mercado:FORMAT    IN FRAME f-tot-geral-item = ">>>,>>>,>>9.99" 
+           tot-ger-despesa:FORMAT    IN FRAME f-tot-geral-item = ">>>,>>>,>>9.99"
+           tot-ger-imposto:FORMAT    IN FRAME f-tot-geral-item = ">>>,>>>,>>9.99"
+           tot-item-importado:FORMAT IN FRAME f-tot-gerais-item = ">>>,>>>,>>9.99"
+           tot-item-mercado:FORMAT   IN FRAME f-tot-gerais-item = ">>>,>>>,>>9.99"
+           tot-item-despesa:FORMAT   IN FRAME f-tot-gerais-item = ">>>,>>>,>>9.99"
+           tot-item-imposto:FORMAT   IN FRAME f-tot-gerais-item = ">>>,>>>,>>9.99"
+           per-item-mercado:FORMAT   IN FRAME f-tot-gerais-item = ">>>,>>>,>>9.99"
+           per-item-despesa:FORMAT   IN FRAME f-tot-gerais-item = ">>>,>>>,>>9.99"
+           per-item-imposto:FORMAT   IN FRAME f-tot-gerais-item = ">>>,>>>,>>9.99"
+           
+           tt-detalha-item.vl-tot-com-ipi-icms-dsp-merc-rea:FORMAT IN FRAME f-item-resumido-2 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-mercado-rea:FORMAT                   IN FRAME f-item-resumido-2 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-tot-des-rea:FORMAT                   IN FRAME f-item-resumido-2 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-tot-imp-rea:FORMAT                   IN FRAME f-item-resumido-2 = ">>>,>>>,>>9.99"
+           
+           tot-ger-importado:FORMAT   IN FRAME f-tot-geral-1 = ">>>,>>>,>>9.99"   
+           tot-ger-mercado:FORMAT     IN FRAME f-tot-geral-1 = ">>>,>>>,>>9.99"     
+           tot-ger-despesa:FORMAT     IN FRAME f-tot-geral-1 = ">>>,>>>,>>9.99"    
+           tot-ger-imposto:FORMAT     IN FRAME f-tot-geral-1 = ">>>,>>>,>>9.99"     
+           tot-ger-ii:FORMAT          IN FRAME f-tot-geral-1 = ">>>,>>>,>>9.99"          
+           tot-ger-ipi:FORMAT         IN FRAME f-tot-geral-1 = ">>>,>>>,>>9.99"         
+           tot-ger-pis:FORMAT         IN FRAME f-tot-geral-1 = ">>>,>>>,>>9.99"         
+           tot-ger-cofins:FORMAT      IN FRAME f-tot-geral-1 = ">>>,>>>,>>9.99"      
+           tot-ger-icms:FORMAT        IN FRAME f-tot-geral-1 = ">>>,>>>,>>9.99"        
+           tot-ger-frete:FORMAT       IN FRAME f-tot-geral-1 = ">>>,>>>,>>9.99"       
+           tot-ger-embalagem:FORMAT   IN FRAME f-tot-geral-1 = ">>>,>>>,>>9.99"   
+           tot-ger-seguro:FORMAT      IN FRAME f-tot-geral-1 = ">>>,>>>,>>9.99"  
+               
+           tot-est-importado:FORMAT   IN FRAME f-tot-gerais  = ">>>,>>>,>>9.99"   
+           tot-est-mercado:FORMAT     IN FRAME f-tot-gerais  = ">>>,>>>,>>9.99"    
+           tot-est-despesa:FORMAT     IN FRAME f-tot-gerais  = ">>>,>>>,>>9.99"    
+           tot-est-imposto:FORMAT     IN FRAME f-tot-gerais  = ">>>,>>>,>>9.99"    
+           tot-est-ii:FORMAT          IN FRAME f-tot-gerais  = ">>>,>>>,>>9.99"         
+           tot-est-ipi:FORMAT         IN FRAME f-tot-gerais  = ">>>,>>>,>>9.99"        
+           tot-est-pis:FORMAT         IN FRAME f-tot-gerais  = ">>>,>>>,>>9.99"        
+           tot-est-cofins:FORMAT      IN FRAME f-tot-gerais  = ">>>,>>>,>>9.99"     
+           tot-est-icms:FORMAT        IN FRAME f-tot-gerais  = ">>>,>>>,>>9.99"       
+           tot-est-frete:FORMAT       IN FRAME f-tot-gerais  = ">>>,>>>,>>9.99"      
+           tot-est-embalagem:FORMAT   IN FRAME f-tot-gerais  = ">>>,>>>,>>9.99"  
+           tot-est-seguro:FORMAT      IN FRAME f-tot-gerais  = ">>>,>>>,>>9.99"     
+           tot-est-outras:FORMAT      IN FRAME f-tot-gerais  = ">>>,>>>,>>9.99"
+           
+           tt-detalha-item.vl-tot-com-ipi-icms-dsp-merc-rea:FORMAT IN FRAME f-item-resumido-1 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-mercado-rea:FORMAT                   IN FRAME f-item-resumido-1 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-tot-des-rea:FORMAT                   IN FRAME f-item-resumido-1 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-tot-imp-rea:FORMAT                   IN FRAME f-item-resumido-1 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-ii-rea:FORMAT                        IN FRAME f-item-resumido-1 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-ipi-rea:FORMAT                       IN FRAME f-item-resumido-1 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-pis-rea:FORMAT                       IN FRAME f-item-resumido-1 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-cofins-rea:FORMAT                    IN FRAME f-item-resumido-1 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-icms-rea:FORMAT                      IN FRAME f-item-resumido-1 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-des-frete:FORMAT                     IN FRAME f-item-resumido-1 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-des-embalagem:FORMAT                 IN FRAME f-item-resumido-1 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-des-seguro:FORMAT                    IN FRAME f-item-resumido-1 = ">>>,>>>,>>9.99"
+           tt-detalha-item.vl-des-outras:FORMAT                    IN FRAME f-item-resumido-1 = ">>>,>>>,>>9.99".  
+END.
+
+/* Fim da include */

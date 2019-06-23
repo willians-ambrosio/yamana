@@ -1,0 +1,182 @@
+/******************************************************************************
+***
+*** esp/esap0749rp.i4 - Label's.
+***
+******************************************************************************/
+{utp/ut-liter.i Contas_a_Pagar * L}
+ assign c-conta = trim(return-value).
+
+{utp/ut-liter.i Estoque * C}
+ assign c-inventario = trim(return-value).
+
+{utp/ut-liter.i Multiplanta * C}
+ assign c-multiplanta = trim(return-value).
+
+{utp/ut-liter.i Outros * C}
+ assign c-outros = trim(return-value).
+
+{utp/ut-liter.i Todos * C}
+ assign c-todos = trim(return-value).
+ 
+{utp/ut-liter.i RAC * C}
+ assign c-rac = trim(return-value).
+
+{utp/ut-liter.i Docto_Substitu¡dos * R}
+assign tt-param.l-tit-subs:label in frame f-imp-par = trim(return-value).
+
+{utp/ut-liter.i Notas_DB/CR * R}
+assign tt-param.l-nota-db-cr:label in frame f-imp-par = trim(return-value).
+
+{utp/ut-liter.i Estabecimento * R}
+assign tt-param.cod-estabel-ini:label in frame f-imp-par = trim(return-value).
+
+{utp/ut-liter.i Esp‚cie * R}
+assign tt-param.cod-esp-ini:label in frame f-imp-par = trim(return-value).
+
+{utp/ut-liter.i Fornecedor * R}
+assign tt-param.cod-emit-ini:label in frame f-imp-par = trim(return-value).
+
+{utp/ut-liter.i Dt_Transa‡Æo * R}
+assign tt-param.dt-trans-ini:label in frame f-imp-par = trim(return-value).
+
+{utp/ut-liter.i Dt_Vencimento * R}
+assign tt-param.dt-venci-ini:label in frame f-imp-par = trim(return-value).
+
+&if "{&mgadm_version}" < "2.06b" &then
+  IF l-selec-ref THEN do:
+     {utp/ut-liter.i Docto_Substitu¡dos * R}
+     assign tt-param.l-tit-subs:label in frame f-imp-par-2 = trim(return-value).
+        
+     {utp/ut-liter.i Notas_DB/CR * R}
+     assign tt-param.l-nota-db-cr:label in frame f-imp-par-2 = trim(return-value).
+        
+     {utp/ut-liter.i Estabecimento * R}
+     assign tt-param.cod-estabel-ini:label in frame f-imp-par-2 = trim(return-value).
+        
+     {utp/ut-liter.i Esp‚cie * R}
+     assign tt-param.cod-esp-ini:label in frame f-imp-par-2 = trim(return-value).
+        
+     {utp/ut-liter.i Fornecedor * R}
+     assign tt-param.cod-emit-ini:label in frame f-imp-par-2 = trim(return-value).
+        
+     {utp/ut-liter.i Dt_Transa‡Æo * R}
+     assign tt-param.dt-trans-ini:label in frame f-imp-par-2 = trim(return-value).
+        
+     {utp/ut-liter.i Dt_Vencimento * R}
+     assign tt-param.dt-venci-ini:label in frame f-imp-par-2 = trim(return-value).
+
+     {utp/ut-liter.i Referˆncia * R} 
+     assign tt-param.referencia-ini:label in frame f-imp-par-2 = trim(return-value).
+     
+     {utp/ut-liter.i Destino * R}
+     assign c-destino:label in frame f-imp-par = trim(return-value). 
+     assign c-destino = v-cod-destino-impres. 
+     
+     {utp/ut-liter.i Origem * R}
+     assign tt-param.c-origem:label in frame f-imp-par-2 = trim(return-value).
+     
+     {utp/ut-liter.i Arquivo * R}
+     assign tt-param.arquivo:label in frame f-imp-par-2 = trim(return-value).
+
+     {utp/ut-liter.i Usu rio * R}
+     assign tt-param.usuario:label in frame f-imp-par-2 = trim(return-value).
+  end.
+&else
+    {utp/ut-liter.i Docto_Substitu¡dos * R}
+     assign tt-param.l-tit-subs:label in frame f-imp-par-2 = trim(return-value).
+        
+     {utp/ut-liter.i Notas_DB/CR * R}
+     assign tt-param.l-nota-db-cr:label in frame f-imp-par-2 = trim(return-value).
+        
+     {utp/ut-liter.i Estabecimento * R}
+     assign tt-param.cod-estabel-ini:label in frame f-imp-par-2 = trim(return-value).
+        
+     {utp/ut-liter.i Esp‚cie * R}
+     assign tt-param.cod-esp-ini:label in frame f-imp-par-2 = trim(return-value).
+        
+     {utp/ut-liter.i Fornecedor * R}
+     assign tt-param.cod-emit-ini:label in frame f-imp-par-2 = trim(return-value).
+        
+     {utp/ut-liter.i Dt_Transa‡Æo * R}
+     assign tt-param.dt-trans-ini:label in frame f-imp-par-2 = trim(return-value).
+        
+     {utp/ut-liter.i Dt_Vencimento * R}
+     assign tt-param.dt-venci-ini:label in frame f-imp-par-2 = trim(return-value).
+
+     {utp/ut-liter.i Referˆncia * R} 
+     assign tt-param.referencia-ini:label in frame f-imp-par-2 = trim(return-value).
+     
+     {utp/ut-liter.i Origem * R}
+     assign tt-param.c-origem:label in frame f-imp-par-2 = trim(return-value).
+     
+     {utp/ut-liter.i Destino * R}
+     assign c-destino:label in frame f-imp-par = trim(return-value). 
+     assign c-destino = v-cod-destino-impres. 
+
+     {utp/ut-liter.i Arquivo * R}
+     assign tt-param.arquivo:label in frame f-imp-par-2 = trim(return-value).
+
+     {utp/ut-liter.i Usu rio * R}
+     assign tt-param.usuario:label in frame f-imp-par-2 = trim(return-value).
+&endif
+
+
+{utp/ut-liter.i Origem * R}
+assign tt-param.c-origem:label in frame f-imp-par = trim(return-value).
+
+
+if  tt-param.destino = 1 then do:
+    {utp/ut-liter.i Impressora * R}    
+    assign v-cod-destino-impres = return-value.
+end.
+else do:
+    if  tt-param.destino = 2 then do:
+        {utp/ut-liter.i Arquivo * R}    
+        assign v-cod-destino-impres = return-value.        
+    end.
+    else do:
+        {utp/ut-liter.i Terminal * R}    
+        assign v-cod-destino-impres = return-value.        
+    end.
+end.
+
+
+if tt-param.classifica = 1 then do:
+    {utp/ut-liter.i  Por_Data_Transa‡Æo }
+    assign c-cla-2 = return-value.
+    {utp/ut-liter.i  Total_Dia: }
+    assign c-total = return-value.
+end.
+if tt-param.classifica = 2 then do:
+    {utp/ut-liter.i  Por_C¢digo_Fornecedor }
+    assign c-cla-2 = return-value.
+    {utp/ut-liter.i  Total_Fornecedor: }
+    assign c-total = return-value.
+end.    
+
+{utp/ut-liter.i  Total_Geral: }
+assign c-tot-ger = return-value.
+
+{utp/ut-liter.i Destino * R}
+assign c-destino:label in frame f-imp-par = trim(return-value). 
+assign c-destino = v-cod-destino-impres. 
+
+{utp/ut-liter.i Arquivo * R}
+assign tt-param.arquivo:label in frame f-imp-par = trim(return-value).
+
+{utp/ut-liter.i Usu rio * R}
+assign tt-param.usuario:label in frame f-imp-par = trim(return-value).
+
+{utp/ut-liter.i Parƒmetros * R}
+assign c-par = return-value.
+
+{utp/ut-liter.i Sele‡Æo * R}
+assign c-sel = return-value.
+
+{utp/ut-liter.i Classifica‡Æo * R}
+assign c-cla = return-value.
+
+{utp/ut-liter.i ImpressÆo * R}
+assign c-imp = return-value.
+
+

@@ -1,0 +1,65 @@
+/********************************************************************************
+** Copyright DATASUL S.A. (1997)
+** Todos os Direitos Reservados.
+**
+** Este fonte e de propriedade exclusiva da DATASUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+*******************************************************************************/
+/*******************************************************************************
+*   {1}  N£mero da imagem
+*******************************************************************************/
+
+case {1}:
+    when 1 then do:
+        {utp/ut-liter.i Empresa}
+    end.
+    when 2 then do:
+        {utp/ut-liter.i Estab_Equipamento}
+    end.
+    when 3 then do:
+        {utp/ut-liter.i Estab_Ordem}
+    end.
+    when 4 then do:
+        {utp/ut-liter.i Centro_Custo}
+    end.
+    when 5 then do:
+        {utp/ut-liter.i Oficina}
+    end.
+    when 6 then do:
+        {utp/ut-liter.i Setor_Oficina}
+    end.
+    when 7 then do:
+        {utp/ut-liter.i Mˆs_/_Ano}
+    end.
+    when 8 then do:
+        {utp/ut-liter.i Data}
+    end.
+    when 9 then do:
+        {utp/ut-liter.i Planejador}
+    end.
+    when 10 then do:
+        {utp/ut-liter.i Equipamento}
+    end.    
+    when 11 then do:
+        {utp/ut-liter.i Estrutura_Mecƒnica}
+    end.
+    when 12 then do:
+        {utp/ut-liter.i Grupo}
+    end.
+    when 13 then do:
+        {utp/ut-liter.i Modelo}
+    end.
+    when 14 then do:
+        {utp/ut-liter.i Usu rio}
+    end.
+    when 15 then do:
+        {utp/ut-liter.i Ordem_Manuten‡Æo}
+    end.
+    when 16 then do:
+        {utp/ut-liter.i Tag}
+    end.
+    when 30 then do:
+        {utp/ut-liter.i Plano}
+    end.    
+end case.

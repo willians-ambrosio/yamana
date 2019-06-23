@@ -1,0 +1,13 @@
+ADD FIELD "narrativa" OF "nfe-nota-fiscal-rec" AS character 
+  FORMAT "x(2000)"
+  INITIAL ""
+  LABEL "Narrativa da Nota"
+  POSITION 114
+  MAX-WIDTH 4000
+  ORDER 1221
+
+.
+PSC
+cpstream=ibm850
+.
+0000035065

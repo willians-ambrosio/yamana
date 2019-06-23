@@ -1,0 +1,41 @@
+/*******************************************************************************
+* esin0519.I - Impress∆o do cabeáalho
+********************************************************************************/
+assign de-total = controle-verba.vl-comp[i-moeda-par] +
+                  controle-verba.vl-real[i-moeda-par].
+
+disp   
+   controle-verba.ep-codigo       
+   empresa.nome when avail empresa              
+   controle-verba.cod-est-exec    
+   estabelec.nome when avail estabelec            
+   controle-verba.num-projeto     
+   proj-inv.descricao when avail proj-inv
+   controle-verba.num-ordem       
+   ordem-inv.descricao when avail ordem-inv
+   c-situacao
+   c-moeda-controle           
+   controle-verba.vl-verba[i-moeda-par]
+   controle-verba.vl-verba-orig[i-moeda-par] 
+   controle-verba.vl-comp[i-moeda-par] 
+   controle-verba.vl-real[i-moeda-par] 
+   c-lb-total
+   de-total
+   
+   c-lb-dt-trans 
+   c-lb-item   
+   c-lb-num-ord-magnus
+   c-lb-tipo-doc    
+   c-lb-solicitacao      
+   c-lb-ordem
+   c-lb-pedido
+   c-lb-especie
+   c-lb-docto       
+   c-lb-ent-comp    
+   c-lb-sai-comp    
+   c-lb-ent-real    
+   c-lb-sai-real    
+   c-lb-acum-comp   
+   c-lb-acum-real   
+   with frame f-cab-controle.
+   down with frame f-cab-controle.

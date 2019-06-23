@@ -1,0 +1,412 @@
+ADD TABLE "es_Gestor"
+  AREA "Schema Area"
+  LABEL "Gestor"
+  DESCRIPTION "Cadastro de Gestores Yamana"
+  DUMP-NAME "ya_gesto"
+
+ADD FIELD "cdn_gestor" OF "es_Gestor" AS integer 
+  DESCRIPTION "Codigo do Gestor"
+  FORMAT "ZZZZZZZ9"
+  INITIAL "0"
+  LABEL "Cod.Gestor"
+  MAX-WIDTH 4
+  COLUMN-LABEL "Cod.Gestor"
+  ORDER 10
+
+ADD FIELD "origem" OF "es_Gestor" AS integer 
+  DESCRIPTION "Identifica‡Æo do Gestor (Externo ou Interno)"
+  FORMAT "9"
+  INITIAL "0"
+  LABEL "Origem"
+  MAX-WIDTH 4
+  VIEW-AS "VIEW-AS RADIO-SET
+  RADIO-BUTTONS ""Interno"",1,
+                ""Externo"",2"
+  COLUMN-LABEL "Origem"
+  ORDER 20
+
+ADD FIELD "cdn_funcionario" OF "es_Gestor" AS integer 
+  DESCRIPTION "Codigo da Matricula do Funcionario"
+  FORMAT "ZZZZZZZ9"
+  INITIAL "0"
+  LABEL "Matricula"
+  MAX-WIDTH 4
+  COLUMN-LABEL "Matricula"
+  ORDER 50
+
+ADD FIELD "nom_gestor" OF "es_Gestor" AS character 
+  DESCRIPTION "Nome do Gestor"
+  FORMAT "x(40)"
+  INITIAL ""
+  LABEL "Nome Gestor"
+  MAX-WIDTH 80
+  COLUMN-LABEL "Gestor"
+  ORDER 60
+
+ADD FIELD "niv_hier_funcnal" OF "es_Gestor" AS integer 
+  DESCRIPTION "Nivel Hierarquico"
+  FORMAT "ZZ9"
+  INITIAL "0"
+  LABEL "Nivel Hieraquico"
+  MAX-WIDTH 4
+  COLUMN-LABEL "Nivel Hieraq"
+  ORDER 70
+
+ADD FIELD "cdn_estab" OF "es_Gestor" AS character 
+  DESCRIPTION "Codigo do Estabelecimento"
+  FORMAT "x(05)"
+  INITIAL ""
+  LABEL "Estabelecimento"
+  MAX-WIDTH 6
+  COLUMN-LABEL "Estab"
+  ORDER 40
+
+ADD FIELD "cdn_empresa" OF "es_Gestor" AS character 
+  DESCRIPTION "Codigo da Empresa"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Empresa"
+  MAX-WIDTH 6
+  COLUMN-LABEL "Empresa"
+  ORDER 30
+
+ADD FIELD "cod_livre_1" OF "es_Gestor" AS character 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "x(100)"
+  INITIAL ""
+  LABEL "Livre 1"
+  LABEL-SA "R9"
+  MAX-WIDTH 200
+  COLUMN-LABEL "Livre 1"
+  COLUMN-LABEL-SA "L100"
+  HELP "Atributo livre para uso interno"
+  ORDER 80
+
+ADD FIELD "cod_livre_2" OF "es_Gestor" AS character 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "x(100)"
+  INITIAL ""
+  LABEL "Livre 2"
+  LABEL-SA "R9"
+  MAX-WIDTH 200
+  COLUMN-LABEL "Livre 2"
+  COLUMN-LABEL-SA "L100"
+  HELP "Atributo livre para uso interno"
+  ORDER 90
+
+ADD FIELD "dat_livre_1" OF "es_Gestor" AS date 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Livre 1"
+  LABEL-SA "R9"
+  MAX-WIDTH 4
+  COLUMN-LABEL "Livre 1"
+  COLUMN-LABEL-SA "L10"
+  HELP "Atributo livre para uso interno"
+  ORDER 100
+
+ADD FIELD "dat_livre_2" OF "es_Gestor" AS date 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Livre 2"
+  LABEL-SA "R9"
+  MAX-WIDTH 4
+  COLUMN-LABEL "Livre 2"
+  COLUMN-LABEL-SA "L10"
+  HELP "Atributo livre para uso interno"
+  ORDER 110
+
+ADD FIELD "log_livre_1" OF "es_Gestor" AS logical 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "Sim/NÆo"
+  INITIAL "no"
+  LABEL "Livre 1"
+  LABEL-SA "L9"
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box"
+  COLUMN-LABEL "Livre 1"
+  COLUMN-LABEL-SA "L7"
+  HELP "Atributo livre para uso interno"
+  ORDER 120
+
+ADD FIELD "log_livre_2" OF "es_Gestor" AS logical 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "Sim/NÆo"
+  INITIAL "no"
+  LABEL "Livre 2"
+  LABEL-SA "L9"
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box"
+  COLUMN-LABEL "Livre 2"
+  COLUMN-LABEL-SA "L7"
+  HELP "Atributo livre para uso interno"
+  ORDER 130
+
+ADD FIELD "val_livre_1" OF "es_Gestor" AS decimal 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "zzz,zzz,zz9.9999"
+  INITIAL "0"
+  LABEL "Livre 1"
+  LABEL-SA "R9"
+  MAX-WIDTH 19
+  COLUMN-LABEL "Livre 1"
+  COLUMN-LABEL-SA "R16"
+  HELP "Atributo livre para uso interno"
+  DECIMALS 4
+  ORDER 140
+
+ADD FIELD "val_livre_2" OF "es_Gestor" AS decimal 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "zzz,zzz,zz9.9999"
+  INITIAL "0"
+  LABEL "Livre 2"
+  LABEL-SA "R9"
+  MAX-WIDTH 19
+  COLUMN-LABEL "Livre 2"
+  COLUMN-LABEL-SA "R16"
+  HELP "Atributo livre para uso interno"
+  DECIMALS 4
+  ORDER 150
+
+ADD FIELD "num_livre_1" OF "es_Gestor" AS integer 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT ">>>>>9"
+  INITIAL "0"
+  LABEL "Livre 1"
+  LABEL-SA "R9"
+  MAX-WIDTH 4
+  COLUMN-LABEL "Livre 1"
+  COLUMN-LABEL-SA "R7"
+  HELP "Atributo livre para uso interno"
+  ORDER 160
+
+ADD FIELD "num_livre_2" OF "es_Gestor" AS integer 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT ">>>>>9"
+  INITIAL "0"
+  LABEL "Livre 2"
+  LABEL-SA "R9"
+  MAX-WIDTH 4
+  COLUMN-LABEL "Livre 2"
+  COLUMN-LABEL-SA "R7"
+  HELP "Atributo livre para uso interno"
+  ORDER 170
+
+ADD INDEX "idx-gestor" ON "es_Gestor" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "cdn_gestor" ASCENDING 
+
+ADD TABLE "es_HistGestor"
+  AREA "Schema Area"
+  DESCRIPTION "Historico dos Gestores do Funcionario"
+  DUMP-NAME "ya_histg"
+
+ADD FIELD "cdn_gestor" OF "es_HistGestor" AS integer 
+  DESCRIPTION "Codigo do Gestor"
+  FORMAT "ZZZZZZZ9"
+  INITIAL "0"
+  LABEL "Cod.Gestor"
+  MAX-WIDTH 4
+  COLUMN-LABEL "Cod.Gestor"
+  ORDER 10
+
+ADD FIELD "cdn_funcionario" OF "es_HistGestor" AS integer 
+  DESCRIPTION "Codigo da Matricula do Funcionario"
+  FORMAT "ZZZZZZZ9"
+  INITIAL "0"
+  LABEL "Matricula"
+  MAX-WIDTH 4
+  COLUMN-LABEL "Matricula"
+  ORDER 50
+
+ADD FIELD "da-inicio" OF "es_HistGestor" AS date 
+  DESCRIPTION "Data de Inicio do Gestor"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Inicio Gestor"
+  MAX-WIDTH 4
+  ORDER 60
+
+ADD FIELD "da-final" OF "es_HistGestor" AS date 
+  DESCRIPTION "Data de Termino do Gestor "
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Final Gestor"
+  MAX-WIDTH 4
+  ORDER 70
+
+ADD FIELD "cdn_empresa" OF "es_HistGestor" AS character 
+  DESCRIPTION "Codigo da Empresa"
+  FORMAT "x(3)"
+  INITIAL ""
+  LABEL "Empresa"
+  MAX-WIDTH 6
+  COLUMN-LABEL "Empresa"
+  ORDER 30
+
+ADD FIELD "cdn_estab" OF "es_HistGestor" AS character 
+  DESCRIPTION "Codigo do Estabelecimento"
+  FORMAT "x(05)"
+  INITIAL ""
+  LABEL "Estabelecimento"
+  MAX-WIDTH 10
+  COLUMN-LABEL "Estab"
+  ORDER 40
+
+ADD FIELD "cod_livre_1" OF "es_HistGestor" AS character 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "x(100)"
+  INITIAL ""
+  LABEL "Livre 1"
+  LABEL-SA "R9"
+  MAX-WIDTH 200
+  COLUMN-LABEL "Livre 1"
+  COLUMN-LABEL-SA "L100"
+  HELP "Atributo livre para uso interno"
+  ORDER 80
+
+ADD FIELD "cod_livre_2" OF "es_HistGestor" AS character 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "x(100)"
+  INITIAL ""
+  LABEL "Livre 2"
+  LABEL-SA "R9"
+  MAX-WIDTH 200
+  COLUMN-LABEL "Livre 2"
+  COLUMN-LABEL-SA "L100"
+  HELP "Atributo livre para uso interno"
+  ORDER 90
+
+ADD FIELD "dat_livre_1" OF "es_HistGestor" AS date 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Livre 1"
+  LABEL-SA "R9"
+  MAX-WIDTH 4
+  COLUMN-LABEL "Livre 1"
+  COLUMN-LABEL-SA "L10"
+  HELP "Atributo livre para uso interno"
+  ORDER 100
+
+ADD FIELD "dat_livre_2" OF "es_HistGestor" AS date 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Livre 2"
+  LABEL-SA "R9"
+  MAX-WIDTH 4
+  COLUMN-LABEL "Livre 2"
+  COLUMN-LABEL-SA "L10"
+  HELP "Atributo livre para uso interno"
+  ORDER 110
+
+ADD FIELD "log_livre_1" OF "es_HistGestor" AS logical 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "Sim/NÆo"
+  INITIAL "no"
+  LABEL "Livre 1"
+  LABEL-SA "L9"
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box"
+  COLUMN-LABEL "Livre 1"
+  COLUMN-LABEL-SA "L7"
+  HELP "Atributo livre para uso interno"
+  ORDER 120
+
+ADD FIELD "log_livre_2" OF "es_HistGestor" AS logical 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "Sim/NÆo"
+  INITIAL "no"
+  LABEL "Livre 2"
+  LABEL-SA "L9"
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box"
+  COLUMN-LABEL "Livre 2"
+  COLUMN-LABEL-SA "L7"
+  HELP "Atributo livre para uso interno"
+  ORDER 130
+
+ADD FIELD "val_livre_1" OF "es_HistGestor" AS decimal 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "zzz,zzz,zz9.9999"
+  INITIAL "0"
+  LABEL "Livre 1"
+  LABEL-SA "R9"
+  MAX-WIDTH 19
+  COLUMN-LABEL "Livre 1"
+  COLUMN-LABEL-SA "R16"
+  HELP "Atributo livre para uso interno"
+  DECIMALS 4
+  ORDER 140
+
+ADD FIELD "val_livre_2" OF "es_HistGestor" AS decimal 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT "zzz,zzz,zz9.9999"
+  INITIAL "0"
+  LABEL "Livre 2"
+  LABEL-SA "R9"
+  MAX-WIDTH 19
+  COLUMN-LABEL "Livre 2"
+  COLUMN-LABEL-SA "R16"
+  HELP "Atributo livre para uso interno"
+  DECIMALS 4
+  ORDER 150
+
+ADD FIELD "num_livre_1" OF "es_HistGestor" AS integer 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT ">>>>>9"
+  INITIAL "0"
+  LABEL "Livre 1"
+  LABEL-SA "R9"
+  MAX-WIDTH 4
+  COLUMN-LABEL "Livre 1"
+  COLUMN-LABEL-SA "R7"
+  HELP "Atributo livre para uso interno"
+  ORDER 160
+
+ADD FIELD "num_livre_2" OF "es_HistGestor" AS integer 
+  DESCRIPTION "Atributo livre para uso interno"
+  FORMAT ">>>>>9"
+  INITIAL "0"
+  LABEL "Livre 2"
+  LABEL-SA "R9"
+  MAX-WIDTH 4
+  COLUMN-LABEL "Livre 2"
+  COLUMN-LABEL-SA "R7"
+  HELP "Atributo livre para uso interno"
+  ORDER 170
+
+ADD INDEX "Idx_Historico" ON "es_HistGestor" 
+  AREA "Schema Area"
+  PRIMARY
+  INDEX-FIELD "cdn_empresa" ASCENDING 
+  INDEX-FIELD "cdn_estab" ASCENDING 
+  INDEX-FIELD "cdn_funcionario" ASCENDING 
+  INDEX-FIELD "cdn_gestor" ASCENDING 
+
+ADD INDEX "Idx-Func" ON "es_HistGestor" 
+  AREA "Schema Area"
+  INDEX-FIELD "cdn_estab" ASCENDING 
+  INDEX-FIELD "cdn_funcionario" ASCENDING 
+
+ADD INDEX "idx_Gestor" ON "es_HistGestor" 
+  AREA "Schema Area"
+  INDEX-FIELD "cdn_gestor" ASCENDING 
+
+ADD INDEX "idx_GestorIni" ON "es_HistGestor" 
+  AREA "Schema Area"
+  INDEX-FIELD "cdn_empresa" ASCENDING 
+  INDEX-FIELD "cdn_estab" ASCENDING 
+  INDEX-FIELD "cdn_funcionario" ASCENDING 
+  INDEX-FIELD "da-inicio" ASCENDING 
+
+.
+PSC
+cpstream=ibm850
+.
+0000010017

@@ -1,0 +1,193 @@
+=====================================================
+PROGRESS stack trace as of Mon Apr 11 14:20:56 2016
+=====================================================
+Startup parameters:
+-pf C:\dlc10\startup.pf,-cpinternal ISO8859-1,-cpstream ISO8859-1,-cpcoll Basic,-cpcase Basic,-d dmy,-numsep 46,-numdec 44,(end .pf),-pf D:/Totvs12/scripts/datasul-ems.pf,-mmax 2048,-s 200,-TB 31,-TM 32,-d dmy,-Bt 4096,-Mm 4096,-cpstream ibm850,-cpterm iso8859-1,-inp 32000,-h 50,-numsep 46,-numdec 44,-noincrwarn,-T d:\temp,-db emsfnd,-ld emsfnd,-S 43620,-H brydmerptst02,-N tcp,(end .pf),-ininame D:/Totvs12/scripts/datasul-progress-ems.ini,-p D:/Totvs12/scripts/datasul-configxml-alias.p,-param ,,39080,v-mmacedo,,0,,DI,8080,EEDB1E301D1122809637080C3E6DC017.YDMDSRPVM018080,brydmerptst02,menu-html,true,true,YAMANA,10.130.81.50,brydmerptst01.yamana.local,,,,,,,true
+
+Exception code: C0000005 ACCESS_VIOLATION
+Fault address:  6F061A00 01:00000A00 C:\Windows\system32\NetworkExplorer.dll
+
+Registers:
+EAX:0ACDF8D0
+EBX:081D2D08
+ECX:6F0616A0
+EDX:00000000
+ESI:0ABB24B0
+EDI:0B27E848
+CS:EIP:0023:6F061A00
+SS:ESP:002B:0B27E7C0  EBP:0B27E7D0
+DS:002B  ES:002B  FS:0053  GS:002B
+Flags:00010202
+
+
+Debugging dll C:\Windows\system32\DBGHELP.DLL
+Symbol Path:
+ C:\dlc10\bin;C:\dlc10\pdbfiles
+
+
+Call Stack:
+Address   Frame
+6F061A00  00000000  DllCanUnloadNow+37D
+74ED1CCE  00000000  SHGetDesktopFolder+434
+74ED1C28  00000000  SHGetDesktopFolder+38E
+74ED479B  00000000  ILCloneFirst+227
+74ED2A08  00000000  SHGetIDListFromObject+141
+74ED2B59  00000000  SHBindToObject+5F
+74ED4C94  00000000  SHBindToFolderIDListParentEx+70
+74EBAFBE  00000000  SHBindToParent+1A
+74E8ED6F  00000000  SHGetPathFromIDListEx+6E
+74E8EE3E  00000000  SHGetPathFromIDListEx+13D
+74E8EE8C  00000000  SHGetPathFromIDListEx+18B
+74E8F7A4  00000000  SHGetPathFromIDListEx+AA3
+750BA618  00000000  StgMakeUniqueName+BC70
+7511D949  00000000  StgMakeUniqueName+6EFA1
+75D13A38  00000000  Ordinal187+39
+6F90221A  00000000  DllGetClassObject+1DB
+769BA0A1  00000000  CoCreateInstanceEx+393
+769B9F61  00000000  CoCreateInstanceEx+253
+769B9DE5  00000000  CoCreateInstanceEx+D7
+769B9D46  00000000  CoCreateInstanceEx+38
+769B9CFF  00000000  CoCreateInstance+34
+74EB8190  00000000  SHParseDisplayName+315
+74EB828D  00000000  Ordinal866+1E
+74EB8970  00000000  Ordinal866+701
+74ED1B7D  00000000  SHGetDesktopFolder+2E3
+74ED2A08  00000000  SHGetIDListFromObject+141
+74EBFD7F  00000000  SHGetSpecialFolderLocation+1D4E
+74EBFBB4  00000000  SHGetSpecialFolderLocation+1B83
+74E8D17E  00000000  PathIsExe+1059
+74E8D111  00000000  PathIsExe+FEC
+74E9747D  00000000  SHDefExtractIconW+67D
+74F90A31  00000000  Ordinal681+B92
+6D612C84  00000000  DllCanUnloadNow+22BFE
+6D6107D2  00000000  DllCanUnloadNow+2074C
+6D5F0C9E  00000000  DllCanUnloadNow+C18
+74ED629B  00000000  Ordinal767+433
+74ED8B2B  00000000  DAD_SetDragImage+732
+74ED8C5F  00000000  DAD_SetDragImage+866
+75D1B2B1  00000000  PathBuildRootW+4C
+77178CB0  00000000  RtlUnlockModuleSection+152
+77162F55  00000000  TpCallbackIndependent+7DC
+74CD338A  00000000  BaseThreadInitThunk+12
+77149A02  00000000  RtlInitializeExceptionChain+63
+771499D5  00000000  RtlInitializeExceptionChain+36
+
+
+** ABL Stack Trace **
+
+--> adecomm/_getfile.p (adecomm/_getfile.r) at line 191
+    choose_open adeuib/_uibmain.p (adeuib/_uibmain.r) at line 9123
+    choose_file_open adeuib/_uibmain.p (adeuib/_uibmain.r) at line 7906
+    USER-INTERFACE-TRIGGER adeuib/_uibmain.p (adeuib/_uibmain.r) at line 4757
+    adeuib/_uibmain.p (adeuib/_uibmain.r) at line 5596
+    _ab.p (C:\dlc10\gui\_ab.r) at line 394
+    USER-INTERFACE-TRIGGER men/men702dc.w (d:\quarentena2\totvs12-ems\ems2esp\men\men702dc.r) at line 1521
+    USER-INTERFACE-TRIGGER men/men702dc.w (d:\quarentena2\totvs12-ems\ems2esp\men\men702dc.r) at line 1719
+    men/men702dc.w (d:\quarentena2\totvs12-ems\ems2esp\men\men702dc.r) at line 2061
+    pi-executa-programa men/men702dd.p (d:\quarentena2\totvs12-ems\fnd\men\men702dd.r) at line 1909
+    men/men702dd.p (d:\quarentena2\totvs12-ems\fnd\men\men702dd.r) at line 1469
+    executeProgram men/men906za.p (d:\quarentena2\totvs12-ems\fnd\men\men906za.r) at line 2716
+    protocolBroker men/men906za.p (d:\quarentena2\totvs12-ems\fnd\men\men906za.r) at line 3929
+    readProcedure men/men906za.p (d:\quarentena2\totvs12-ems\fnd\men\men906za.r) at line 4010
+    men/men906za.p (d:\quarentena2\totvs12-ems\fnd\men\men906za.r) at line 2134
+    D:/Totvs12/scripts/datasul-configxml-alias.p (D:\Totvs12\scripts\datasul-configxml-alias.r) at line 10
+
+** Persistent procedures/Classes **
+
+Handle  File Name
+002747  adeuib/_semain.r
+002530  d:\quarentena2\totvs12-ems\fnd\btb\btb920aa.r
+002527  d:\quarentena2\totvs12-ems\ems2esp\esp\escc0302.w
+000000  d:\producao\totvs11\fnd\com\totvs\datasul\fluig\FluigProperties.r (STATIC)
+002354  d:\producao\totvs11\fnd\fluig\fluigAPI.r
+002247  d:\quarentena2\totvs12-ems\fnd\fnbo\bofn116.r
+002246  d:\quarentena2\totvs12-ems\fnd\fnbo\bofn088.r
+002245  d:\quarentena2\totvs12-ems\fnd\utp\ut-xmlprs.r
+002244  d:\quarentena2\totvs12-ems\fnd\btb\btbsecurity.r
+002243  d:\quarentena2\totvs12-ems\fnd\fnbo\bofn068.r
+001873  d:\quarentena2\totvs12-ems\fnd\utp\ut-extra.r
+001871  d:\quarentena2\totvs12-ems\fnd\utp\ut-rsocial.r
+001869  d:\quarentena2\totvs12-ems\fnd\adm\objects\broker.r
+001853  adecomm/as-utils.r
+001812  adecomm/_palette.r
+001811  protools/_protool.r
+001258  adeshar/_mlmgr.r
+001136  adeuib/_abfuncs.r
+001135  C:\dlc10\gui\_ab.r
+001122  d:\quarentena2\totvs12-ems\ems2esp\men\men702dc.r
+001088  d:\quarentena2\totvs12-ems\hcm\prghur\fpp\fp9200.r
+001038  d:\producao\totvs11\fnd\btb\btb906zb.r
+001037  d:\producao\totvs11\fnd\prgtec\btb\btb901zo.r
+001017  d:\quarentena2\totvs12-ems\ems2\utp\ut-log.r
+001012  d:\quarentena2\totvs12-ems\fnd\btb\btb432zg.r
+001011  d:\quarentena2\totvs12-ems\fnd\btb\btb432za.r
+001005  d:\quarentena2\totvs12-ems\fnd\utp\ut-func.r
+001004  d:\quarentena2\totvs12-ems\fnd\utp\ut-win.r
+001002  d:\quarentena2\totvs12-ems\fnd\btb\btb901zo.r
+001000  d:\quarentena2\totvs12-ems\fnd\utp\ut-globalsession.r
+
+//=====================================================
+PROGRESS stack trace as of Mon Apr 11 14:20:57 2016
+//=====================================================
+Exception code: C0000005 ACCESS_VIOLATION
+Fault address:  6F061A00 01:00000A00 C:\Windows\system32\NetworkExplorer.dll
+
+Registers:
+EAX:0ACDF8D0
+EBX:081D2D08
+ECX:6F0616A0
+EDX:00000000
+ESI:0ABB24B0
+EDI:0B27E848
+CS:EIP:0023:6F061A00
+SS:ESP:002B:0B27E7C0  EBP:0B27E7D0
+DS:002B  ES:002B  FS:0053  GS:002B
+Flags:00010202
+
+Call Stack:
+Address   Frame
+6F061A00  0B27E7D0  DllCanUnloadNow+37D
+74ED1CCE  0B27E7F8  SHGetDesktopFolder+434
+74ED1C28  0B27E84C  SHGetDesktopFolder+38E
+74ED479B  0B27E88C  ILCloneFirst+227
+74ED2A08  0B27E8B0  SHGetIDListFromObject+141
+74ED2B59  0B27E8E8  SHBindToObject+5F
+74ED4C94  0B27E928  SHBindToFolderIDListParentEx+70
+74EBAFBE  0B27E948  SHBindToParent+1A
+74E8ED6F  0B27EB9C  SHGetPathFromIDListEx+6E
+74E8EE3E  0B27EBD4  SHGetPathFromIDListEx+13D
+74E8EE8C  0B27EBEC  SHGetPathFromIDListEx+18B
+74E8F7A4  0B27F070  SHGetPathFromIDListEx+AA3
+750BA618  0B27F4C0  StgMakeUniqueName+BC70
+7511D949  0B27F4F0  StgMakeUniqueName+6EFA1
+75D13A38  0B27F514  Ordinal187+39
+6F90221A  0B27F5AC  DllGetClassObject+1DB
+769BA0A1  0B27F5CC  CoCreateInstanceEx+393
+769B9F61  0B27F6BC  CoCreateInstanceEx+253
+769B9DE5  0B27F71C  CoCreateInstanceEx+D7
+769B9D46  0B27F740  CoCreateInstanceEx+38
+769B9CFF  0B27F770  CoCreateInstance+34
+74EB8190  0B27FA08  SHParseDisplayName+315
+74EB828D  0B27FA2C  Ordinal866+1E
+74EB8970  0B27FA8C  Ordinal866+701
+74ED1B7D  0B27FACC  SHGetDesktopFolder+2E3
+74ED2A08  0B27FAF0  SHGetIDListFromObject+141
+74EBFD7F  0B27FB2C  SHGetSpecialFolderLocation+1D4E
+74EBFBB4  0B27FB88  SHGetSpecialFolderLocation+1B83
+74E8D17E  0B27FBC0  PathIsExe+1059
+74E8D111  0B27FC00  PathIsExe+FEC
+74E9747D  0B27FC48  SHDefExtractIconW+67D
+74F90A31  0B27FC7C  Ordinal681+B92
+6D612C84  0B27FCA4  DllCanUnloadNow+22BFE
+6D6107D2  0B27FD18  DllCanUnloadNow+2074C
+6D5F0C9E  0B27FD38  DllCanUnloadNow+C18
+74ED629B  0B27FD54  Ordinal767+433
+74ED8B2B  0B27FD9C  DAD_SetDragImage+732
+74ED8C5F  0B27FDA4  DAD_SetDragImage+866
+75D1B2B1  0B27FDB4  PathBuildRootW+4C
+77178CB0  0B27FE28  RtlUnlockModuleSection+152
+77162F55  0B27FF88  TpCallbackIndependent+7DC
+74CD338A  0B27FF94  BaseThreadInitThunk+12
+77149A02  0B27FFD4  RtlInitializeExceptionChain+63
+771499D5  0B27FFEC  RtlInitializeExceptionChain+36
+

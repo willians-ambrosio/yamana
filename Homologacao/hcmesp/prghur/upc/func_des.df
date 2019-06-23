@@ -1,0 +1,90 @@
+ADD TABLE "func_desligto"
+  AREA "Schema Area"
+  LABEL "Desligamento Funcionario"
+  DESCRIPTION "Desligamento Funcionario"
+  DUMP-NAME "func_des"
+
+ADD FIELD "cdn_empresa" OF "func_desligto" AS character 
+  DESCRIPTION "Empresa"
+  FORMAT "x(03)"
+  INITIAL ""
+  LABEL "Empresa"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Empresa"
+  HELP "Empresa"
+  ORDER 10
+
+ADD FIELD "cdn_estab" OF "func_desligto" AS character 
+  DESCRIPTION "Estabelecimento"
+  FORMAT "x(05)"
+  INITIAL ""
+  LABEL "Estabelecimento"
+  POSITION 3
+  MAX-WIDTH 4
+  COLUMN-LABEL "Estabelecimento"
+  HELP "Estabelecimento"
+  ORDER 20
+
+ADD FIELD "cdn_funcionario" OF "func_desligto" AS integer 
+  DESCRIPTION "Matricula"
+  FORMAT "99999999"
+  INITIAL "0"
+  LABEL "Matricula"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "Matricula"
+  HELP "Matricula"
+  ORDER 30
+
+ADD FIELD "dat_desligto" OF "func_desligto" AS date 
+  DESCRIPTION "Data desligamento "
+  FORMAT "99/99/9999"
+  INITIAL ?
+  LABEL "Data desligamento"
+  POSITION 5
+  MAX-WIDTH 4
+  COLUMN-LABEL "Data desligamento"
+  HELP "Data desligamento"
+  ORDER 40
+
+ADD FIELD "existe-cta" OF "func_desligto" AS logical 
+  FORMAT "Sim/NÆo"
+  INITIAL "Sim"
+  LABEL "Existe Cta"
+  POSITION 6
+  MAX-WIDTH 1
+  COLUMN-LABEL "Existe Cta"
+  ORDER 50
+
+ADD FIELD "usuar_alter" OF "func_desligto" AS character 
+  FORMAT "x(12)"
+  INITIAL ""
+  LABEL "Usuar Alter"
+  POSITION 7
+  MAX-WIDTH 24
+  COLUMN-LABEL "Usuar Alter"
+  ORDER 60
+
+ADD FIELD "tem-avaliacao" OF "func_desligto" AS logical 
+  FORMAT "Sim/NÆo"
+  INITIAL "Sim"
+  LABEL "Tem Avalia‡Æo"
+  POSITION 8
+  MAX-WIDTH 1
+  COLUMN-LABEL "Tem Avalia‡Æo"
+  ORDER 70
+
+ADD INDEX "idx01" ON "func_desligto" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "cdn_empresa" ASCENDING 
+  INDEX-FIELD "cdn_estab" ASCENDING 
+  INDEX-FIELD "cdn_funcionario" ASCENDING 
+
+.
+PSC
+cpstream=ibm850
+.
+0000001899

@@ -1,0 +1,251 @@
+ADD TABLE "es-integra-retorno"
+  AREA "Schema Area"
+  DUMP-NAME "es-integra-retorno"
+
+ADD FIELD "dt-ret" OF "es-integra-retorno" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  POSITION 2
+  MAX-WIDTH 4
+  ORDER 10
+
+ADD FIELD "dt-carga" OF "es-integra-retorno" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  POSITION 3
+  MAX-WIDTH 4
+  ORDER 20
+
+ADD FIELD "dt-int-erp" OF "es-integra-retorno" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  POSITION 4
+  MAX-WIDTH 4
+  ORDER 30
+
+ADD FIELD "statusRetorno" OF "es-integra-retorno" AS character 
+  FORMAT "x(1)"
+  INITIAL ""
+  POSITION 5
+  MAX-WIDTH 2
+  ORDER 40
+
+ADD FIELD "log-retorno" OF "es-integra-retorno" AS character 
+  FORMAT "x(400)"
+  INITIAL ""
+  POSITION 6
+  MAX-WIDTH 800
+  ORDER 50
+
+ADD FIELD "IdKlassmatt" OF "es-integra-retorno" AS integer 
+  FORMAT "->,>>>,>>9"
+  INITIAL "0"
+  POSITION 7
+  MAX-WIDTH 4
+  ORDER 60
+
+ADD FIELD "codigo" OF "es-integra-retorno" AS character 
+  FORMAT "x(16)"
+  INITIAL ""
+  POSITION 8
+  MAX-WIDTH 32
+  ORDER 70
+
+ADD FIELD "ep-codigo" OF "es-integra-retorno" AS character 
+  FORMAT "x(5)"
+  INITIAL ""
+  POSITION 9
+  MAX-WIDTH 10
+  ORDER 80
+
+ADD FIELD "cod-estabel" OF "es-integra-retorno" AS character 
+  FORMAT "x(5)"
+  INITIAL ""
+  POSITION 10
+  MAX-WIDTH 10
+  ORDER 90
+
+ADD FIELD "IdSIN" OF "es-integra-retorno" AS integer 
+  FORMAT "->,>>>,>>9"
+  INITIAL "0"
+  POSITION 11
+  MAX-WIDTH 4
+  ORDER 100
+
+ADD INDEX "pku" ON "es-integra-retorno" 
+  AREA "Schema Area"
+  PRIMARY
+  INDEX-FIELD "dt-ret" ASCENDING 
+  INDEX-FIELD "dt-int-erp" ASCENDING 
+  INDEX-FIELD "statusRetorno" ASCENDING 
+  INDEX-FIELD "log-retorno" ASCENDING 
+  INDEX-FIELD "IdKlassmatt" ASCENDING 
+  INDEX-FIELD "dt-carga" ASCENDING 
+
+ADD TABLE "es-movto-ext-item-cfa"
+  AREA "Schema Area"
+  DUMP-NAME "es-movto-ext-item-cfa"
+
+ADD FIELD "it-codigo" OF "es-movto-ext-item-cfa" AS character 
+  DESCRIPTION "C¢digo do Item"
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Item"
+  POSITION 2
+  MAX-WIDTH 32
+  COLUMN-LABEL "Item"
+  HELP "C¢digo do Item"
+  ORDER 10
+
+ADD FIELD "identificador" OF "es-movto-ext-item-cfa" AS integer 
+  FORMAT ">,>>>,>>9"
+  INITIAL "0"
+  POSITION 4
+  MAX-WIDTH 4
+  ORDER 30
+
+ADD FIELD "pergunta-literal" OF "es-movto-ext-item-cfa" AS character 
+  FORMAT "x(400)"
+  INITIAL ""
+  POSITION 5
+  MAX-WIDTH 800
+  ORDER 40
+
+ADD FIELD "resposta-literal" OF "es-movto-ext-item-cfa" AS character 
+  FORMAT "x(400)"
+  INITIAL ""
+  POSITION 6
+  MAX-WIDTH 800
+  ORDER 50
+
+ADD FIELD "usuario" OF "es-movto-ext-item-cfa" AS character 
+  FORMAT "x(12)"
+  INITIAL ""
+  LABEL "Usu rio"
+  POSITION 7
+  MAX-WIDTH 24
+  COLUMN-LABEL "Usu"
+  ORDER 60
+
+ADD FIELD "dt-movto" OF "es-movto-ext-item-cfa" AS date 
+  FORMAT "99/99/9999"
+  INITIAL ?
+  POSITION 8
+  MAX-WIDTH 4
+  ORDER 70
+
+ADD FIELD "hr-movto" OF "es-movto-ext-item-cfa" AS character 
+  FORMAT "x(8)"
+  INITIAL ""
+  POSITION 9
+  MAX-WIDTH 16
+  ORDER 80
+
+ADD FIELD "classe" OF "es-movto-ext-item-cfa" AS character 
+  FORMAT "x(4)"
+  INITIAL ""
+  POSITION 11
+  MAX-WIDTH 8
+  ORDER 100
+
+ADD FIELD "ep-codigo" OF "es-movto-ext-item-cfa" AS character 
+  FORMAT "x(5)"
+  INITIAL ""
+  POSITION 13
+  MAX-WIDTH 10
+  ORDER 120
+
+ADD FIELD "nr-seq" OF "es-movto-ext-item-cfa" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  POSITION 14
+  MAX-WIDTH 4
+  ORDER 130
+
+ADD INDEX "ident-002" ON "es-movto-ext-item-cfa" 
+  AREA "Schema Area"
+  PRIMARY
+  INDEX-FIELD "ep-codigo" ASCENDING 
+  INDEX-FIELD "it-codigo" ASCENDING 
+  INDEX-FIELD "identificador" ASCENDING 
+  INDEX-FIELD "nr-seq" ASCENDING 
+
+ADD INDEX "extt" ON "es-movto-ext-item-cfa" 
+  AREA "Schema Area"
+  INDEX-FIELD "it-codigo" ASCENDING 
+  INDEX-FIELD "classe" ASCENDING 
+
+ADD INDEX "kindentificador" ON "es-movto-ext-item-cfa" 
+  AREA "Schema Area"
+  INDEX-FIELD "it-codigo" ASCENDING 
+  INDEX-FIELD "classe" ASCENDING 
+  INDEX-FIELD "identificador" ASCENDING 
+
+ADD INDEX "pk-ident" ON "es-movto-ext-item-cfa" 
+  AREA "Schema Area"
+  INDEX-FIELD "ep-codigo" ASCENDING 
+  INDEX-FIELD "it-codigo" ASCENDING 
+  INDEX-FIELD "identificador" DESCENDING 
+
+ADD TABLE "ext-item-cfa"
+  AREA "Schema Area"
+  DUMP-NAME "ext-item-cfa"
+
+ADD FIELD "it-codigo" OF "ext-item-cfa" AS character 
+  DESCRIPTION "C¢digo do Item"
+  FORMAT "x(16)"
+  INITIAL ""
+  LABEL "Item"
+  POSITION 2
+  MAX-WIDTH 32
+  COLUMN-LABEL "Item"
+  HELP "C¢digo do Item"
+  ORDER 30
+
+ADD FIELD "classe" OF "ext-item-cfa" AS character 
+  FORMAT "x(4)"
+  INITIAL ""
+  POSITION 3
+  MAX-WIDTH 8
+  ORDER 40
+
+ADD FIELD "ep-codigo" OF "ext-item-cfa" AS character 
+  FORMAT "x(3)"
+  INITIAL ""
+  POSITION 5
+  MAX-WIDTH 6
+  ORDER 60
+
+ADD FIELD "chancela" OF "ext-item-cfa" AS logical 
+  FORMAT "sim/nao"
+  INITIAL "nao"
+  POSITION 6
+  MAX-WIDTH 1
+  ORDER 70
+
+ADD FIELD "IdKlassmatt" OF "ext-item-cfa" AS integer 
+  FORMAT "->,>>>,>>9"
+  INITIAL "0"
+  POSITION 7
+  MAX-WIDTH 4
+  ORDER 80
+
+ADD FIELD "IdSIN" OF "ext-item-cfa" AS integer 
+  FORMAT "->,>>>,>>9"
+  INITIAL "0"
+  POSITION 8
+  MAX-WIDTH 4
+  ORDER 90
+
+ADD INDEX "pku" ON "ext-item-cfa" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "it-codigo" ASCENDING 
+  INDEX-FIELD "ep-codigo" ASCENDING 
+
+.
+PSC
+cpstream=ibm850
+.
+0000005303

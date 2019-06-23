@@ -1,0 +1,30 @@
+/***************************************************************************
+**
+**  ESCC0406.i6 - Verifica o n£mero de linhas da narrativa.
+**
+***************************************************************************/
+
+form narrativa.descricao    skip
+     ordem-compra.narrativa
+     with stream-io frame f-linhas.
+/* Inicio -- Projeto Internacional -- ut-trfrrp.p adicionado */
+RUN utp/ut-trfrrp.p (INPUT FRAME f-linhas:HANDLE).
+
+
+if  avail item then do:
+    if  item.it-codigo = "" then do:
+        find first narrativa
+            where narrativa.it-codigo = item.it-codigo no-lock no-error.
+        if  avail narrativa then do:
+            if  narrativa.descricao <> "" then
+                assign i-narrativa = i-narrativa
+                                   + narrativa.descricao:num-lines in frame f-linhas
+                       i-narrativa = i-narrativa + 1.
+        end.
+    end.
+end.
+if  ordem-compra.narrativa <> "" then
+    assign i-narrativa = i-narrativa
+                       + ordem-compra.narrativa:num-lines in frame f-linhas.
+
+/* ESCC0406.i6 */

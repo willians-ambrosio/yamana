@@ -1,0 +1,17 @@
+/*************************************************************************
+** 
+**  Programa: CCAPI012.I1
+** 
+**  Objetivo: Defini»’o das temp-tables usadas na API ccapi202.p
+**
+*************************************************************************/
+
+def temp-table tt-ordem-compra no-undo like ordem-compra
+    field l-split           as   logical                    initial no
+    field l-gerou           as   logical         
+    field r-ordem           as   rowid
+    field ind-tipo-movto    as   integer format "99"        initial 1.
+
+def temp-table tt-prazo-compra no-undo like prazo-compra
+    field ind-tipo-movto    as   integer format "99"        initial 1.
+

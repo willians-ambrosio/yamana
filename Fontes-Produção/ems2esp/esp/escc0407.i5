@@ -1,0 +1,34 @@
+/***************************************************************************
+**
+**  escc0407.i5 - Imprime a Narrativa do Pedido
+**
+***************************************************************************/
+
+assign i-conta-narra = 0.
+if  tt-ordem.comentarios <> "" then do:
+    assign i-salta-narra = 1
+           i-conta-narra = i-conta-narra
+                         + tt-ordem.comentarios:num-lines in frame f-editor.
+    if  i-conta-narra = 1 then put skip(1).
+    if  line-counter > 63 then do:
+        page.
+        {&display}
+    end.
+    run pi-print-editor (input tt-ordem.comentarios, input 60).
+    for each tt-editor with frame f-narrativa:
+        if  tt-editor.linha = 1 then
+            put unformatted
+                fill("-", 19)  at 52
+                c-lb-narra-ped at 72
+                fill("-", 18)  at 92.
+        disp tt-editor.conteudo when avail tt-editor
+             with frame f-narrativa.
+        down with frame f-narrativa.
+    end.
+    if  line-counter > 63 then do:
+        page.
+        {&display}
+    end.
+end.
+
+/* escc0407.i5 */

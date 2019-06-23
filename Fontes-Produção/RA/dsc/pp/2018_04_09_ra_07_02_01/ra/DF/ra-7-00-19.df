@@ -1,0 +1,188 @@
+ADD TABLE "nfe-it-imposto-alt"
+  AREA "Schema Area"
+  LABEL "Impostos alterado"
+  DESCRIPTION "Gravar altera‡Æo dos impostos dos itens
+"
+  DUMP-NAME "dsc030"
+
+ADD FIELD "chave-acesso-nfe" OF "nfe-it-imposto-alt" AS character 
+  DESCRIPTION "Chave Acesso do SEFAZ"
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Chave Acesso Sefaz"
+  POSITION 2
+  MAX-WIDTH 100
+  COLUMN-LABEL "Chave Acesso"
+  HELP "Chave Acesso do SEFAZ"
+  ORDER 40
+
+ADD FIELD "seq-item" OF "nfe-it-imposto-alt" AS integer 
+  DESCRIPTION "Sequencia do Item na NF-e"
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Sequencia"
+  POSITION 3
+  MAX-WIDTH 4
+  COLUMN-LABEL "Seq"
+  HELP "Sequencia do Item na NF-e"
+  ORDER 50
+
+ADD FIELD "icms-bc" OF "nfe-it-imposto-alt" AS decimal 
+  FORMAT "->>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Base ICMS"
+  POSITION 4
+  MAX-WIDTH 17
+  COLUMN-LABEL "Base ICMS"
+  DECIMALS 2
+  ORDER 60
+
+ADD FIELD "icms-aliq" OF "nfe-it-imposto-alt" AS decimal 
+  FORMAT "->>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Aliq ICMS"
+  POSITION 5
+  MAX-WIDTH 17
+  COLUMN-LABEL "Aliq ICMS"
+  DECIMALS 2
+  ORDER 70
+
+ADD FIELD "icms-valor" OF "nfe-it-imposto-alt" AS decimal 
+  FORMAT "->>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor ICMS"
+  POSITION 6
+  MAX-WIDTH 17
+  COLUMN-LABEL "Valor ICMS"
+  DECIMALS 2
+  ORDER 80
+
+ADD FIELD "ipi-base" OF "nfe-it-imposto-alt" AS decimal 
+  FORMAT "->>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Base IPI"
+  POSITION 7
+  MAX-WIDTH 17
+  COLUMN-LABEL "Base IPI"
+  DECIMALS 2
+  ORDER 90
+
+ADD FIELD "ipi-aliq" OF "nfe-it-imposto-alt" AS decimal 
+  FORMAT "->>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Aliq IPI"
+  POSITION 8
+  MAX-WIDTH 17
+  COLUMN-LABEL "Aliq IPI"
+  DECIMALS 2
+  ORDER 100
+
+ADD FIELD "ipi-valor" OF "nfe-it-imposto-alt" AS decimal 
+  FORMAT "->>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor IPI"
+  POSITION 9
+  MAX-WIDTH 17
+  COLUMN-LABEL "Valor IPI"
+  DECIMALS 2
+  ORDER 110
+
+ADD FIELD "pis-base" OF "nfe-it-imposto-alt" AS decimal 
+  FORMAT "->>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Base PIS"
+  POSITION 10
+  MAX-WIDTH 17
+  COLUMN-LABEL "Base PIS"
+  DECIMALS 2
+  ORDER 120
+
+ADD FIELD "pis-aliq" OF "nfe-it-imposto-alt" AS decimal 
+  FORMAT "->>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Aliq PIS"
+  POSITION 11
+  MAX-WIDTH 17
+  COLUMN-LABEL "Aliq PIS"
+  DECIMALS 2
+  ORDER 130
+
+ADD FIELD "pis-valor" OF "nfe-it-imposto-alt" AS decimal 
+  FORMAT "->>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor PIS"
+  POSITION 12
+  MAX-WIDTH 17
+  COLUMN-LABEL "Valor PIS"
+  DECIMALS 2
+  ORDER 140
+
+ADD FIELD "cofins-base" OF "nfe-it-imposto-alt" AS decimal 
+  FORMAT "->>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Base Cofins"
+  POSITION 13
+  MAX-WIDTH 17
+  COLUMN-LABEL "Base Cofins"
+  DECIMALS 2
+  ORDER 150
+
+ADD FIELD "cofins-aliq" OF "nfe-it-imposto-alt" AS decimal 
+  FORMAT "->>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Aliq Cofins"
+  POSITION 14
+  MAX-WIDTH 17
+  COLUMN-LABEL "Aliq Cofins"
+  DECIMALS 2
+  ORDER 160
+
+ADD FIELD "cofins-valor" OF "nfe-it-imposto-alt" AS decimal 
+  FORMAT "->>>,>>>,>>9.99"
+  INITIAL "0"
+  LABEL "Valor Cofins"
+  POSITION 15
+  MAX-WIDTH 17
+  COLUMN-LABEL "Valor Cofins"
+  DECIMALS 2
+  ORDER 170
+
+ADD FIELD "icms-tribut" OF "nfe-it-imposto-alt" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Tributacao ICMS"
+  POSITION 16
+  MAX-WIDTH 4
+  COLUMN-LABEL "Tr ICMS"
+  ORDER 180
+
+ADD FIELD "pis-tribut" OF "nfe-it-imposto-alt" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Pis Tribut"
+  POSITION 17
+  MAX-WIDTH 4
+  COLUMN-LABEL "Pis Tribut"
+  ORDER 190
+
+ADD FIELD "cofins-tribut" OF "nfe-it-imposto-alt" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "COFINS Tribut"
+  POSITION 18
+  MAX-WIDTH 4
+  COLUMN-LABEL "COFINS Tribut"
+  ORDER 200
+
+ADD INDEX "chave-acesso" ON "nfe-it-imposto-alt" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "chave-acesso-nfe" ASCENDING 
+  INDEX-FIELD "seq-item" ASCENDING 
+
+.
+PSC
+cpstream=ibm850
+.
+0000003983

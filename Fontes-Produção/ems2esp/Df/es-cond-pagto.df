@@ -1,0 +1,37 @@
+ADD TABLE "es-cond-pagto"
+  AREA "Schema Area"
+  LABEL "Condi‡Æo"
+  DESCRIPTION "Condi‡Æo de Pagamento"
+  DUMP-NAME "es-cd-pa"
+
+ADD FIELD "cod-cond-pag" OF "es-cond-pagto" AS integer 
+  FORMAT ">>>9"
+  INITIAL "0"
+  LABEL "Condi‡Æo Pagamento"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Cond"
+  HELP "C¢digo da condi‡Æo de pagamento"
+  ORDER 10
+  MANDATORY
+
+ADD FIELD "cd-ativa" OF "es-cond-pagto" AS logical 
+  FORMAT "Sim/NÆo"
+  INITIAL "no"
+  POSITION 26
+  MAX-WIDTH 1
+  VIEW-AS "view-as toggle-box"
+  COLUMN-LABEL-SA "L3"
+  ORDER 20
+
+ADD INDEX "codigo" ON "es-cond-pagto" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "cod-cond-pag" ASCENDING 
+
+.
+PSC
+cpstream=ibm850
+.
+0000000692

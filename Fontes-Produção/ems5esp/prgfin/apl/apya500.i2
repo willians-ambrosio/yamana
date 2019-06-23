@@ -1,0 +1,86 @@
+/*  ****************************************************************************
+**  
+**    PROGRAMA: apya500.i2
+**  
+**    Data....: 30/10/2017
+**  
+**    Autor...: ECR
+**  
+**    Vers∆o..: 
+**  
+**    OBS.....: 
+**  
+**  ****************************************************************************  */
+
+
+    for each tp-operac_financ:
+       delete tp-operac_financ.
+    end.
+    for each tp-movto_operac_financ:
+       delete tp-movto_operac_financ.
+    end.
+
+
+    for each ems5.banco no-lock where
+             banco.cod_banco >= tt-param.banco-ini and
+             banco.cod_banco <= tt-param.banco-fim:
+             
+            
+        FOR EACH operac_financ no-lock WHERE
+                 operac_financ.cod_banco                 = STRING(banco.cod_banco) AND
+                 operac_financ.ind_sit_operac_financ_apl = "Ativa"                        AND
+                 operac_financ.cod_produt_financ        >= tt-param.prod-financ-ini       AND
+                 operac_financ.cod_produt_financ        <= tt-param.prod-financ-fim       AND
+                 operac_financ.dat_operac_financ        >= tt-param.dat-operac-ini        AND
+                 operac_financ.dat_operac_financ        <= tt-param.dat-operac-fim,
+                 each es_operac_financ
+                      where es_operac_financ.cod_banco          = operac_financ.cod_banco          and
+                            es_operac_financ.cod_produt_financ  = operac_financ.cod_produt_financ  and
+                            es_operac_financ.cod_operac_financ  = operac_financ.cod_operac_financ  and
+                            (es_operac_financ.cod_contrat_apf   >= tt-param.contrato-ini and
+                             es_operac_financ.cod_contrat_apf   <= tt-param.contrato-fim)
+                      no-lock:       
+
+
+             if operac_financ.cod_empresa < tt-param.empresa-ini OR
+                operac_financ.cod_empresa > tt-param.empresa-fim THEN NEXT.
+     
+        
+             run pi-acompanhar in h-acomp (input "Operaáao Financeira: " + operac_financ.cod_operac_financ).
+        
+             create tp-operac_financ.
+             buffer-copy operac_financ to tp-operac_financ.
+             
+             assign tp-operac_financ.cod_contrat_apf = es_operac_financ.cod_contrat_apf.
+             
+             movto_operac_financ:
+             for each movto_operac_financ of operac_financ no-lock:
+             
+                if movto_operac_financ.log_movto_estordo = yes then next movto_operac_financ.
+            
+                if  movto_operac_financ.ind_tip_trans_apl begins "Estorno" then next movto_operac_financ.               
+            
+                if     movto_operac_financ.ind_tip_trans_apl      = "Alteraá∆o n∆o ctbl"
+                   or  movto_operac_financ.ind_tip_trans_apl      = "Transferància Saldo" /*l_transferencia_saldo*/    
+                   or  movto_operac_financ.ind_tip_trans_apl      = "Transf Var Cambial" /*l_transf_var_camb*/    
+                   or  movto_operac_financ.ind_tip_trans_apl      = "Transf VC Juros" /*l_transf_vc_juros*/       
+                   or (movto_operac_financ.ind_tip_trans_apl      = "Imposto" /*l_imposto*/ 
+                   and movto_operac_financ.ind_aprop_impto_despes = "Gera Movto C/C" /*l_gera_movto_cc*/  )
+                   or (movto_operac_financ.ind_tip_trans_apl      = "Imposto Competància" /*l_imposto_competencia*/ 
+                   and movto_operac_financ.ind_aprop_impto_despes = "Gera Movto C/C" /*l_gera_movto_cc*/  )
+                   or (movto_operac_financ.ind_tip_trans_apl      = "Despesa Banc†ria" /*l_despes_bcia*/ 
+                   and movto_operac_financ.ind_aprop_impto_despes = "Gera Movto C/C" /*l_gera_movto_cc*/  )
+                then do:
+                       next movto_operac_financ.           
+                end.
+        
+                create tp-movto_operac_financ.
+                buffer-copy movto_operac_financ to tp-movto_operac_financ.
+             end.
+        end.
+        
+    end.
+    
+
+/*  Fim de Programa ***********************************************************/
+    

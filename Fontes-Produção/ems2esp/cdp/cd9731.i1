@@ -1,0 +1,31 @@
+/***********************************************************************
+** Copyright DATASUL S.A. (1997)
+** Todos os Direitos Reservados.
+** Este fonte e de propriedade exclusiva da DATASUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+************************************************************************/
+/***********************************************************************
+** PROGRAMA: cd9731.i1
+**
+** DATA....: Junho de 2003
+**
+** OBJETIVO: verifica a existencia da funcao spp-integra-cn-in-medicao
+************************************************************************/
+{cdp/cdcfgmat.i}
+
+DEF VAR l-integra-cn-in-medicao AS LOGICAL NO-UNDO.
+
+FIND FIRST param-global NO-LOCK NO-ERROR.
+
+&if "{&bf_mat_versao_ems}" >= "2.062" &then
+    IF  param-global.modulo-in AND param-global.modulo-cn THEN
+        ASSIGN l-integra-cn-in-medicao = YES.
+&else
+    IF  param-global.modulo-in AND param-global.modulo-cn THEN DO:
+        IF  CAN-FIND (funcao WHERE 
+                     funcao.cd-funcao = "integra_cn_in_me" AND
+                     funcao.ativo = YES) THEN
+            ASSIGN l-integra-cn-in-medicao = YES.
+    END.
+&endif

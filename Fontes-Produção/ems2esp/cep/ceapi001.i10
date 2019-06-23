@@ -1,0 +1,45 @@
+/*******************************************************************************
+** Programa: ceapi001.i10
+** Objetivo: Definicao de preprocessadores para as especies de movimentos
+*******************************************************************************/
+
+&GLOBAL-DEFINE ACA  1 /* acabado                                                           */
+&GLOBAL-DEFINE ACT  2 /* acerto                                                            */
+&GLOBAL-DEFINE CAC  3 /*                                                                   */
+&GLOBAL-DEFINE DD   4 /* d‚bito direto                                                     */
+&GLOBAL-DEFINE DEV  5 /* devolu‡Æo                                                         */
+&GLOBAL-DEFINE DIV  6 /* diversas                                                          */
+&GLOBAL-DEFINE DRM  7 /* devolu‡Æo de requisi‡Æo de material (eletr“nica)                  */
+&GLOBAL-DEFINE EAC  8 /* estorno de acabado                                                */
+&GLOBAL-DEFINE EGF  9 /* estorno de ggf                                                    */
+&GLOBAL-DEFINE BEM 10 /* estorno de reporte de mÆo-de-obra                                 */
+&GLOBAL-DEFINE ESP 11 /*                                                                   */
+&GLOBAL-DEFINE GRN 12 /* goods receiving note (nota de recebimento)                        */
+&GLOBAL-DEFINE GTN 13 /* goods transfer note (nota de transferˆncia)                       */
+&GLOBAL-DEFINE ICM 14 /* imposto de circula‡Æo de mercadoria                               */
+&GLOBAL-DEFINE INV 15 /* invent rio                                                        */
+&GLOBAL-DEFINE IPL 16 /* implanta‡Æo de saldo                                              */
+&GLOBAL-DEFINE MOB 17 /* mÆo-de-obra                                                       */
+&GLOBAL-DEFINE NC  18 /* nota complementar                                                 */
+&GLOBAL-DEFINE NF  19 /* nota fiscal                                                       */
+&GLOBAL-DEFINE NFD 20 /* nota fiscal de devolu‡Æo                                          */
+&GLOBAL-DEFINE NFE 21 /* nota fiscal de entrada                                            */
+&GLOBAL-DEFINE NFS 22 /* nota fiscal de sa¡da                                              */
+&GLOBAL-DEFINE NFT 23 /* nota fiscal de transferˆncia                                      */
+&GLOBAL-DEFINE PRA 24 /* purchase return aknowledgment (nota de devolu‡Æo de compra) = nfd */
+&GLOBAL-DEFINE REF 25 /* refugo                                                            */
+&GLOBAL-DEFINE RCS 26 /* requisi‡Æo de consignado                                          */
+&GLOBAL-DEFINE RDD 27 /* retorno de d‚bito direto                                          */
+&GLOBAL-DEFINE REQ 28 /* requisi‡Æo                                                        */
+&GLOBAL-DEFINE RFS 29 /* requisi‡Æo de item f¡sico                                         */
+&GLOBAL-DEFINE RM  30 /* requisi‡Æo de material (eletr“nica)                               */
+&GLOBAL-DEFINE RRQ 31 /* retorno de requisi‡Æo                                             */
+&GLOBAL-DEFINE STR 32 /* substitui‡Æo tribut ria                                           */
+&GLOBAL-DEFINE TRA 33 /* transferˆncia                                                     */
+&GLOBAL-DEFINE ZZZ 34 /*                                                                   */
+&GLOBAL-DEFINE SOB 35 /* sobra                                                             */
+&GLOBAL-DEFINE EDD 36 /* estorno de d‚bito direto                                          */
+&GLOBAL-DEFINE VAR 37 /* varia‡Æo                                                          */
+&GLOBAL-DEFINE ROP 38 /* refugo por opera‡Æo                                               */
+
+/* ceapi001.i10 */

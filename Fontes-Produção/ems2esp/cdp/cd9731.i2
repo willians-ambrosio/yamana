@@ -1,0 +1,65 @@
+/***********************************************************************
+** Copyright DATASUL S.A. (1997)
+** Todos os Direitos Reservados.
+** Este fonte e de propriedade exclusiva da DATASUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+************************************************************************/
+/***********************************************************************
+** PROGRAMA: cd9731.i2
+**
+** DATA....: Junho de 2003
+**
+** OBJETIVO: verifica a existencia da funcao spp-matriz-medicao
+************************************************************************/
+
+DEF VAR l-matriz-medicao AS LOGICAL NO-UNDO.
+DEF VAR l-rat-ord        AS LOGICAL NO-UNDO.
+DEF VAR l-rat-med        AS LOGICAL NO-UNDO.
+DEF VAR l-rat-contr-tot  AS LOGICAL NO-UNDO.
+DEF VAR l-lib-sem-matriz AS LOGICAL NO-UNDO.
+
+
+/** Verifica se a funcÆo matriz est  cadastrada **/
+&IF DEFINED(bf_mat_versao_ems) &THEN
+    &IF '{&bf_mat_versao_ems}' >= '2.04' &THEN
+        IF  CAN-FIND (funcao WHERE 
+                      funcao.cd-funcao = "matriz_medicao" AND
+                      funcao.ativo = YES) THEN
+            ASSIGN l-matriz-medicao = YES.
+    &ENDIF
+&ENDIF
+
+&IF DEFINED(bf_mat_versao_ems) &THEN
+    &IF '{&bf_mat_versao_ems}' >= '2.05' &THEN
+        ASSIGN l-matriz-medicao = YES.
+    &ENDIF
+&ENDIF
+
+
+IF  l-matriz-medicao THEN DO:
+
+    /** Verifica os parametros do contrato **/
+    FIND FIRST param-contrat NO-LOCK NO-ERROR.
+    IF  AVAIL param-contrat THEN DO:
+        &IF "{&bf_mat_versao_ems}" >= "2.06" &THEN
+            ASSIGN l-rat-ord         = param-contrat.log-rat-ord
+                   l-rat-med         = param-contrat.log-rat-medi
+                   l-rat-contr-tot   = param-contrat.log-rat-contrat-tot
+                   l-lib-sem-matriz  = param-contrat.log-libera-matriz.
+        &ELSE
+            ASSIGN l-rat-ord         = IF SUBSTRING(param-contrat.char-2,1,1) = "S":U
+                                          THEN YES
+                                          ELSE NO
+                   l-rat-med         = IF SUBSTRING(param-contrat.char-2,2,1) = "S":U
+                                          THEN YES
+                                          ELSE NO
+                   l-rat-contr-tot   = IF SUBSTRING(param-contrat.char-2,3,1) = "S":U
+                                          THEN YES
+                                          ELSE NO
+                   l-lib-sem-matriz  = IF SUBSTRING(param-contrat.char-2,4,1) = "S":U
+                                          THEN YES
+                                          ELSE NO.
+        &ENDIF
+    END.
+END.

@@ -1,0 +1,128 @@
+
+/*********************************************************************************
+**
+** rip/ri0404rp.i7 - cria o registro com o valor do imposto creditado 
+**                   no estabelecimento de origem  
+**
+*********************************************************************************/    
+PROCEDURE pi-gera-historico-transf:
+
+    DEF VAR de-vl-parcela                   LIKE ri-valor-bem.val-imposto       NO-UNDO.
+    DEF VAR i-nr-parc-cred                  AS   INTE                           NO-UNDO.
+    DEF VAR da-data-aux                     AS   DATE                           NO-UNDO.
+    DEF VAR de-vl-tot-recup-estab-origem    LIKE ri-valor-bem.val-imposto       NO-UNDO.
+    DEF VAR de-vl-recuperado                LIKE ri-valor-bem.val-imposto       NO-UNDO.
+    DEF VAR de-vl-nao-recuperado            LIKE ri-valor-bem.val-imposto       NO-UNDO.
+    DEF VAR de-coeficiente                  AS   DECI                           NO-UNDO.
+    
+/*
+    DEFINE BUFFER b-ri-movto-bem        FOR ri-movto-bem.
+    DEFINE BUFFER b-ri-estabelecimento  FOR ri-estabelecimento.
+    DEFINE BUFFER btp-ri-bem            FOR ri-bem.
+    DEFINE BUFFER btf-ri-bem            FOR ri-bem.
+*/
+    DEFINE BUFFER b-ped-curva           FOR ped-curva.
+
+    FOR FIRST ri-movto-bem NO-LOCK
+        WHERE ri-movto-bem.id-bem             = ri-bem.id-bem
+        AND   ri-movto-bem.idi-tipo-movto     = 1    /* implantacao */
+        AND   ri-movto-bem.log-tipo-movto     = YES  /* entrada */
+        AND   ri-movto-bem.nr-sequencia-movto = 10,
+
+        EACH ri-movto-bem-impto OF ri-movto-bem NO-LOCK,
+
+        EACH ri-bem-grupo NO-LOCK
+        WHERE ri-bem-grupo.id-bem    = ri-movto-bem-impto.id-bem 
+        AND   ri-bem-grupo.cod-grupo = ri-movto-bem-impto.cod-grupo,
+
+        EACH ri-estab-grupos NO-LOCK
+        WHERE ri-estab-grupos.cod-estabel = ri-bem.cod-estabel
+        AND   ri-estab-grupos.cod-grupo   = ri-bem-grupo.cod-grupo
+
+        BREAK BY ri-bem-grupo.cod-grupo:
+
+        IF  FIRST-OF(ri-bem-grupo.cod-grupo) THEN DO:
+
+            ASSIGN de-vl-tot-recup-estab-origem = 0.
+
+            RUN rip/ri9999.p (INPUT  ri-bem-grupo.data-1, /* data de inicio de credito */ 
+                              INPUT  ri-movto-bem.dat-movto, 
+                              OUTPUT i-nr-parc-cred).
+
+            /* calculo das parcelas j† creditadas */
+            /* se nao contabiliza no màs da baixa, ent∆o tem que substrair uma parcela */
+            IF  ri-estab-grupos.log-1 = NO
+            AND i-nr-parc-cred >= 1 THEN
+                ASSIGN i-nr-parc-cred = i-nr-parc-cred - 1.
+        END.
+
+        ASSIGN l-icms = NO.
+        FOR FIRST ri-grupos NO-LOCK
+            WHERE ri-grupos.cod-grupo = ri-bem-grupo.cod-grupo
+            AND   ri-grupos.log-ciap:
+            ASSIGN l-icms = YES. 
+        END.
+
+        RUN pi-calcula-valor-parcela-mensal (INPUT l-icms,
+                                             INPUT ri-movto-bem-impto.val-imposto,
+                                             /* mandar parcela = 1 para n∆o sofrer o ajuste da £ltima parcela */
+                                             INPUT 1, /* i-nr-parc-cred */
+                                             INPUT ri-bem-grupo.num-meses,
+                                             OUTPUT de-vl-parcela).
+
+        /* calcular o total de imposto recuperado no estabelecimento de origem */
+        ASSIGN de-vl-tot-recup-estab-origem = de-vl-tot-recup-estab-origem + (de-vl-parcela * i-nr-parc-cred).
+
+        IF  LAST-OF(ri-bem-grupo.cod-grupo) THEN DO:
+
+            ASSIGN da-data-aux   = ri-movto-bem.dat-movto + 35
+                   da-data-aux   = DATE( MONTH(da-data-aux), 01, YEAR(da-data-aux)) - 1.
+
+            FIND FIRST b-ped-curva
+                 WHERE b-ped-curva.vl-aberto = 413
+                 AND   b-ped-curva.codigo    = ri-bem.id-bem
+                 AND   b-ped-curva.tot-ped   = ri-bem-grupo.cod-grupo
+                 AND   b-ped-curva.it-codigo = STRING(i-nr-parc-cred)
+                 AND   b-ped-curva.nome       = STRING(DAY(ri-movto-bem.dat-movto), "99") + "/" + string(MONTH(ri-movto-bem.dat-movto), "99") + "/" + STRING(YEAR(ri-movto-bem.dat-movto), "9999")
+                 EXCLUSIVE-LOCK NO-ERROR.
+
+            IF  NOT AVAIL b-ped-curva THEN DO:
+
+                /* criar ped-curva para o bem ; estabelecimento do destino da transferencia */
+                CREATE b-ped-curva.
+                ASSIGN b-ped-curva.vl-aberto  = 413
+                       b-ped-curva.codigo     = ri-bem.id-bem
+                       b-ped-curva.tot-ped    = ri-bem-grupo.cod-grupo
+                       b-ped-curva.it-codigo  = STRING(i-nr-parc-cred)
+                       /* data para impressao dd/mm/aaaa */
+                       b-ped-curva.nome       = STRING(DAY(ri-movto-bem.dat-movto), "99") + "/" + string(MONTH(ri-movto-bem.dat-movto), "99") + "/" + STRING(YEAR(ri-movto-bem.dat-movto), "9999")
+                       /* data para classificacao aaaa/mm/dd */
+                       b-ped-curva.regiao     =  STRING(YEAR(ri-movto-bem.dat-movto), "9999") + "/" + string(MONTH(ri-movto-bem.dat-movto), "99") + "/" + STRING(DAY(ri-movto-bem.dat-movto), "99").
+            END.
+
+            /* ler o historico da contabilizacao para distribuir o valor do imposto recuperado em RECUP e NAO RECUP */
+            FOR EACH ped-curva USE-INDEX ch-curva NO-LOCK
+                 WHERE ped-curva.vl-aberto = 412
+                 AND   ped-curva.codigo    = ri-movto-bem.id-bem
+                 AND   ped-curva.tot-ped   = ri-bem-grupo.cod-grupo
+                 AND   ped-curva.nome  <= STRING(YEAR(da-data-aux), "9999") + "/" + string(MONTH(da-data-aux), "99") + "/" + string(DAY(da-data-aux), "99")
+                 BREAK BY ped-curva.nome:
+
+                 /* considerar somente atÇ a parcela que tomou crÇdito na origem */
+                 IF  INT(ped-curva.it-codigo) <= i-nr-parc-cred THEN
+                     ASSIGN de-vl-recuperado     = de-vl-recuperado + ped-curva.vl-lucro-br
+                            de-vl-nao-recuperado = de-vl-nao-recuperado + ped-curva.quantidade.
+            END.
+
+            IF  (de-vl-recuperado + de-vl-nao-recuperado) <> 0 THEN
+                ASSIGN de-coeficiente = de-vl-recuperado / (de-vl-recuperado + de-vl-nao-recuperado).
+            ELSE
+                ASSIGN de-coeficiente = 1.
+
+            ASSIGN de-vl-recuperado        = ROUND(de-vl-tot-recup-estab-origem * de-coeficiente, 2)
+                   b-ped-curva.vl-lucro-br = b-ped-curva.vl-lucro-br + de-vl-recuperado 
+                   b-ped-curva.quantidade  = b-ped-curva.quantidade + (de-vl-tot-recup-estab-origem - de-vl-recuperado).
+        END.
+    END.
+
+END PROCEDURE.

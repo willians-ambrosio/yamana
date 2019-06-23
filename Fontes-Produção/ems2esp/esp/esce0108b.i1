@@ -1,0 +1,333 @@
+/*********************** INICIO INCLUDE ESCE0108B.I1 *****************************/
+
+/***********************   PROCEDURE check-dados  ***************************************/
+
+    FIND FIRST ITEM EXCLUSIVE-LOCK WHERE ITEM.it-codigo = bb-item.it-codigo NO-ERROR.
+    IF AVAIL ITEM THEN DO:
+        ASSIGN n-preco-unit = 0.
+        FIND LAST  movto-estoq NO-LOCK
+             WHERE movto-estoq.esp-docto = 21
+             AND   movto-estoq.it-codigo = item.it-codigo
+             USE-INDEX esp-data NO-ERROR.
+        IF AVAIL movto-estoq THEN DO:
+            FIND FIRST item-doc-est NO-LOCK
+                 WHERE item-doc-est.serie-docto  = movto-estoq.serie-docto 
+                 AND   item-doc-est.nro-docto    = movto-estoq.nro-docto   
+                 AND   item-doc-est.cod-emitente = movto-estoq.cod-emitente
+                 AND   item-doc-est.nat-operacao = movto-estoq.nat-operacao
+                 AND   item-doc-est.sequencia    = movto-estoq.seq NO-ERROR.   
+            IF NOT AVAIL item-doc-est THEN DO:
+                FIND LAST  ordem-compra NO-LOCK
+                     WHERE ordem-compra.it-codigo = item.it-codigo
+                     AND   (ordem-compra.situacao  = 2
+                            OR ordem-compra.situacao  = 6) NO-ERROR.
+                IF NOT AVAIL ordem-compra THEN DO:
+                    RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 18100, INPUT "Item sem preáo").
+                    ASSIGN l-ok = NO.
+                END.
+                ELSE ASSIGN n-preco-unit = ordem-compra.preco-fornec.
+            END.
+            ELSE ASSIGN n-preco-unit = item-doc-est.preco-unit[1]. 
+        END.
+        ELSE DO: 
+            FIND LAST  ordem-compra NO-LOCK
+                 WHERE ordem-compra.it-codigo = item.it-codigo
+                 AND   (ordem-compra.situacao  = 2
+                        OR ordem-compra.situacao  = 6) NO-ERROR.
+            IF NOT AVAIL ordem-compra THEN DO:
+               /* RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 18100, INPUT "Item sem preáo"). */
+                ASSIGN l-ok = NO.
+            END.
+            ELSE ASSIGN n-preco-unit = ordem-compra.preco-fornec.
+        END.
+
+        IF l-ok = NO THEN DO:
+            ASSIGN l-ok         = YES
+                   n-preco-unit = 1 /* 0.0001 */ .
+        END.
+    
+        IF l-ok THEN DO:
+    
+            ASSIGN i-docto = i-docto + 1.
+    
+            find first tt-param no-error.
+            if not avail tt-param then
+                create tt-param.
+            assign l-rejeita-dec         = no.    
+            assign tt-param.medio-mat[1] = fn_vld_ajust_dec(n-preco-unit,0).
+            assign tt-param.medio-mat[2] = fn_vld_ajust_dec(n-preco-unit,param-estoq.moeda1).
+            assign tt-param.medio-mat[3] = fn_vld_ajust_dec(n-preco-unit,param-estoq.moeda2).
+            assign tt-param.depos-pad    = b-item-uni-estab.deposito-pad /*"ALM"*/ 
+                   tt-param.serie1       = ""
+                   tt-param.docto1       = string(i-docto)
+                   tt-param.parametro    = IF (tt-param.i-movto-tipo = 1 or tt-param.i-movto-tipo = 4) THEN 
+                                                "Total" ELSE "F°sico" 
+                   tt-param.tipo         = tt-param.i-movto-tipo. 
+
+/********************************/
+            if l-rejeita-dec then do:
+                RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 18100, INPUT "").
+                ASSIGN l-ok = NO.
+            end.
+
+            for each tt-item-2: delete tt-item-2. end.
+
+            create tt-item-2.
+            buffer-copy item to tt-item-2.
+            /*
+            {utp/ut-liter.i Troca_de_controle_cont†bil_n∆o_permitida!_Item_de_contrato. mce R}
+            ASSIGN v_msg_1 = RETURN-VALUE.
+
+            FIND FIRST param-contrat NO-LOCK WHERE param-contrat.it-codigo = item.it-codigo NO-ERROR.
+            IF AVAIL param-contrat THEN DO:
+                RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 17006, INPUT v_msg_1).
+                ASSIGN l-ok = NO.
+            END.
+            
+            FOR EACH item-contrat NO-LOCK WHERE
+                   item-contrat.it-codigo = item.it-codigo and 
+                   item-contrat.ind-sit-item <> 3 :
+                RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 17006, INPUT v_msg_1).
+                ASSIGN l-ok = NO.
+            END.
+            */
+            /*Cadastre os ParÉmetros Globais antes de executar este programa*/
+            find first param-global no-lock no-error.
+            if not avail param-global then do:
+                RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 16, INPUT "").
+                ASSIGN l-ok = NO.
+            end.
+
+             /*Os ParÉmetros de Estoque devem ser cadastrados.*/
+            find first param-estoq no-lock no-error.
+            if not avail param-estoq then do:
+                RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 1059, INPUT "").
+                ASSIGN l-ok = NO.
+            end.
+
+            if item.it-codigo = "" and item.tipo-contr =  4 then do:
+              {utp/ut-liter.i DÇbito_direto}
+              RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 32401, INPUT item.it-codigo + " " + return-value).
+              ASSIGN l-ok = NO.
+            end.
+            
+            if item.tipo-contr = LOOKUP(tt-param.parametro, c-list-it-ctrl,",") then do:
+                RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 8951, INPUT "").
+                ASSIGN l-ok = NO.
+            end.
+            
+            find param-fasb where param-fasb.ep-codigo = i-empresa no-lock no-error .
+            
+            assign i-mo-fasb = if avail param-fasb and param-fasb.moeda-fasb <> 0 then 
+                               if param-fasb.moeda-fasb = param-estoq.moeda1  then 2
+                                 else if param-fasb.moeda-fasb = param-estoq.moeda2 then 3
+                                      else 0
+                               else 0
+                   i-mo-cmi  = if avail param-fasb and param-fasb.moeda-cmi <> 0 then
+                               if param-fasb.moeda-cmi = param-estoq.moeda1 then 2
+                                 else if param-fasb.moeda-cmi = param-estoq.moeda2
+                                        then 3
+                                        else 0
+                               else 0. 
+            
+            for each item-estab use-index item
+                where item-estab.it-codigo = item.it-codigo no-lock:
+                &if defined (bf_mat_fech_estab) &then
+                    if param-estoq.tp-fech = 2 then do:
+                        find estab-mat 
+                            where estab-mat.cod-estabel = item-estab.cod-estabel
+                            no-lock no-error.
+                        if avail estab-mat then
+                            assign da-ult-fech-dia = estab-mat.ult-fech-dia.
+                        end.
+                        else
+                            assign da-ult-fech-dia = param-estoq.ult-fech-dia.
+                &else
+                    assign da-ult-fech-dia = param-estoq.ult-fech-dia.
+                &endif
+
+                find first movto-estoq use-index item-data 
+                     where movto-estoq.it-codigo = item.it-codigo  
+                       and movto-estoq.dt-trans  > da-ult-fech-dia 
+                       and movto-estoq.esp-docto = 25  no-lock no-error.
+                /*Item nao pode ser modificado porque possui transacao REF*/
+                if avail movto-estoq then do:
+                    RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 3242, INPUT return-value).
+                    ASSIGN l-ok = NO.
+                end.
+
+                if item-estab.sald-ini-mat-m[1] < 0 or
+                   item-estab.sald-ini-mat-m[2] < 0 or
+                   item-estab.sald-ini-mat-m[3] < 0 or
+                   item-estab.sald-ini-mob-m[1] < 0 or
+                   item-estab.sald-ini-mob-m[2] < 0 or
+                   item-estab.sald-ini-mob-m[3] < 0 then do:
+                    /*Item com saldo inicial negativo*/
+                    RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 3244, INPUT return-value).
+                    ASSIGN l-ok = NO.
+                end.
+            end.
+
+            for each saldo-estoq use-index item
+                where saldo-estoq.it-codigo = item.it-codigo no-lock:
+                if saldo-estoq.qtidade-ini < 0 then do:
+                    /*Item com saldo inicial negativo*/
+                    RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 3244, INPUT return-value).
+                    ASSIGN l-ok = NO.
+                end.
+            end.
+
+            /* Verifica Notas nao Confirmadas no Faturamento */
+            if param-global.modulo-ft then do:
+                assign l-nota-ft = no.
+                for each it-nota-fisc
+                   where it-nota-fisc.it-codigo = item.it-codigo
+                     and it-nota-fisc.dt-confirma = ? no-lock :
+                    find nota-fiscal where nota-fiscal.cod-estabel = it-nota-fisc.cod-estabel and
+                                           nota-fiscal.serie       = it-nota-fisc.serie       and
+                                           nota-fiscal.nr-nota-fis = it-nota-fisc.nr-nota-fis no-lock no-error.
+                    if avail nota-fiscal then 
+                        if nota-fiscal.dt-cancela <> ? then next.
+                    else do:
+                        assign l-nota-ft = yes.
+                        leave.
+                    end.
+                end.
+
+                if l-nota-ft = no then 
+                    /*Existem notas fiscais ou embarques pendentes no faturamento*/
+                    for each pre-fatur where pre-fatur.cod-sit-pre <> 3 no-lock:
+                        for each it-pre-fat where it-pre-fat.cdd-embarq = pre-fatur.cdd-embarq and
+                                                  it-pre-fat.nome-abrev  = pre-fatur.nome-abrev  and
+                                                  it-pre-fat.nr-pedcli   = pre-fatur.nr-pedcli   and
+                                                  it-pre-fat.it-codigo   = item.it-codigo        no-lock:
+                            assign l-nota-ft = yes.
+                            leave.
+                        end.
+                    end.
+
+                if l-nota-ft then do:
+                    RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 25902, INPUT return-value).
+                    ASSIGN l-ok = NO.
+                end.
+            end.
+            
+            /* Se tiver alguma transacao NFT com valores zerados */
+            find first movto-estoq  where movto-estoq.it-codigo      = item.it-codigo and
+                                          movto-estoq.dt-trans      >= da-inipa-x     and
+                                          movto-estoq.esp-docto      = 23             and
+                                          movto-estoq.valor-mat-m[1] = 0              and
+                                          movto-estoq.valor-mob-m[1] = 0              and
+                                          movto-estoq.valor-ggf-m[1] = 0 no-lock no-error.
+            if avail movto-estoq then do:
+                /*O item possui Notas Fiscais de Transferància a serem valorizadas*/
+                RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 3261, INPUT return-value).
+                ASSIGN l-ok = NO.
+            end.  
+            
+            find cta_ctbl_integr where cta_ctbl_integr.cod_modul_dtsul = "CEP"
+                                   and cta_ctbl_integr.cod_cta_ctbl = tt-param.c-conta-contabil
+                                   AND cta_ctbl_integr.dat_inic_valid <= TODAY
+                                   AND cta_ctbl_integr.dat_fim_valid  >= TODAY no-lock no-error.
+            if not avail cta_ctbl_integr then do:
+                /*A conta informada n∆o consta no plano de contas desta empresa.*/
+                RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 177, INPUT return-value).
+                ASSIGN l-ok = NO.
+            end.    
+            
+            if cta_ctbl_integr.ind_finalid_ctbl <> "Consumo" then do:
+                /*Conta n∆o pode ser do Tipo T°tulo.*/
+                RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 286, INPUT return-value).
+                ASSIGN l-ok = NO.
+            end.
+
+            assign tt-param.r-conta   = rowid(conta-contab)
+                   item.conta-aplicacao     = tt-param.c-conta-contabil
+                   tt-param.it-codigo   = item.it-codigo.
+
+            find deposito where deposito.cod-depos = tt-param.depos-pad no-lock no-error.
+            if not avail deposito then do:
+                RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 530, INPUT return-value).
+                ASSIGN l-ok = NO.
+            end.
+
+            if deposito.ind-dep-cq = yes and item.contr-qualid then do:
+                /*Movimentaá∆o n∆o pode ser feita com o dep¢sito  CQ.*/
+                RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 1210, INPUT return-value).
+                ASSIGN l-ok = NO.
+            end.   
+
+            if deposito.ind-dep-rej = yes and item.contr-qualid then do:
+                /*Movimentaá∆o n∆o pode ser feita com o dep¢sito de rejeiá∆o de CQ.*/
+                RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 1217, INPUT return-value).
+                ASSIGN l-ok = NO.
+            end.   
+
+            for each item-estab where item-estab.it-codigo = item.it-codigo no-lock:
+                find estabelec where estabelec.cod-estabel = item-estab.cod-estabel no-lock no-error.
+                if not avail estabelec then 
+                    next.
+                /*Movimentaá∆o n∆o pode ser feita com o dep¢sito  CQ.*/
+                if estabelec.deposito-cq = tt-param.depos-pad and item.contr-qualid then do:
+                    RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 1210, INPUT return-value).
+                    ASSIGN l-ok = NO.
+                end.    
+                /*Movimentaá∆o n∆o pode ser feita com o dep¢sito de rejeiá∆o de CQ.*/
+                if estabelec.dep-rej-cq = tt-param.depos-pad and item.contr-qualid then do:
+                    RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 1217, INPUT return-value).
+                    ASSIGN l-ok = NO.
+                end.
+            end. 
+
+            if (item.tipo-contr = 1 and {ininc/i09in122.i 06 tt-param.parametro} = 2) or
+               (item.tipo-contr = 3 and {ininc/i09in122.i 06 tt-param.parametro} = 2) or  
+               (item.tipo-contr = 4 and {ininc/i09in122.i 06 tt-param.parametro} = 2) then do:
+                if item.tipo-contr = 3 and {ininc/i09in122.i 06 tt-param.parametro} = 2  then do:
+                    /*{utp/ut-liter.i Assumir†_o_valor_informado_como_mÇdio,_caso_o_mÇdio_calculado_for_igual_a_0 mce R}*/
+                    /*status input return-value.                                                                        */
+                end.
+
+            /************************************************/
+                if tt-param.medio-mat[1] = 0 and
+                   tt-param.medio-mob[1] = 0 and
+                   tt-param.medio-ggf[1] = 0 then do:
+                    /*valor deve ser diferente de zero medio-mat mob ggf*/
+                    RUN pi-erro-item IN THIS-PROCEDURE (INPUT ITEM.it-codigo, INPUT 3263, INPUT "").
+                    ASSIGN l-ok = NO.
+                end.    
+                if item.tipo-contr = 3 and {ininc/i09in122.i 06 tt-param.parametro} = 2  then
+                  /*status input " ".*/
+            end.
+
+            if item.tipo-contr = 1 and {ininc/i09in122.i 06 tt-param.parametro} = 2  then 
+                find first movto-estoq
+                     where movto-estoq.it-codigo = item.it-codigo  and
+                           movto-estoq.dt-trans  < da-ult-fech-dia and
+                           movto-estoq.esp-docto = 29 /*"RFS"*/ no-lock no-error.
+
+            if item.tipo-contr = 4 and {ininc/i09in122.i 06 tt-param.parametro} = 2 or
+               item.tipo-contr = 4 and {ininc/i09in122.i 06 tt-param.parametro} = 1 then 
+                find first movto-estoq
+                     where movto-estoq.it-codigo = item.it-codigo  and
+                           movto-estoq.dt-trans  < da-ult-fech-dia and
+                           movto-estoq.esp-docto = 27 /*"RDD"*/ no-lock no-error.
+
+            if item.tipo-contr = 3 and {ininc/i09in122.i 06 tt-param.parametro} = 2  then 
+                find first movto-estoq
+                     where movto-estoq.it-codigo = item.it-codigo  and
+                           movto-estoq.dt-trans  < da-ult-fech-dia and
+                           movto-estoq.esp-docto = 26 /*"RCS"*/ no-lock no-error.
+            if avail movto-estoq then do:
+                run utp/ut-msgs.p (input "show":U, 
+                                   input 3264, 
+                                   input "").
+                if return-value = "no" then
+                  ASSIGN l-ok = NO. 
+            end.
+
+        END. /* IF l-ok THEN DO: */
+    END.  /* IF AVAIL ITEM THEN DO: */
+
+/***********************   PROCEDURE check-dados  ***************************************/
+
+/*********************** FIM INCLUDE ESCE0108B.I1 *****************************/

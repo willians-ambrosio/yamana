@@ -1,0 +1,371 @@
+/***************************************************************************
+**
+**     Define Vari veis e Tabelas Tempor rias Comuns
+**
+***************************************************************************/
+
+{cdp/cdcfgmat.i} /* defini‡Æo de pr‚-processadores */ 
+
+{utp/ut-glob.i}
+
+define temp-table tt-param
+    field destino               as integer
+    field arquivo               as char
+    field usuario               as char
+    field data-exec             as date
+    field hora-exec             as integer
+    field i-classifica          as integer
+    field i-pedido-i            as integer
+    field i-pedido-f            as integer
+    field da-iniper             as date format 99/99/9999
+    field da-fimper             as date format 99/99/9999
+    field c-estabel-i           as char
+    field c-estabel-f           as char
+    field i-fornec-i            as integer
+    field i-fornec-f            as integer
+    field c-comp-i              as char
+    field c-comp-f              as char
+    field l-receb               as logical
+    field l-alter               as logical
+    field l-emergencial         as logical
+    field l-moeda               as logical
+    field l-narrativa           as logical
+    field l-extra-fornecedor    as logical
+    field l-end-entrega         as logical
+    field i-moeda               as integer
+    field c-moeda               as char
+    field c-classe              as char
+    field c-destino             as char
+    field l-despesas            as logical
+    field i-despesas-pag        as integer
+    field l-despesas-inc        as logical
+    field l-imprime-param       as logical.
+
+def {1} shared var c-narrativa    as char view-as editor size 80 by 2 no-undo.
+def {1} shared var l-preco-bruto  as logical init no no-undo.
+
+def var de-preco-conv    as decimal no-undo.
+def var de-preco-unit    as decimal format ">>>>>>>>>,>>9.9999".
+def var de-preco-merc    as decimal format ">>>>>>>>>>>,>>9.99".
+def var de-valor-ipi     as decimal format ">>>>>>>>,>>9.99".
+def var de-valor-descto  as decimal format ">>>,>>>,>>9.9999".
+def var de-preco-total   as decimal format ">>>>>>>>>>>,>>9.99".
+def var de-val-orig      like de-preco-merc.
+def var de-tot-ger       like de-preco-total no-undo.
+def var de-tot-ped       like de-preco-total no-undo.
+def var de-tot-for       like de-preco-total no-undo.
+def var de-qt-tot-ped    like de-preco-total no-undo.
+def var de-tot-descto    as decimal format ">>>,>>>,>>9.9999".
+def var de-ger-descto    as decimal format ">>>,>>>,>>9.9999".
+def var de-ger-des-est   as decimal format ">>>,>>>,>>9.9999".
+def var de-tot-des-res   as decimal format ">>>,>>>,>>9.9999".
+def var de-tot-ped-est   like de-preco-total no-undo.
+def var de-tot-liq-est   like de-preco-total no-undo.
+def var de-tot-ipi-est   like de-preco-total no-undo.
+def var de-tot-ped-res   like de-preco-total no-undo.
+def var de-tot-liq-res   like de-preco-total no-undo.
+def var de-tot-ipi-res   like de-preco-total no-undo.
+def var de-tot-liq       like de-preco-total no-undo.
+def var de-tot-ipi       like de-preco-total no-undo.
+def var de-ger-liq       like de-preco-total no-undo.
+def var de-ger-ipi       like de-preco-total no-undo.
+def var l-param          like param-global.exp-cep no-undo.
+def var c-sit            as character format "x(4)".
+def var c-natureza       as character format "x(9)".
+def var i-atraso         as integer   format ">>>>>9-".
+def var i-cont           as integer.
+def var i-narrativa      as integer.
+def var i-nr-pedido      as integer.
+def var l-imp-ped        as logical.
+def var l-imp-ord        as logical.
+def var l-imprimiu       as logical init no.
+def var h-acomp          as handle  no-undo.
+def var c-nome-abrev     like emitente.nome-abrev. 
+def var c-desc-item      like item.desc-item.
+def var l-loc-entrega    as log  no-undo.
+def var c-format-entrega as char no-undo.
+
+/* Define variaveis para tradu»’o */
+def var c-lb-tot-liq as char no-undo.
+def var c-lb-tot-ger as char no-undo.
+def var c-lb-tot-ipi as char no-undo.
+def var c-lb-tot-ped as char no-undo.
+def var c-lb-tot-est as char no-undo.
+def var c-lb-tot-for as char no-undo.
+def var c-lb-tot-descto as char no-undo.
+def var c-lb-tot-res as char no-undo.
+def var c-lb-num-ped as char no-undo.
+def var c-lb-qtde    as char no-undo.
+def var c-lb-estab   as char no-undo.
+def var c-lb-fornec  as char no-undo.
+def var c-lb-compr   as char no-undo.
+def var c-lb-nar-it  as char no-undo.
+def var c-lb-nar-ord as char no-undo.
+def var c-lb-entrega as char no-undo.
+def var c-lb-pedido  as char no-undo.
+def var c-lb-dt-ped  as char no-undo.
+def var c-lb-nat     as char no-undo.
+def var c-lb-cond    as char no-undo.
+def var c-lb-ordem   as char no-undo.
+def var c-lb-est     as char no-undo.
+def var c-lb-item    as char no-undo.
+def var c-lb-descr   as char no-undo.
+def var c-lb-un      as char no-undo.
+def var c-lb-preco   as char no-undo.
+def var c-lb-moeda   as char no-undo.
+def var c-lb-alt     as char no-undo.
+def var c-lb-loc-entrega  as char no-undo.
+def var c-lb-emit-ent     as char no-undo. 
+def var c-lb-ped-cliente  as char no-undo.
+def var c-lb-sequencia    as char no-undo.
+def var c-lb-end-entrega  as char no-undo.
+def var c-lb-cod-entrega  as char no-undo.
+def var c-lb-end-completo as char no-undo.
+def var c-lb-endereco     as char no-undo.
+def var c-lb-bairro       as char no-undo.
+def var c-lb-cidade       as char no-undo.
+def var c-lb-uf           as char no-undo.
+def var c-lb-pais         as char no-undo.
+def var c-lb-cep          as char no-undo.
+def var c-lb-jurisdicao   as char no-undo.
+def var c-lb-ext-fornec   as char no-undo.
+def var c-lb-emit-extra   as char no-undo.
+def var c-lb-cnpj         as char no-undo.
+def var c-lb-contato      as char no-undo.
+def var c-lb-telefone     as char no-undo.
+def var c-lb-e-mail       as char no-undo.
+def var c-lb-estado       as char no-undo.  
+
+def var c-lb-pa      as char no-undo.
+def var c-lb-sit     as char no-undo.
+def var c-lb-dt-emis as char no-undo.
+def var c-lb-dt-entr as char no-undo.
+def var c-lb-qtd     as char no-undo.
+def var c-lb-saldo   as char no-undo.
+def var c-lb-pr-merc as char no-undo.
+def var c-lb-valor   as char no-undo.
+def var c-lb-total   as char no-undo.
+def var c-lb-cliente as char no-undo.
+def var c-lb-seq     as char no-undo.
+def var c-lb-atraso  as char no-undo.
+
+def var c-lb-data    as char no-undo.
+def var c-lb-ped-rec as char no-undo.
+def var c-lb-ord-alt as char no-undo.
+def var c-lb-ped-eme as char no-undo.
+def var c-lb-outr-mo as char no-undo.
+def var c-lb-selec   as char no-undo.
+def var c-lb-param   as char no-undo.
+def var c-lb-classe  as char no-undo.
+def var c-lb-impr    as char no-undo.
+def var c-lb-dest    as char no-undo.
+def var c-lb-usuar   as char no-undo.
+
+/*Unidade de Neg¢cio*/
+&IF '{&bf_mat_versao_ems}' >= '2.062' &THEN
+    def var c-lb-unineg  as char no-undo.
+&ENDIF
+
+/* Integracao Modulo Importacao */
+def var c-lb-despesas      as char                      no-undo.
+def var c-lb-despesas-pag1 as char                      no-undo.
+def var c-lb-despesas-pag2 as char                      no-undo.
+def var c-lb-despesas-inc  as char                      no-undo.
+def var de-val-desp        like cotacao-item.preco-unit no-undo.
+
+{include/tt-edit.i}
+
+form tt-editor.conteudo at 52
+     with stream-io no-box no-label width 132 frame f-narrativa.
+
+form c-lb-pedido         format "x(6)"
+     c-lb-dt-ped  at 11  format "x(9)"
+     c-lb-nat     at 22
+     c-lb-fornec  at 32  format "x(10)"
+     c-lb-cond    at 45  format "x(3)"
+     c-lb-ordem   at 49  format "x(5)"
+     c-lb-est     at 59  format "x(3)"
+     c-lb-item    at 63  format "x(4)"
+     c-lb-descr   at 80  format "x(9)" skip
+     c-lb-un      at 1   format "x(2)" 
+     c-lb-preco   at 4   format "x(14)"
+     c-lb-moeda   at 23  format "x(5)"
+     c-lb-alt     at 32  format "x(3)" 
+     c-lb-emit-ent       format "x(12)"
+     /*Unidade de Neg¢cio*/
+     &IF '{&bf_mat_versao_ems}' >= '2.062' &THEN
+     c-lb-unineg         format "x(4)"
+     &ENDIF 
+     skip     
+     c-lb-pa             format "x(2)"
+     c-lb-sit     at 7   format "x(3)"
+     c-lb-dt-emis at 12  format "x(10)"
+     c-lb-dt-entr at 23  format "x(10)"
+     c-lb-qtd     at 34  format "x(10)"
+     c-lb-saldo   at 49  format "x(5)"
+     c-lb-pr-merc at 61  format "x(16)"
+     c-lb-valor   at 80  format "x(9)"
+     c-lb-total   at 96  format "x(11)"
+     c-lb-cliente at 115 format "x(5)"
+     c-lb-seq     at 121 format "x(3)"
+     c-lb-atraso  at 128 format "x(5)" skip
+     "------------------------------------------------------------------"
+     "------------------------------------------------------------------" to 132
+     with stream-io no-box no-label width 132 frame f-cab-corpo.
+
+{utp/ut-liter.i Total_L¡quido * r}
+assign c-lb-tot-liq = trim(return-value).
+{utp/ut-liter.i Total_Geral * r}
+assign c-lb-tot-ger = trim(return-value).
+{utp/ut-liter.i Total_do_IPI * r}
+assign c-lb-tot-ipi = trim(return-value).
+{utp/ut-liter.i Total_Pedido * r}
+assign c-lb-tot-ped = trim(return-value).
+{utp/ut-liter.i Total_Desconto * r}
+assign c-lb-tot-descto = trim(return-value).
+{utp/ut-liter.i Total_Estabelecimento * r}
+assign c-lb-tot-est = trim(return-value).
+{utp/ut-liter.i N£mero_de_Pedidos * r}
+assign c-lb-num-ped = trim(return-value).
+{utp/ut-liter.i Quantidade_Total * r}
+assign c-lb-qtde = trim(return-value).
+{utp/ut-liter.i Total_Responsÿvel * r}
+assign c-lb-tot-res = trim(return-value).
+{utp/ut-liter.i Total_Fornecedor * r}
+assign c-lb-tot-for = trim(return-value).
+{utp/ut-liter.i Estabelecimento * r}
+assign c-lb-estab   = trim(return-value).
+{utp/ut-liter.i Fornecedor * r}
+assign c-lb-fornec  = trim(return-value).
+{utp/ut-liter.i Comprador * r}
+assign c-lb-compr   = trim(return-value).
+{utp/ut-liter.i Narrativa_do_Item * r}
+assign c-lb-nar-it  = trim(return-value).
+{utp/ut-liter.i Narrativa_da_Ordem * r}
+assign c-lb-nar-ord = trim(return-value).
+{utp/ut-liter.i End_Entrega * r}
+assign c-lb-end-entrega = trim(return-value).
+{utp/ut-liter.i Estabelecimento/Emitente * r}
+assign c-format-entrega = trim(return-value).
+{utp/ut-liter.i Local_Entrega * r}
+assign c-lb-entrega = trim(return-value).
+{utp/ut-liter.i Pedido * r}
+assign c-lb-pedido = trim(return-value).
+{utp/ut-liter.i Dt_Pedido * r}
+assign c-lb-dt-ped = trim(return-value).
+{utp/ut-liter.i Natureza * r}
+assign c-lb-nat = trim(return-value).
+{utp/ut-liter.i CPg * r}
+assign c-lb-cond = trim(return-value).
+{utp/ut-liter.i Ordem * r}
+assign c-lb-ordem = trim(return-value).
+{utp/ut-liter.i Est * r}
+assign c-lb-est = trim(return-value).
+{utp/ut-liter.i Item * r}
+assign c-lb-item = trim(return-value).
+{utp/ut-liter.i Descri‡Æo * r}
+assign c-lb-descr = trim(return-value).
+{utp/ut-liter.i UN * r}
+assign c-lb-un = trim(return-value).
+{utp/ut-liter.i Pre‡o_Unit rio * r}
+assign c-lb-preco = trim(return-value).
+{utp/ut-liter.i Moeda * r}
+assign c-lb-moeda = trim(return-value).
+{utp/ut-liter.i Alt * r}
+assign c-lb-alt = trim(return-value).
+{utp/ut-liter.i Loc_Entrega * r}
+assign c-lb-loc-entrega = trim(return-value).
+{utp/ut-liter.i Emit_Entrega * r}
+assign c-lb-emit-ent = trim(return-value).
+{utp/ut-liter.i Ped_Cliente * r}
+assign c-lb-ped-cliente = trim(return-value).
+{utp/ut-liter.i Seq * r}
+assign c-lb-sequencia = trim(return-value).
+{utp/ut-liter.i Cod_Entrega * r}
+assign c-lb-cod-entrega = trim(return-value).
+{utp/ut-liter.i Endere‡o_Completo * r}
+assign c-lb-end-completo = trim(return-value).
+{utp/ut-liter.i Endere‡o * r}
+assign c-lb-endereco = trim(return-value).
+{utp/ut-liter.i Bairro * r}
+assign c-lb-bairro = trim(return-value).
+{utp/ut-liter.i Cidade * r}
+assign c-lb-cidade = trim(return-value).
+{utp/ut-liter.i UF * r}
+assign c-lb-uf = trim(return-value).
+{utp/ut-liter.i Pais * r}
+assign c-lb-pais = trim(return-value).
+{utp/ut-liter.i CEP * r}
+assign c-lb-cep = trim(return-value).
+{utp/ut-liter.i Jurisdi‡Æo * r}
+assign c-lb-jurisdicao = trim(return-value).
+{utp/ut-liter.i Pa * r}
+assign c-lb-pa = trim(return-value).
+{utp/ut-liter.i Sit * r}
+assign c-lb-sit = trim(return-value).
+{utp/ut-liter.i Dt_EmissÆo * r}
+assign c-lb-dt-emis  = trim(return-value).
+{utp/ut-liter.i Dt_Entrega * r}
+assign c-lb-dt-entr = trim(return-value).
+{utp/ut-liter.i Quantidade * r}
+assign c-lb-qtd = trim(return-value).
+{utp/ut-liter.i Saldo * r}
+assign c-lb-saldo = trim(return-value).
+{utp/ut-liter.i Pre‡o_Mercadoria * r}
+assign c-lb-pr-merc = trim(return-value).
+{utp/ut-liter.i Valor_IPI * r}
+assign c-lb-valor = trim(return-value).
+{utp/ut-liter.i Pre‡o_Total * r}
+assign c-lb-total = trim(return-value).
+{utp/ut-liter.i PdCli * r}
+assign c-lb-cliente = trim(return-value).
+{utp/ut-liter.i Seq * r}
+assign c-lb-seq = trim(return-value).
+{utp/ut-liter.i Atras * r}
+assign c-lb-atraso = trim(return-value).
+{utp/ut-liter.i Data * r}
+assign c-lb-data = trim(return-value).
+{utp/ut-liter.i Imprimir_Pedidos_Recebidos * r}
+assign c-lb-ped-rec = trim(return-value).
+{utp/ut-liter.i Apenas_Pedidos_com_Ordens_Alteradas * r}
+assign c-lb-ord-alt = trim(return-value).
+{utp/ut-liter.i Somente_Pedidos_Emergenciais * r}
+assign c-lb-ped-eme = trim(return-value).
+{utp/ut-liter.i Utilizar_outra_moeda * r}
+assign c-lb-outr-mo = trim(return-value).
+{utp/ut-liter.i SELE€ÇO * r}
+assign c-lb-selec = trim(return-value).
+{utp/ut-liter.i PAR¶METROS * r}
+assign c-lb-param = trim(return-value).
+{utp/ut-liter.i CLASSIFICA€ÇO * r}
+assign c-lb-classe = trim(return-value).
+{utp/ut-liter.i IMPRESSÇO * r}
+assign c-lb-impr = trim(return-value).
+{utp/ut-liter.i Destino * r}
+assign c-lb-dest = trim(return-value).
+{utp/ut-liter.i Usu rio * r}
+assign c-lb-usuar = trim(return-value).
+{utp/ut-liter.i Despesas_Importa‡Æo * R}
+assign c-lb-despesas      = trim(return-value).
+{utp/ut-liter.i Despesas_Pagas_Fornecedor_Material * R}
+assign c-lb-despesas-pag1 = trim(return-value).
+{utp/ut-liter.i Todas_Despesas * R}
+assign c-lb-despesas-pag2 = trim(return-value).
+{utp/ut-liter.i Adiciona_Despesas_Pre‡o_Material * R}
+assign c-lb-despesas-inc  = trim(return-value).
+
+/*Unidade de Neg¢cio*/
+&IF '{&bf_mat_versao_ems}' >= '2.062' &THEN
+    {utp/ut-liter.i UNeg * R}
+    assign c-lb-unineg  = trim(return-value).
+&ENDIF
+
+assign c-lb-ext-fornec    = "Imprime Pedidos Extra Fornecedor".
+assign c-lb-emit-extra    = "Forn Extra".
+assign c-lb-cnpj          = "CNPJ".
+assign c-lb-contato       = "Contato".
+assign c-lb-telefone      = "Telefone".
+assign c-lb-e-mail        = "E-mail".
+assign c-lb-estado        = "UF".
+
+/* ESCC0406.i5 */

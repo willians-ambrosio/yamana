@@ -1,0 +1,79 @@
+ /******************************************************************************************
+
+Objetivo: Buscar as varia‡äes e os limites de varia‡Æo do pre‡o e da quantidade de acordo
+          com a versÆo corrente do produto . Para fazer uso dessa include ‚ necess rio que
+          dentro do programa principal seja utilizada a include re1001.i09 que define as 
+          variaveis utilizadas, e a include cdcfgat.i que define os pr‚-processadores
+          que definem qual versÆo do produto est  sendo executada . 
+
+
+Autor: JoÆo Francisco Moretti da Silva - log13242	
+Data : 25/04/2003
+
+*******************************************************************************************/
+
+
+&if defined(bf_mat_uni_estab) &then
+        
+        for first item-uni-estab
+            fields ( it-codigo     lim-var-valor
+                     cod-estabel   var-val-re-maior
+                     var-qtd-re    lim-var-qtd
+                     deposito-pad  cod-localiz
+                     loc-unica )
+            where item-uni-estab.it-codigo   = item.it-codigo
+              and item-uni-estab.cod-estabel = {1} no-lock.
+
+
+        end.
+        
+        if  not avail item-uni-estab
+        or (     avail item-uni-estab 
+            and (   item-uni-estab.var-val-re-maior = 0
+                 or item-uni-estab.lim-var-valor    = 0
+                 or item-uni-estab.var-qtd-re       = 0
+                 or item-uni-estab.lim-var-qtd      = 0 ) ) then do:
+            for first item-mat
+                fields ( it-codigo      var-val-re-maior
+                         lim-var-valor  var-qtd-re     
+                         lim-var-qtd                     ) 
+                where item-mat.it-codigo = item.it-codigo no-lock.
+
+            end.
+        end.
+
+
+        assign de-var-val-re-maior  = if  avail item-uni-estab
+                                      and item-uni-estab.var-val-re-maior > 0 
+                                      then item-uni-estab.var-val-re-maior
+                                      else item-mat.var-val-re-maior
+
+                de-lim-var-valor   = if  avail item-uni-estab
+                                     and item-uni-estab.lim-var-valor > 0 
+                                     then item-uni-estab.lim-var-valor
+                                     else item-mat.lim-var-valor
+
+                de-var-qtd-re       = if  avail item-uni-estab
+                                      and item-uni-estab.var-qtd-re > 0 
+                                      then item-uni-estab.var-qtd-re
+                                      else item-mat.var-qtd-re
+                                 
+                de-lim-var-qtd      = if  avail item-uni-estab
+                                      and item-uni-estab.lim-var-qtd > 0 
+                                      then item-uni-estab.lim-var-qtd
+                                      else item-mat.lim-var-qtd.
+  
+
+
+
+
+&else
+
+    find familia where familia.fm-codigo = item.fm-codigo no-lock no-error. 
+    IF AVAIL familia THEN
+       ASSIGN de-var-val-re-maior = familia.var-pre-perm 
+              de-var-qtd-re       = familia.var-qtd-perm .
+
+
+
+&endif

@@ -1,0 +1,18 @@
+/*********************************************************************
+ CD9731.i8 :: Verifica se a fun‡Æo 
+           "Integra‡Æo Contratos X Manuten‡Æo Industrial" est  ativa
+
+ Cria‡Æo: 21/08/2005 - 16:14h
+**********************************************************************/
+
+DEF VAR l-spp-integra-cn-mi-med AS LOGICAL INIT NO NO-UNDO.
+
+&IF "{&bf_mat_versao_ems}" >= "2.04":U &THEN
+    &IF "{&bf_mat_versao_ems}" >= "2.062":U &THEN
+        ASSIGN l-spp-integra-cn-mi-med = YES.
+    &ELSE
+        ASSIGN l-spp-integra-cn-mi-med = CAN-FIND (FIRST funcao
+                                                   WHERE funcao.cd-funcao = "spp-integra-cn-mi-med":U
+                                                     AND funcao.ativo     = YES).
+    &ENDIF
+&ENDIF

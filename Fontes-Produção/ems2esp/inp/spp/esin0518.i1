@@ -1,0 +1,675 @@
+/*******************************************************************************
+* ESIN0518.I - Busca Valores
+********************************************************************************/
+{cdp/cdcfgmat.i}
+
+run pi-inicializar in h-acomp(input c-processando).
+for each controle-verba
+    where controle-verba.ep-codigo    >= tt-param.i-ep-ini
+      and controle-verba.ep-codigo    <= tt-param.i-ep-fim
+      and controle-verba.cod-est-exec >= tt-param.c-est-ini
+      and controle-verba.cod-est-exec <= tt-param.c-est-fim      
+      and controle-verba.num-projeto  >= tt-param.i-proj-ini
+      and controle-verba.num-projeto  <= tt-param.i-proj-fim
+      and controle-verba.num-ordem    >= tt-param.i-ord-ini
+      and controle-verba.num-ordem    <= tt-param.i-ord-fim 
+      AND controle-verba.dt-ini-validade >= tt-param.d-data-ini
+      AND controle-verba.dt-fim-validade <= tt-param.d-data-fim NO-LOCK
+      break by controle-verba.ep-codigo
+            by controle-verba.cod-est-exec
+            by controle-verba.num-projeto
+            by controle-verba.num-ordem:
+
+      if first-of (controle-verba.ep-codigo) then do:
+         find param-inv 
+              where param-inv.ep-codigo = controle-verba.ep-codigo no-lock no-error.     
+         if tt-param.i-moeda-par = 1 then
+            assign i-cod-moeda-par = param-inv.moeda-inv.
+         else if tt-param.i-moeda-par = 2 then
+            assign i-cod-moeda-par = param-inv.moeda1.
+         else
+            assign i-cod-moeda-par = param-inv.moeda2.
+      end.   
+
+      run pi-acompanhar in h-acomp(input (c-lb-proj + 
+                                         string(controle-verba.num-projeto) + "  " + 
+                                         c-lb-ordem + 
+                                         string(controle-verba.num-ordem))).
+      for each plano-aprov
+         where plano-aprov.ep-codigo = controle-verba.ep-codigo
+           and plano-aprov.cod-est-exec = controle-verba.cod-est-exec
+           and plano-aprov.num-projeto = controle-verba.num-projeto
+           and plano-aprov.num-ordem = controle-verba.num-ordem
+           and plano-aprov.cod-sit-solic <> " " 
+           and plano-aprov.cod-sit-plano <> "E"
+           and plano-aprov.num-solicitacao > 0 
+           AND plano-aprov.dt-atualizacao >= tt-param.d-data-ini
+           AND plano-aprov.dt-atualizacao <= tt-param.d-data-fim NO-LOCK:
+
+          if plano-aprov.num-ord-comp <> 0 then do:
+              find ord-ped where 
+                   ord-ped.ep-codigo = plano-aprov.ep-codigo and
+                   ord-ped.cod-estabel = plano-aprov.cod-estabel and
+                   ord-ped.cod-area = 0 and
+                   ord-ped.num-ord-comp = plano-aprov.num-ord-comp and
+                   ord-ped.seq-comp = plano-aprov.seq-comp no-lock no-error.
+              if avail ord-ped then do:
+                 if ord-ped.cod-sit-comp = "E" or
+                    ord-ped.cod-sit-ped  = "E" then
+                    next.
+              end.     
+           end.
+
+           create t-controle.
+           assign t-controle.seq          = 10
+                  t-controle.ep-codigo    = plano-aprov.ep-codigo
+                  t-controle.cod-est-exec = plano-aprov.cod-est-exec
+                  t-controle.num-projeto  = plano-aprov.num-projeto
+                  t-controle.num-ordem    = plano-aprov.num-ordem
+                  t-controle.it-codigo    = plano-aprov.it-codigo
+                  t-controle.num-ord-magnus = plano-aprov.num-ord-magnus
+                  t-controle.dt-trans     = plano-aprov.dt-emiss-solic
+                  t-controle.solicitacao  = plano-aprov.num-solicitacao
+                  t-controle.ent-comp     = dec(substring(plano-aprov.char-1,1,15)) +
+                                            (dec(substring(plano-aprov.char-1,16,2)) / 100).
+
+                  run cdp/cd0812.p(input  0,
+                                 input  i-cod-moeda-par,
+                                 input  t-controle.ent-comp,
+                                 input  t-controle.dt-trans,
+                                 output t-controle.ent-comp).                          
+
+                  if plano-aprov.tp-solic = "1" then
+                     assign t-controle.tipo-doc = "Requisi‡Æo".
+                  else
+                     assign t-controle.tipo-doc = "Solicit".
+        {inp/spp/esin0518.i3}
+      end. 
+
+      for each ord-ped
+         where ord-ped.ep-codigo = controle-verba.ep-codigo
+           and ord-ped.cod-est-exec = controle-verba.cod-est-exec
+           and ord-ped.num-projeto = controle-verba.num-projeto
+           and ord-ped.num-ordem = controle-verba.num-ordem
+           and ord-ped.cod-sit-comp <> "E"
+           and ord-ped.cod-sit-ped <> "E"
+           AND ord-ped.dt-atualizacao >= tt-param.d-data-ini 
+           AND ord-ped.dt-atualizacao <= tt-param.d-data-fim
+           no-lock:
+
+           find plano-aprov where
+                plano-aprov.ep-codigo = ord-ped.ep-codigo and
+                plano-aprov.cod-area = ord-ped.cod-area and
+                plano-aprov.num-ord-comp = ord-ped.num-ord-comp and
+                plano-aprov.seq-comp = ord-ped.seq-comp no-lock no-error.
+           if not avail plano-aprov then next.     
+
+           create t-controle.
+           assign t-controle.ep-codigo    = ord-ped.ep-codigo
+                  t-controle.cod-est-exec = ord-ped.cod-est-exec
+                  t-controle.num-projeto  = ord-ped.num-projeto
+                  t-controle.num-ordem    = ord-ped.num-ordem
+                  t-controle.it-codigo    = plano-aprov.it-codigo
+                  t-controle.num-ord-magnus = plano-aprov.num-ord-magnus
+                  t-controle.tipo-doc     = "Ordem"
+                  t-controle.dt-trans     = ord-ped.data-1
+                  t-controle.num-ord-comp = ord-ped.num-ord-comp
+                  t-controle.seq-comp     = ord-ped.seq-comp
+                  t-controle.solicitacao  = plano-aprov.num-solicitacao
+                  t-controle.ent-comp     = ord-ped.dec-1 * ord-ped.quant-comp.
+
+           &IF "{&bf_mat_versao_ems}" >= "2.062" &THEN
+               IF ord-ped.nr-contrato <> 0 THEN DO:
+                 if l-integra-cn-in or 
+                    l-integra-cn-in-medicao then do:
+    
+                    assign T-CONTROLE.NUM-DOCTO = string(ord-ped.nr-contrato).
+    
+                    if l-integra-cn-in-medicao THEN DO:
+                       IF  ord-ped.num-seq-item <> 0 THEN DO: 
+    
+                          assign T-CONTROLE.NUM-DOCTO = string(ord-ped.nr-contrato)  + "/" + 
+                                                        string(ord-ped.num-seq-item) + "/" + 
+                                                        string(ord-ped.num-seq-medicao) + "/" +
+                                                        string(ord-ped.num-seq-event).
+    
+                       END.
+                    END.
+                 END.
+               end.
+           &else
+                 IF SUBSTRING(ORD-PED.CHAR-2,1,9) <> "" THEN DO:
+                   if l-integra-cn-in or 
+                      l-integra-cn-in-medicao then do:
+    
+                      assign T-CONTROLE.NUM-DOCTO = substring(ord-ped.char-2,1,9).
+    
+                      if l-integra-cn-in-medicao THEN DO:
+                         IF SUBSTRING(ord-ped.char-2,10,4) <> "" THEN DO: 
+    
+                            assign T-CONTROLE.NUM-DOCTO = trim(substring(ord-ped.char-2,1,9))  + "/" + 
+                                                          trim(SUBSTRING(ord-ped.char-2,10,4)) + "/" + 
+                                                          trim(SUBSTRING(ord-ped.char-2,18,4)) + "/" +
+                                                          trim(substring(ord-ped.char-2,14,4)).
+    
+                         END.
+                      END.
+                   END.
+                 end.
+           &ENDIF
+           if plano-aprov.num-solicitacao <> 0 then           
+              assign t-controle.sai-comp = dec(substring(plano-aprov.char-1,1,15)) +
+                                               (dec(substring(plano-aprov.char-1,16,2)) / 100).
+
+
+           run cdp/cd0812.p(input  0,
+                          input  i-cod-moeda-par,
+                          input  t-controle.ent-comp,
+                          input  t-controle.dt-trans,
+                          output t-controle.ent-comp).
+
+           if plano-aprov.num-solicitacao <> 0 then                
+              run cdp/cd0812.p(input  0,
+                             input  i-cod-moeda-par,
+                             input  t-controle.sai-comp,
+                             input  plano-aprov.dt-emiss-solic,
+                             output t-controle.sai-comp).
+
+           if plano-aprov.num-solicitacao <> 0 then             
+              assign t-controle.seq = 10.
+           else
+              assign t-controle.seq = 20.                                 
+
+         {inp/spp/esin0518.i3}
+      end.       
+
+
+      for each ord-ped
+         where ord-ped.ep-codigo = controle-verba.ep-codigo
+           and ord-ped.cod-est-exec = controle-verba.cod-est-exec
+           and ord-ped.num-projeto = controle-verba.num-projeto
+           and ord-ped.num-ordem = controle-verba.num-ordem
+           and ord-ped.num-pedido <> 0 
+           and (ord-ped.cod-sit-ped = "A"
+                or ord-ped.cod-sit-ped = "F") 
+           and ord-ped.cod-sit-comp   <> "E" 
+           AND ord-ped.dt-atualizacao >= tt-param.d-data-ini
+           AND ord-ped.dt-atualizacao <= tt-param.d-data-fim NO-LOCK:
+
+           find plano-aprov where
+                plano-aprov.ep-codigo = ord-ped.ep-codigo and
+                plano-aprov.cod-area = ord-ped.cod-area and
+                plano-aprov.num-ord-comp = ord-ped.num-ord-comp and
+                plano-aprov.seq-comp = ord-ped.seq-comp no-lock no-error.
+           if not avail plano-aprov then next.     
+
+           create t-controle.
+           assign t-controle.ep-codigo    = ord-ped.ep-codigo
+                  t-controle.cod-est-exec = ord-ped.cod-est-exec
+                  t-controle.num-projeto  = ord-ped.num-projeto
+                  t-controle.num-ordem    = ord-ped.num-ordem
+                  t-controle.it-codigo    = plano-aprov.it-codigo
+                  t-controle.num-ord-magnus = plano-aprov.num-ord-magnus
+                  t-controle.tipo-doc     = "Pedido"
+                  t-controle.dt-trans     = ord-ped.dt-pedido
+                  t-controle.num-ord-comp = ord-ped.num-ord-comp
+                  t-controle.seq-comp     = ord-ped.seq-comp
+                  t-controle.solicitacao  = plano-aprov.num-solicitacao
+                  t-controle.num-pedido   = ord-ped.num-pedido
+                  t-controle.ent-comp     = ord-ped.vl-item[1]
+                  t-controle.sai-comp     = ord-ped.dec-1 * ord-ped.quant-comp.
+
+
+        run cdp/cd0812.p(input  param-inv.moeda-inv,
+                          input  i-cod-moeda-par,
+                          input  t-controle.ent-comp,
+                          input  ord-ped.dt-pedido,
+                          output t-controle.ent-comp).
+
+           run cdp/cd0812.p(input  0,
+                          input  i-cod-moeda-par,
+                          input  t-controle.sai-comp,
+                          input  ord-ped.data-1,
+                          output t-controle.sai-comp).
+
+           if plano-aprov.num-solicitacao <> 0 then             
+              assign t-controle.seq = 10.
+           else
+              assign t-controle.seq = 20.                                 
+
+           {inp/spp/esin0518.i3}
+      end.       
+
+      for each movto-nf
+         where movto-nf.ep-codigo = controle-verba.ep-codigo
+           and movto-nf.cod-est-exec = controle-verba.cod-est-exec
+           and movto-nf.num-projeto = controle-verba.num-projeto
+           and movto-nf.num-ordem = controle-verba.num-ordem
+           AND movto-nf.dt-atualizacao >= tt-param.d-data-ini
+           AND movto-nf.dt-atualizacao <= tt-param.d-data-fim
+           no-lock:
+
+           find plano-aprov where
+                plano-aprov.ep-codigo = movto-nf.ep-codigo and
+                plano-aprov.cod-area = movto-nf.cod-area and
+                plano-aprov.num-ord-comp = movto-nf.num-ord-comp and
+                plano-aprov.seq-comp = movto-nf.seq-comp no-lock no-error.
+           if not avail plano-aprov then next.     
+
+           find ord-ped where 
+                   ord-ped.ep-codigo = plano-aprov.ep-codigo and
+                   ord-ped.cod-estabel = plano-aprov.cod-estabel and
+                   ord-ped.cod-area = 0 and
+                   ord-ped.num-ord-comp = plano-aprov.num-ord-comp and
+                   ord-ped.seq-comp = plano-aprov.seq-comp no-lock no-error.
+           if not avail ord-ped then next.  
+
+           create t-controle.
+           assign t-controle.ep-codigo    = movto-nf.ep-codigo
+                  t-controle.cod-est-exec = movto-nf.cod-est-exec
+                  t-controle.num-projeto  = movto-nf.num-projeto
+                  t-controle.num-ordem    = movto-nf.num-ordem
+                  t-controle.it-codigo    = plano-aprov.it-codigo
+                  t-controle.num-ord-magnus = plano-aprov.num-ord-magnus
+                  t-controle.tipo-doc     = "Nota Fisc"
+                  t-controle.dt-trans     = movto-nf.dt-trans
+                  t-controle.num-ord-comp = movto-nf.num-ord-comp
+                  t-controle.seq-comp     = ord-ped.seq-comp
+                  t-controle.solicitacao  = plano-aprov.num-solicitacao
+                  t-controle.num-pedido   = movto-nf.num-pedido
+                  t-controle.num-docto    = movto-nf.serie-docto + "/" +
+                                            substring(movto-nf.nro-docto,1,10) + "/" +
+                                            movto-nf.nat-operacao + "/" +
+                                            string(movto-nf.sequencia,">>>>9")
+                  t-controle.ent-real     = movto-nf.vl-nota[1].
+
+            run cdp/cd0812.p (input  param-inv.moeda-inv,
+                              input  i-cod-moeda-par,
+                              input  t-controle.ent-real,
+                              input  movto-nf.dt-trans,
+                              output t-controle.ent-real).  
+
+           if ord-ped.cod-sit-comp <> "E" and ord-ped.cod-sit-ped <> "E" then do:                  
+                assign t-controle.sai-comp = movto-nf.quant-doc-ent * 
+                                             (ord-ped.vl-item[1] / ord-ped.quant-comp).
+                                             
+                &if '{&BF_MAT_VERSAO_EMS}' = '2.04':U &then
+                     if  can-find (funcao where funcao.cd-funcao = "spp-atu-comp-receb" 
+                                            and funcao.ativo) THEN DO:
+                     
+                         assign t-controle.sai-comp = dec(substr(movto-nf.char-1,39,18)).
+                     END.
+                &endif
+                
+                
+                &if '{&BF_MAT_VERSAO_EMS}' > '2.04':U and '{&BF_MAT_VERSAO_EMS}' <= '2.062':U &then
+                     assign t-controle.sai-comp = dec(substr(movto-nf.char-1,39,18)).
+                &endif
+                 
+                
+                &if '{&BF_MAT_VERSAO_EMS}' > '2.062':U &then
+                     assign t-controle.sai-comp = movto-nf.val-cpromis.
+                &endif
+
+             IF ord-ped.data-2 <> ? THEN
+                 RUN cdp/cd0812.p (INPUT  param-inv.moeda-inv,
+                                   INPUT  i-cod-moeda-par,
+                                   INPUT  t-controle.sai-comp,
+                                   INPUT  ord-ped.data-2,
+                                   OUTPUT t-controle.sai-comp).
+             ELSE                                              
+                 RUN cdp/cd0812.p (INPUT  param-inv.moeda-inv,
+                                   INPUT  i-cod-moeda-par,
+                                   INPUT  t-controle.sai-comp,
+                                   INPUT  ord-ped.data-1,
+                                   OUTPUT t-controle.sai-comp).
+           end.
+
+           /* Devolu‡Æo ao Fornecedor: Gera entrada no compromissado e sa¡da no realizado */
+           &IF "{&bf_mat_versao_EMS}" >= "2.04" &THEN
+               if  movto-nf.tipo-trans = 2 then
+                   assign t-controle.sai-real = t-controle.ent-real
+                          t-controle.ent-real = 0
+                          t-controle.ent-comp = t-controle.sai-comp
+                          t-controle.sai-comp = 0.
+           &endif.
+
+           if plano-aprov.num-solicitacao <> 0 then
+               assign t-controle.seq = 10.
+           else
+               assign t-controle.seq = 20.
+
+         {inp/spp/esin0518.i3}
+      end.                                          
+
+     for each movto-apr
+         where movto-apr.ep-codigo = controle-verba.ep-codigo
+           and movto-apr.cod-est-exec = controle-verba.cod-est-exec
+           and movto-apr.num-projeto = controle-verba.num-projeto
+           and movto-apr.num-ordem = controle-verba.num-ordem
+           AND movto-apr.dt-trans    >= tt-param.d-data-ini
+           AND movto-apr.dt-trans    <= tt-param.d-data-fim 
+           no-lock:      
+           if movto-apr.transacao = "IMD" and
+              movto-apr.num-pedido <> 0 then next.             
+
+           create t-controle.
+           assign t-controle.ep-codigo    = movto-apr.ep-codigo
+                  t-controle.cod-est-exec = movto-apr.cod-est-exec
+                  t-controle.num-projeto  = movto-apr.num-projeto
+                  t-controle.num-ordem    = movto-apr.num-ordem
+                  t-controle.it-codigo    = movto-apr.it-codigo
+                  t-controle.num-ord-magnus = movto-apr.num-ord-magnus
+                  t-controle.dt-trans     = movto-apr.dt-trans 
+                  t-controle.esp-docto    = movto-apr.esp-docto
+                  t-controle.num-docto    = movto-apr.nro-docto
+                  t-controle.ent-real     = movto-apr.vl-mat[1] + 
+                                            movto-apr.vl-mob[1].
+
+           if movto-apr.transacao = "IMD" or 
+              movto-apr.transacao = "PEF" then
+              assign t-controle.num-docto = movto-apr.serie-docto    + "/" + 
+                                            movto-apr.nro-docto      + "/" + 
+                                            movto-apr.parcela        + "/" +
+                                            trim(string(movto-apr.cod-emitente,">>>>>>>>9")). 
+
+
+
+           if movto-apr.tipo-trans = 2 then
+              assign t-controle.ent-real = t-controle.ent-real * -1.    
+
+           run cdp/cd0812.p(input  param-inv.moeda-inv,
+                          input  i-cod-moeda-par,
+                          input  t-controle.ent-real,
+                          input  movto-apr.dt-trans,
+                          output t-controle.ent-real).    
+
+           if movto-apr.transacao = "REQ" then do:                                 
+                if movto-apr.tipo-trans = 1 then                              
+                   assign t-controle.tipo-doc = "Atend. REQ".
+                else
+                   assign t-controle.tipo-doc = "Devol. REQ".
+           end.
+           else do:
+               assign t-controle.tipo-doc = movto-apr.transacao.
+           end.        
+
+           if movto-apr.transacao = "REQ" then do:
+              assign t-controle.seq = 10.
+              find plano-aprov where
+                   plano-aprov.ep-codigo = movto-apr.ep-codigo and
+                   plano-aprov.cod-estabel = movto-apr.cod-estabel and
+                   plano-aprov.num-solicitacao = int(movto-apr.nro-docto) and
+                   plano-aprov.seq-solic = int(movto-apr.parcela) and
+                   plano-aprov.tp-solic = "1" 
+                   no-lock no-error.
+              if avail plano-aprov then     
+                  assign t-controle.solicitacao = plano-aprov.num-solicitacao.   
+
+              if movto-apr.log-1 then do: /* Executou o in2301 */                    
+                if avail plano-aprov then do:                     
+                     assign t-controle.sai-comp = dec(substring(plano-aprov.char-1,1,15)) +
+                                                   (dec(substring(plano-aprov.char-1,16,2)) / 100).
+                     assign t-controle.sai-comp = t-controle.sai-comp / plano-aprov.quant-solic.
+                     assign t-controle.sai-comp = t-controle.sai-comp * movto-apr.quant-mov.                                 
+                            t-controle.solicitacao  = plano-aprov.num-solicitacao.                        
+                     run cdp/cd0812.p(input  0,
+                                    input  i-cod-moeda-par,
+                                    input  t-controle.sai-comp,
+                                    input  plano-aprov.dt-emiss-solic,
+                                    output t-controle.sai-comp).                  
+                end.                
+              end.
+
+              if movto-apr.tipo-trans = 2 then do:                 
+                 assign t-controle.ent-real = t-controle.ent-real * -1
+                        t-controle.ent-comp = t-controle.sai-comp
+                        t-controle.sai-comp = 0
+                        t-controle.sai-real = t-controle.ent-real
+                        t-controle.ent-real = 0.                          
+              end.                             
+           end.              
+           else if movto-apr.transacao = "DIV" then 
+              assign t-controle.seq = 40.
+           else
+              assign t-controle.seq = 50.   
+
+        {inp/spp/esin0518.i3}
+      end.           
+
+
+      for each ordem-man
+         where ordem-man.ep-codigo = controle-verba.ep-codigo
+           and ordem-man.cod-est-exec = controle-verba.cod-est-exec
+           and ordem-man.num-projeto = controle-verba.num-projeto
+           and ordem-man.num-ordem = controle-verba.num-ordem
+          AND ordem-man.dt-cadastro  >= tt-param.d-data-ini
+          AND ordem-man.dt-cadastro  <= tt-param.d-data-fim NO-LOCK:                     
+
+           create t-controle.
+           assign t-controle.ep-codigo    = ordem-man.ep-codigo
+                  t-controle.cod-est-exec = ordem-man.cod-est-exec
+                  t-controle.num-projeto  = ordem-man.num-projeto
+                  t-controle.num-ordem    = ordem-man.num-ordem
+                  t-controle.it-codigo    = ordem-man.char-2
+                  t-controle.num-ord-magnus = ordem-man.num-ord-magnus                  
+                  t-controle.dt-trans     = ordem-man.dt-cadastro
+                  t-controle.num-ord-comp = 0
+                  t-controle.solicitacao  = 0
+                  t-controle.num-pedido   = 0
+                  t-controle.num-docto    = string(ordem-man.num-ord-man)
+                  t-controle.ent-real     = ordem-man.vl-material[1] + ordem-man.vl-servico[1] + 
+                                            ordem-man.vl-mob[1] + decimal(substring(ordem-man.char-1,1,18)).
+           if ordem-man.log-2 then
+              assign t-controle.tipo-doc = "Ord Manut".
+           else   
+              assign t-controle.tipo-doc = "Ord Prod".
+
+            run cdp/cd0812.p (input  param-inv.moeda-inv,
+                              input  i-cod-moeda-par,
+                              input  t-controle.ent-real,
+                              input  ordem-man.dt-cadastro,
+                              output t-controle.ent-real).  
+
+
+
+            assign t-controle.seq = 50.
+
+        {inp/spp/esin0518.i3}
+      end.              
+
+    {utp/ut-liter.i Apontamento_MOB}
+    FOR EACH  controle-inv-esp NO-LOCK
+        WHERE controle-inv-esp.ep-codigo    = controle-verba.ep-codigo   
+        AND   controle-inv-esp.cod-est-exec = controle-verba.cod-est-exec
+        AND   controle-inv-esp.num-projeto  = controle-verba.num-projeto 
+        AND   controle-inv-esp.tipo-doc     = RETURN-VALUE
+        AND   controle-inv-esp.dt-trans    >= tt-param.d-data-ini
+        AND   controle-inv-esp.dt-trans    <= tt-param.d-data-fim:
+
+        CREATE t-controle.
+        ASSIGN t-controle.dt-trans       = controle-inv-esp.dt-trans
+               t-controle.it-codigo      = STRING(controle-inv-esp.item)
+               t-controle.num-ord-magnus = controle-inv-esp.num-ord-inv
+               t-controle.tipo-doc       = controle-inv-esp.tipo-doc
+               t-controle.solicitacao    = 0
+               t-controle.num-ord-comp   = controle-inv-esp.numero-ordem
+               t-controle.num-pedido     = controle-inv-esp.num-pedido
+               t-controle.num-docto      = controle-inv-esp.nro-docto
+               t-controle.ent-comp       = 0
+               t-controle.sai-comp       = 0
+               t-controle.ent-real       = controle-inv-esp.valor-origem
+               t-controle.sai-real       = 0
+               t-controle.ep-codigo      = controle-inv-esp.ep-codigo
+               t-controle.cod-est-exec   = controle-inv-esp.cod-est-exec
+               t-controle.num-projeto    = controle-inv-esp.num-projeto
+               t-controle.num-ordem      = controle-inv-esp.num-ordem.
+
+        RUN cdp/cd0812.p (INPUT  param-inv.moeda-inv,
+                          INPUT  i-cod-moeda-par,
+                          INPUT  t-controle.ent-real,
+                          INPUT  t-controle.dt-trans,
+                          OUTPUT t-controle.ent-real).  
+
+        ASSIGN t-controle.seq = 60.
+
+        {inp/spp/esin0518.i3}
+    END.
+
+    {utp/ut-liter.i Despesa_de_Importa‡Æo}
+    FOR EACH  controle-inv-esp NO-LOCK
+        WHERE controle-inv-esp.ep-codigo    = controle-verba.ep-codigo   
+        AND   controle-inv-esp.cod-est-exec = controle-verba.cod-est-exec
+        AND   controle-inv-esp.num-projeto  = controle-verba.num-projeto 
+        AND   controle-inv-esp.tipo-doc     = RETURN-VALUE
+        AND   controle-inv-esp.dt-trans    >= tt-param.d-data-ini
+        AND   controle-inv-esp.dt-trans    <= tt-param.d-data-fim:
+
+        CREATE t-controle.
+        ASSIGN t-controle.dt-trans       = controle-inv-esp.dt-trans
+               t-controle.it-codigo      = STRING(controle-inv-esp.item)
+               t-controle.num-ord-magnus = controle-inv-esp.num-ord-inv
+               t-controle.tipo-doc       = controle-inv-esp.tipo-doc
+               t-controle.solicitacao    = 0
+               t-controle.num-ord-comp   = controle-inv-esp.numero-ordem
+               t-controle.num-pedido     = controle-inv-esp.num-pedido
+               t-controle.num-docto      = controle-inv-esp.nro-docto
+               t-controle.ent-comp       = controle-inv-esp.ent-comp
+               t-controle.sai-comp       = controle-inv-esp.sai-comp
+               t-controle.ent-real       = controle-inv-esp.ent-real
+               t-controle.sai-real       = controle-inv-esp.sai-real
+               t-controle.ep-codigo      = controle-inv-esp.ep-codigo
+               t-controle.cod-est-exec   = controle-inv-esp.cod-est-exec
+               t-controle.num-projeto    = controle-inv-esp.num-projeto
+               t-controle.num-ordem      = controle-inv-esp.num-ordem.
+
+        run cdp/cd0812.p (INPUT  param-inv.moeda-inv,
+                          INPUT  i-cod-moeda-par,
+                          INPUT  t-controle.ent-real,
+                          INPUT  t-controle.dt-trans,
+                          OUTPUT t-controle.ent-real).  
+
+        ASSIGN t-controle.seq = 70.
+
+        {inp/spp/esin0518.i3}
+    END.
+    
+    {utp/ut-liter.i Contrato}
+    FOR EACH  controle-inv-esp NO-LOCK
+        WHERE controle-inv-esp.ep-codigo    = controle-verba.ep-codigo   
+        AND   controle-inv-esp.cod-est-exec = controle-verba.cod-est-exec
+        AND   controle-inv-esp.num-projeto  = controle-verba.num-projeto 
+        AND   controle-inv-esp.tipo-doc     = RETURN-VALUE
+        AND   controle-inv-esp.dt-trans    >= tt-param.d-data-ini
+        AND   controle-inv-esp.dt-trans    <= tt-param.d-data-fim:
+
+        CREATE t-controle.
+        ASSIGN t-controle.dt-trans       = controle-inv-esp.dt-trans
+               t-controle.it-codigo      = STRING(controle-inv-esp.item)
+               t-controle.num-ord-magnus = controle-inv-esp.num-ord-inv
+               t-controle.tipo-doc       = controle-inv-esp.tipo-doc
+               t-controle.solicitacao    = 0
+               t-controle.num-ord-comp   = controle-inv-esp.numero-ordem
+               t-controle.num-pedido     = controle-inv-esp.num-pedido
+               t-controle.num-docto      = controle-inv-esp.nro-docto
+               t-controle.ent-comp       = controle-inv-esp.ent-comp
+               t-controle.sai-comp       = controle-inv-esp.sai-comp
+               t-controle.ent-real       = controle-inv-esp.ent-real
+               t-controle.sai-real       = controle-inv-esp.sai-real
+               t-controle.ep-codigo      = controle-inv-esp.ep-codigo
+               t-controle.cod-est-exec   = controle-inv-esp.cod-est-exec
+               t-controle.num-projeto    = controle-inv-esp.num-projeto
+               t-controle.num-ordem      = controle-inv-esp.num-ordem.
+               
+        RUN cdp/cd0812.p (INPUT  param-inv.moeda-inv,
+                          INPUT  i-cod-moeda-par,
+                          INPUT  t-controle.ent-real,
+                          INPUT  t-controle.dt-trans,
+                          OUTPUT t-controle.ent-real).  
+
+        ASSIGN t-controle.seq = 80.
+
+        {inp/spp/esin0518.i3}
+    END.
+    
+    {utp/ut-liter.i Item_Contrato}
+    FOR EACH  controle-inv-esp NO-LOCK
+        WHERE controle-inv-esp.ep-codigo    = controle-verba.ep-codigo   
+        AND   controle-inv-esp.cod-est-exec = controle-verba.cod-est-exec
+        AND   controle-inv-esp.num-projeto  = controle-verba.num-projeto 
+        AND   controle-inv-esp.tipo-doc     = RETURN-VALUE
+        AND   controle-inv-esp.dt-trans    >= tt-param.d-data-ini
+        AND   controle-inv-esp.dt-trans    <= tt-param.d-data-fim:
+
+        CREATE t-controle.
+        ASSIGN t-controle.dt-trans       = controle-inv-esp.dt-trans
+               t-controle.it-codigo      = STRING(controle-inv-esp.item)
+               t-controle.num-ord-magnus = controle-inv-esp.num-ord-inv
+               t-controle.tipo-doc       = controle-inv-esp.tipo-doc
+               t-controle.solicitacao    = 0
+               t-controle.num-ord-comp   = controle-inv-esp.numero-ordem
+               t-controle.num-pedido     = controle-inv-esp.num-pedido
+               t-controle.num-docto      = controle-inv-esp.nro-docto
+               t-controle.ent-comp       = controle-inv-esp.ent-comp
+               t-controle.sai-comp       = controle-inv-esp.sai-comp
+               t-controle.ent-real       = controle-inv-esp.ent-real
+               t-controle.sai-real       = controle-inv-esp.sai-real
+               t-controle.ep-codigo      = controle-inv-esp.ep-codigo
+               t-controle.cod-est-exec   = controle-inv-esp.cod-est-exec
+               t-controle.num-projeto    = controle-inv-esp.num-projeto
+               t-controle.num-ordem      = controle-inv-esp.num-ordem.
+
+        run cdp/cd0812.p (INPUT  param-inv.moeda-inv,
+                          INPUT  i-cod-moeda-par,
+                          INPUT  t-controle.ent-real,
+                          INPUT  t-controle.dt-trans,
+                          OUTPUT t-controle.ent-real).  
+
+        ASSIGN t-controle.seq = 80.
+
+        {inp/spp/esin0518.i3}
+    END.
+    
+    FOR EACH  controle-inv-frotas NO-LOCK
+        WHERE controle-inv-frotas.ep-codigo    = controle-verba.ep-codigo   
+        AND   controle-inv-frotas.cod-est-exec = controle-verba.cod-est-exec
+        AND   controle-inv-frotas.num-projeto  = controle-verba.num-projeto 
+        AND   controle-inv-frotas.num-ordem    = controle-verba.num-ordem
+        AND   controle-inv-frotas.data-trans  >= tt-param.d-data-ini
+        AND   controle-inv-frotas.data-trans  <= tt-param.d-data-fim:
+        
+        FOR FIRST ord-prod
+            WHERE ord-prod.nr-ord-produ = controle-inv-frotas.nr-ord-produ NO-LOCK:
+        END.
+            
+        CREATE t-controle.
+        ASSIGN t-controle.dt-trans       = controle-inv-frotas.data-trans
+               t-controle.it-codigo      = STRING(ord-prod.it-codigo)
+               t-controle.num-ord-magnus = controle-inv-frotas.num-ord-magnus
+               t-controle.tipo-doc       = controle-inv-frotas.tipo-doc
+               t-controle.solicitacao    = 0
+               t-controle.num-ord-comp   = 0
+               t-controle.num-pedido     = 0
+               t-controle.num-docto      = STRING(controle-inv-frotas.nr-ord-produ)
+               t-controle.ent-comp       = 0
+               t-controle.sai-comp       = 0
+               t-controle.ent-real       = controle-inv-frotas.ent-real
+               t-controle.sai-real       = 0
+               t-controle.ep-codigo      = controle-inv-frotas.ep-codigo
+               t-controle.cod-est-exec   = controle-inv-frotas.cod-est-exec
+               t-controle.num-projeto    = controle-inv-frotas.num-projeto
+               t-controle.num-ordem      = controle-inv-frotas.num-ordem.
+
+        RUN cdp/cd0812.p (INPUT  param-inv.moeda-inv,
+                          INPUT  i-cod-moeda-par,
+                          INPUT  t-controle.ent-real,
+                          INPUT  t-controle.dt-trans,
+                          OUTPUT t-controle.ent-real).  
+                           
+        ASSIGN t-controle.seq = 90.
+
+        {inp/spp/esin0518.i3}
+    END.
+END.
+
+

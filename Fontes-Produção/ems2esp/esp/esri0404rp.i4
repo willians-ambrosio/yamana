@@ -1,0 +1,76 @@
+/*********************************************************************************
+**
+** rip/ri0404rp.i4 - retorna curto prazo e longo prazo
+**
+*********************************************************************************/    
+  
+PROCEDURE pi-retorna-cp-lp:
+
+    DEF INPUT  PARAMETER p-qt-parc-cp          AS INTEGER.
+    DEF INPUT  PARAMETER p-qt-parc-lp          AS INTEGER.
+    DEF INPUT  PARAMETER p-i-nr-parc-cred      AS INTEGER.
+    DEF INPUT  PARAMETER p-de-valor-atual-bem  LIKE ri-valor-bem.val-imposto   NO-UNDO.
+    DEF INPUT  PARAMETER p-de-vl-parcela       LIKE ri-valor-bem.val-imposto   NO-UNDO.
+    DEF INPUT  PARAMETER p-de-saldo            AS DEC.
+    DEF OUTPUT PARAMETER p-de-saldo-cp         AS DEC.
+    DEF OUTPUT PARAMETER p-de-saldo-lp         AS DEC.
+
+    DEF VAR de-qt-parc-prev AS DECIMAL.
+
+    /* Valor do credito */
+    IF p-de-saldo           <= 0
+    OR p-de-valor-atual-bem <= 0
+    OR p-de-vl-parcela      <= 0 THEN
+        RETURN.
+    
+    /* Quantidade de parcelas previstas para recuperar o credito em funá∆o do valor da parcela
+       Em alguns casos o total do credito e recuperado antes do prazo previsto
+       A quantidade de parcelas prevista e necessaria para ajustar a quantidade de parcelas a curto e a longo prazo
+       Por ex: se o credito total for igual a R$0,30 seram recuperadas 30 parcelas de R#0,01
+       E a quantidade de parcelas a curto prazo ser† igual a 12 e quantidade de parcelas a longo prazo ser† igual a 18 */
+    ASSIGN de-qt-parc-prev = ROUND(p-de-valor-atual-bem / p-de-vl-parcela,2).
+
+    IF de-qt-parc-prev >= (p-qt-parc-lp + p-qt-parc-cp) THEN
+        /* A parcela foi arredondada para menor, n∆o sera possivel recuperar todo o credito no prazo
+        Por ex: se o total do credito for igual a R$22,11 em 48 parcelas o valor da parcela sera 
+        arredondado de R$0,460625 para R$0,46 recuperando apenas R$22,08 (0,46 X 48) que Ç R$0,03 menor que o total do credito
+        Neste caso a quantidade de parcelas prevista sera igual a quantidade de meses do curto prazo mais a quantidade de meses do longo prazo */
+        ASSIGN de-qt-parc-prev = (p-qt-parc-lp + p-qt-parc-cp).
+    ELSE 
+        IF de-qt-parc-prev <> TRUNC(de-qt-parc-prev,0) THEN
+           /* Quando a quantidade de parcelas prevista n∆o for exata o valor dever ser arredondado para o pr¢ximo inteiro
+              Isto significa que o valor da £ltima parcela ser† menor do que o valor da parcela mensal
+              Por Ex: Se o total do credito for igual a R$11,89 em 48 parcelas o valor da parcela sera 
+              arredondado de R$0,247708333 para R$0,25 se fossem recuperadas 48 parcelas de R$0,25 o total recuperado ficaria igual a R$12,00 
+              Que Ç maior que o total do credito a recuperar por este motivo seram recuperadas 47 parcelas de R$0,25 e o valor da £ltima parcela sera igual a R$ 0,14 */
+            ASSIGN de-qt-parc-prev = TRUNC(de-qt-parc-prev,0) + 1.
+    
+    /* Ajuste da quantidade de parcela a curto e longo prazo para os casos em que a quantidade de parcelas prevista
+       for menor que a quantidade total de parcelas (curto + longo) */
+    IF de-qt-parc-prev <= p-qt-parc-cp THEN
+        ASSIGN p-qt-parc-cp = de-qt-parc-prev
+               p-qt-parc-lp = 0.
+    ELSE
+        IF de-qt-parc-prev < (p-qt-parc-cp + p-qt-parc-lp) THEN
+            ASSIGN p-qt-parc-lp = de-qt-parc-prev - p-qt-parc-cp. 
+
+    /* Ajuste da quantidade de parcela a curto e longo prazo em funá∆o da quantidade de parcelas ainda n∆o recuperadas */
+    ASSIGN p-qt-parc-lp = p-qt-parc-lp - p-i-nr-parc-cred.
+
+    /* Quando a quantidade de parcelas a recuperar e menor que a quantidade de parcelas do curto prazo */
+    IF  p-qt-parc-lp < 0 THEN 
+        ASSIGN p-qt-parc-cp = p-qt-parc-cp + p-qt-parc-lp
+               p-qt-parc-lp = 0.  
+
+    IF p-qt-parc-lp > 1 THEN
+        ASSIGN p-de-saldo-cp = p-de-vl-parcela * p-qt-parc-cp
+               p-de-saldo-lp = p-de-saldo      - p-de-saldo-cp.
+    ELSE 
+        IF p-qt-parc-lp = 1 THEN
+            ASSIGN p-de-saldo-cp = p-de-saldo - p-de-saldo-lp
+                   p-de-saldo-lp = p-de-vl-parcela.
+        ELSE
+            ASSIGN p-de-saldo-cp = p-de-saldo
+                   p-de-saldo-lp = 0.
+    
+END PROCEDURE.

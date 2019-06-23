@@ -1,0 +1,73 @@
+put skip(2). /* salto de pagina inicial */
+  /* ---> WELLINGTON ALTERADO O PULO INICIAL DE 5 para 2
+          COM ISTO EVITANDO QUE O USUARIO PRECISE AJUSTA <--- */
+  
+  c-num-nota = string(nota-fiscal.nr-nota-fis).
+  
+/* ---> FLAG de ENTRADA ou SAIDA 
+    Wellington Ap - DSC - 18/09/08 <--- */
+   
+  IF natur-oper.tipo = 1 THEN  /* ---> ENRADA <--- */
+    PUT 
+      "X"  AT 110 
+      c-num-nota at 130 skip (5) .
+    
+  IF natur-oper.tipo = 2 THEN  /* ---> SAIDA <--- */
+    PUT "X"  AT 94 
+      c-num-nota at 130 skip (5).
+/* -------------------- FIM FLAG --------------------------- */
+
+  put 
+    c-desc-cfop-nat                                                        at 6
+    {cdp/cd0620.i2 nat-operacao nota-fiscal.dt-emis-nota "' '" c-formato-cfop} at 56.
+    
+ /*------ INS. EST. DO SUBSTITUITO TRIB. ------*/
+  if  l-sub = yes then do:
+  
+    find first estab-uf
+      where estab-uf.cod-estabel = nota-fiscal.cod-estabel
+      and   estab-uf.estado      = nota-fiscal.estado  no-lock no-error.
+    if avail estab-uf then do:
+      put estab-uf.ins-estadual   at 65.
+    end.
+  end.
+  
+  put skip(2).
+  
+  /*------------- IMPRESSAO DOS DADOS DO EMITENTE --------------*/
+
+  put emitente.nome-emit at  6.
+
+  if  nota-fiscal.nome-ab-cli <> "brinde" then
+    put  "(" + string(emitente.cod-emitente, "999999999") + ")"  at 56 format "x(11)"
+    c-cgc                                      at 100.
+
+  put nota-fiscal.dt-emis-nota at 130 skip(1).
+
+  /*----------ENDERECO DO EMITENTE-------------------------------------------*/
+  if  nota-fiscal.nome-ab-cli <> "brinde" then
+          
+    put nota-fiscal.endereco   at  6
+        nota-fiscal.bairro     at 79
+        nota-fiscal.cep        at 115.
+
+  if b-nota-fiscal.dt-saida <> ? then do:
+  
+    put substring(string(b-nota-fiscal.dt-saida ,"99/99/9999"),1,2) + "/" +
+        substring(string(b-nota-fiscal.dt-saida ,"99/99/9999"),4,2) + "/" +
+        substring(string(b-nota-fiscal.dt-saida ,"99/99/9999"),7,4) at 130 format "x(10)".
+  
+  end.
+      
+  put skip(2).
+  
+  if  nota-fiscal.nome-ab-cli <> "brinde" then
+    put nota-fiscal.cidade     at  6
+        emitente.telefone[1]   at 67
+        nota-fiscal.estado     at 91
+        nota-fiscal.ins-estadual  at 100.
+        
+  if  l-dt = yes then
+    put hr-saida  at 130.  /* nao esta sendo gravada na nota */
+    
+  put skip(2).

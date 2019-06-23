@@ -1,0 +1,44 @@
+/********************************************************************************
+** Copyright DATASUL S.A. (1997)
+** Todos os Direitos Reservados.
+**
+** Este fonte e de propriedade exclusiva da DATASUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+**
+**     mip/mi9999.i  Include para verifica‡Æo do m¢dulo de manuten‡Æo.
+**     Data          Fevereiro/2000
+**     Autor         Datasul S.A
+*******************************************************************************/
+DEFINE VARIABLE hDBOParamMntMi      AS HANDLE NO-UNDO.
+DEFINE VARIABLE ModuloMiImplantado AS LOGICAL NO-UNDO.
+DEFINE VARIABLE ModuloPiImplantado AS LOGICAL NO-UNDO.
+DEFINE VARIABLE ParamMiEncontrado  AS LOGICAL NO-UNDO.
+
+        {btb/btb008za.i1 mnbo/bomn162.p}
+        {btb/btb008za.i2 mnbo/bomn162.p '' hDBOParamMntMi}
+      
+    RUN verificaModuloImplantado IN hDBOParamMntMi (output ModuloMiImplantado,
+                                                    output ModuloPiImplantado,
+                                                    output ParamMiEncontrado).
+    if not ModuloMiImplantado then do:
+        VIEW {&WINDOW-NAME}.
+        {utp/ut-field.i mgmnt param-mnt modulo-mi 1}
+        run utp/ut-msgs.p(input 'show', 
+                          input 2082, 
+                          input trim(return-value)).
+        RETURN "NOK":U.    
+    end.
+    if not ParamMiEncontrado then do:
+        VIEW {&WINDOW-NAME}.
+        {utp/ut-table.i mgmnt param-mi 1}
+        run utp/ut-msgs.p(input 'show', 
+                          input 56, 
+                          input trim(return-value)).
+        RETURN "NOK":U.
+    end.
+ if valid-handle (hDBOParamMntMi)
+    and hDBOParamMntMi:type = "procedure":U
+    and hDBOParamMntMi:file-name = "mnbo/bomn162.p":U then
+    RUN destroy IN hDBOParamMntMi.
+/*fim do include*/

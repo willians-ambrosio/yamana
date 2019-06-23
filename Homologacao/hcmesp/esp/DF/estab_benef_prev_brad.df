@@ -1,0 +1,75 @@
+ADD TABLE "estab_benef_prev_brad"
+  AREA "Schema Area"
+  DESCRIPTION "Parametros para Geracao de Arquivo da Previdencia Privada Bradesco"
+  DUMP-NAME "estab_benef_prev_brad"
+
+ADD FIELD "cdn_empresa" OF "estab_benef_prev_brad" AS integer 
+  DESCRIPTION "C¢digo Empresa"
+  FORMAT "zz9"
+  INITIAL "0"
+  LABEL "Empresa"
+  LABEL-SA "R9"
+  POSITION 2
+  MAX-WIDTH 4
+  VIEW-AS ""
+  COLUMN-LABEL "Emp"
+  COLUMN-LABEL-SA "R3"
+  HELP "C¢digo Empresa"
+  ORDER 10
+  MANDATORY
+
+ADD FIELD "cdn_estab" OF "estab_benef_prev_brad" AS integer 
+  DESCRIPTION "C¢digo N£mero Estabelecimento"
+  FORMAT "zz9"
+  INITIAL "0"
+  LABEL "Estabelecimento"
+  LABEL-SA "R18"
+  POSITION 3
+  MAX-WIDTH 4
+  VIEW-AS ""
+  COLUMN-LABEL "Est"
+  COLUMN-LABEL-SA "R3"
+  HELP "C¢digo N£mero Estabelecimento"
+  ORDER 20
+  MANDATORY
+
+ADD FIELD "cdn_beneficio" OF "estab_benef_prev_brad" AS integer 
+  FORMAT ">>9"
+  INITIAL "0"
+  LABEL "Beneficio"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "Beneficio"
+  ORDER 30
+
+ADD FIELD "nr_contrato" OF "estab_benef_prev_brad" AS character 
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Contrato"
+  POSITION 5
+  MAX-WIDTH 20
+  COLUMN-LABEL "Contrato"
+  ORDER 40
+
+ADD FIELD "nr_cliente" OF "estab_benef_prev_brad" AS character 
+  FORMAT "x(10)"
+  INITIAL ""
+  LABEL "Cliente"
+  POSITION 6
+  MAX-WIDTH 20
+  COLUMN-LABEL "Cliente"
+  ORDER 50
+
+ADD INDEX "idx_principal" ON "estab_benef_prev_brad" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "cdn_empresa" ASCENDING 
+  INDEX-FIELD "cdn_estab" ASCENDING 
+  INDEX-FIELD "cdn_beneficio" ASCENDING 
+
+.
+PSC
+cpstream=ibm850
+.
+0000001612

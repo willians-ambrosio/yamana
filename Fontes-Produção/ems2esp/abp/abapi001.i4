@@ -1,0 +1,139 @@
+&ANALYZE-SUSPEND _VERSION-NUMBER UIB_v9r12
+&ANALYZE-RESUME
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _CUSTOM _DEFINITIONS Include 
+/********************************************************************************
+** Copyright DATASUL S.A. (1997)
+** Todos os Direitos Reservados.
+**
+** Este fonte e de propriedade exclusiva da DATASUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+*****************************************************************************
+**
+**       PROGRAMA: ABAPI001.i4
+**
+**       DATA....: Janeiro de 2004
+**
+**       AUTOR...: Marcio Willwock - Manufatura - DATASUL S.A.
+**
+**       OBJETIVO: Atualizaá∆o dos movimentos de eventos, conforme consistància
+**                 das fichas de abastecimento/lubrificaá∆o
+**
+*****************************************************************************/
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+
+&ANALYZE-SUSPEND _UIB-PREPROCESSOR-BLOCK 
+
+/* ********************  Preprocessor Definitions  ******************** */
+
+
+
+/* _UIB-PREPROCESSOR-BLOCK-END */
+&ANALYZE-RESUME
+
+
+
+/* *********************** Procedure Settings ************************ */
+
+&ANALYZE-SUSPEND _PROCEDURE-SETTINGS
+/* Settings for THIS-PROCEDURE
+   Type: Include
+   Allow: 
+   Frames: 0
+   Add Fields to: Neither
+   Other Settings: INCLUDE-ONLY
+ */
+&ANALYZE-RESUME _END-PROCEDURE-SETTINGS
+
+/* *************************  Create Window  ************************** */
+
+&ANALYZE-SUSPEND _CREATE-WINDOW
+/* DESIGN Window definition (used by the UIB) 
+  CREATE WINDOW Include ASSIGN
+         HEIGHT             = 4.63
+         WIDTH              = 31.57.
+/* END WINDOW DEFINITION */
+                                                                        */
+&ANALYZE-RESUME
+
+ 
+
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _CUSTOM _MAIN-BLOCK Include 
+
+
+/* ***************************  Main Block  *************************** */
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+
+/* **********************  Internal Procedures  *********************** */
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piBaixaMovtoEvento Include 
+PROCEDURE piBaixaMovtoEvento :
+/*------------------------------------------------------------------------------
+  Purpose:     piBaixaMovtoEvento
+  Parameters:  entrada pDocto   = Documento de Abastecimento/Lubrificaá∆o
+               entrada pData    = Data do movimento
+               entrada pHoraIni = Hora Inicial do Movimento
+               entrada pHoraFim = Hora Final do Movimento
+               entrada pConsist = Apontamento Consistido (Sim/N∆o)
+  Notes:       Atualiza os movimentos de eventos do equipamento informado
+------------------------------------------------------------------------------*/
+define input parameter pDocto   as integer                  no-undo.
+define input parameter pData    as date format "99/99/9999" no-undo.
+define input parameter pHoraIni as character                no-undo.
+define input parameter pHoraFim as character                no-undo.
+define input parameter pConsist as logical                  no-undo.
+
+define variable iDesc as integer no-undo.
+define buffer bfLubrif for mab-item-lubrific.
+
+/** Busca Todas as Lubrificaá‰es do Documento Atualizado **/
+FOR EACH  bfLubrif 
+    WHERE bfLubrif.num-docto = pDocto no-lock:
+    /** Se apontamento est† consistido, Baixar o Evento **/
+    if pConsist then do:
+       for first mab-comptmento-eqpto 
+           where mab-comptmento-eqpto.cod-comptmento = bfLubrif.cod-comptmento
+             and mab-comptmento-eqpto.ep-codigo      = bfLubrif.ep-codigo
+             and mab-comptmento-eqpto.cod-eqpto      = bfLubrif.cod-eqpto no-lock:
+        /** Busca o primeiro movimento de evento n∆o finalizado **/
+        FOR FIRST mab-movto-event 
+            WHERE mab-movto-event.ep-codigo    = bfLubrif.ep-codigo
+            AND   mab-movto-event.cod-eqpto    = bfLubrif.cod-eqpto
+            AND   mab-movto-event.cod-evento   = bfLubrif.cod-evento
+            and   mab-movto-event.cod-sub-sist = mab-comptmento-eqpto.cod-sub-sist
+            AND   mab-movto-event.dat-final    = ? EXCLUSIVE-LOCK:
+            /** Verifica se Lubrificaá∆o foi feita dentro da data do movimento de evento **/
+            IF mab-movto-event.dat-inicial < pData OR 
+              (mab-movto-event.dat-inicial = pData AND 
+               mab-movto-event.hra-inicial < pHoraIni) THEN DO:
+                {utp/ut-liter.i "Documento conclu°do conforme Movimento de Lubrificaá∆o"}
+                /** Atualiza data/hora conclus∆o do movimento de evento **/
+                ASSIGN mab-movto-event.dat-final      = pData
+                       mab-movto-event.hra-final      = pHoraFim
+                       mab-movto-event.num-docto-orig = pDocto
+                       /** Atualiza a descriá∆o, inclui texto de conclus∆o **/
+                       mab-movto-event.dsl-obs        = mab-movto-event.dsl-obs + 
+                                                        "***":U                 +
+                                                        trim(return-value)      + 
+                                                        " (MAB) ":U             + 
+                                                        STRING(pDocto).
+            END.
+        END.
+       end.
+     end.
+END.
+
+return "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+

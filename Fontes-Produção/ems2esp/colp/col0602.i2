@@ -1,0 +1,29 @@
+/********************************************************************************
+** Copyright DATASUL S.A. (1997)
+** Todos os Direitos Reservados.
+**
+** Este fonte e de propriedade exclusiva da DATASUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+*******************************************************************************/
+/*******************************************************************************
+*   {1}  N£mero da imagem
+*******************************************************************************/
+
+case {1}:
+    when 1 then do:
+        {utp/ut-liter.i Estabelecimento}
+    end.
+    when 2 then do:
+        {utp/ut-liter.i Sistema}
+    end.
+    when 3 then do:
+        {utp/ut-liter.i Tipo}
+    end.
+    when 30 then do:
+        {utp/ut-liter.i Detalhes}
+    end.
+    when 31 then do:
+        {utp/ut-liter.i Hist¢rico}
+    end.
+end case.

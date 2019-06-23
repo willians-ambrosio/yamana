@@ -1,0 +1,16 @@
+/*******************************************************************************
+** Elimina os registros para integracao de contratos
+*******************************************************************************/
+
+&IF '{&bf_mat_versao_ems}' >= '2.04' &THEN
+
+     FOR EACH tt-integra-cn:
+         DELETE tt-integra-cn.
+     END.
+
+     FOR EACH rowErrors
+        WHERE RowErrors.ErrorNumber = 29693:
+         DELETE rowErrors.
+     END.
+
+&ENDIF

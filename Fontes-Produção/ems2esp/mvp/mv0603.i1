@@ -1,0 +1,77 @@
+/********************************************************************************
+** Copyright DATASUL S.A. (1997)
+** Todos os Direitos Reservados.
+**
+** Este fonte e de propriedade exclusiva da DATASUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+*****************************************************************************
+**
+**       PROGRAMA: MV0603.i1
+**
+**       DATA....: Dezembro de 2003
+**
+**       AUTOR...: DATASUL S.A.
+**
+**       OBJETIVO: Reincidˆncia de Servi‡os
+**
+*****************************************************************************/
+                                                /** Defini‡Æo de Vari veis **/
+DEFINE VARIABLE c-liter-imp  AS CHARACTER FORMAT "x(14)" NO-UNDO.
+DEFINE VARIABLE c-destino    AS CHARACTER FORMAT "x(09)" NO-UNDO.
+DEFINE VARIABLE c-fora       AS CHARACTER FORMAT "x(01)" NO-UNDO.
+
+/*****************************************************************************/
+                                                     /** Form de Parƒmetros **/
+form   /*IMPRESSÇO*/
+       skip(1)
+       c-liter-imp              AT 09    no-label
+       skip(1)
+       c-destino                COLON 30 " - " tt-param.arquivo NO-LABEL
+       tt-param.usuario         COLON 30
+       skip(1)
+       with width 132 side-labels frame f-param-definidos stream-io.
+       
+/*****************************************************************************/
+                                                              /** ImpressÆo **/
+form tt-digita.cod-oficial   AT 20 " - " 
+     tt-digita.desc-dimensao no-label
+     with width 132 side-labels frame f-visoes stream-io.
+     
+form bfDigita.cod-oficial
+     bfDigita.desc-dimensao    format "x(31)"
+     bfDigita.qtd-interv   
+     bfDigita.qtd-reinc    
+     bfDigita.tempo-reparo 
+     bfDigita.per-interv   
+     bfDigita.un           
+     with width 132 no-attr-space no-box down frame f-dados stream-io.
+
+/*****************************************************************************/
+                                               /** Literais Form Parƒmetros **/
+{utp/ut-liter.i Usu rio * l}
+assign tt-param.usuario:label in frame f-param-definidos = trim(return-value).
+
+{utp/ut-liter.i Destino * l}
+assign c-destino:label in frame f-param-definidos = trim(return-value).
+
+{utp/ut-liter.i IMPRESSÇO * R}
+assign c-liter-imp = trim(return-value).
+
+/*****************************************************************************/
+                                                    /** Literais Form Dados **/
+{utp/ut-liter.i Descri‡Æo}
+assign bfDigita.desc-dimensao:label in frame f-dados = return-value.
+{utp/ut-liter.i "Interven‡äes"}
+assign bfDigita.qtd-interv:label in frame f-dados = return-value.
+{utp/ut-liter.i "Reincidˆncias"}
+assign bfDigita.qtd-reinc:label in frame f-dados = return-value.
+{utp/ut-liter.i "Tempo Reparo"}
+assign bfDigita.tempo-reparo:label in frame f-dados = return-value.
+{utp/ut-liter.i "Per¡odo Entre Interv"}
+assign bfDigita.per-interv:label in frame f-dados = return-value.
+{utp/ut-liter.i "UN"}
+assign bfDigita.un:label in frame f-dados = trim(return-value).
+
+/*****************************************************************************/
+                                                         /** Fim da Include **/

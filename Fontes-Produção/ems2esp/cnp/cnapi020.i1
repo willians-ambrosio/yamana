@@ -1,0 +1,59 @@
+/*******************************************************************************
+** Elimina e cria os registros para integracao de contratos
+**
+** Parƒmetros: 
+**             {1} => Indica qual o tratamento que a include dever  realizar
+**             --------------------------------------------------------------
+**             {1} = 1 Cria registro com o conte£do INICIAL
+**             {1} = 2 Cria/atualiza registro com o conte£do FINAL
+**
+**
+**             {2} => Indica a movimenta‡Æo que est  sendo processada
+**             --------------------------------------------------------------
+**             {2} = 1 InclusÆo
+**             {2} = 2 Altera‡Æo
+**             {2} = 3 Elimina‡Æo
+**
+**             {3} => Programa Origem.  Ex: "CN0201"
+**
+**             {4} => Ponto (opcional). Ex: "Liberacao-medicao"
+**                    Quando nÆo for necessario, passar "".
+**
+**             {5} => C¢digo Tabela.  Ex: "medicao-contrat"
+** 
+**             {6} => C¢digo Tabela ou buffer utilizado no programa.  Ex: "b-medicao-contrat"
+**
+**             {7} => C¢digo para que seja copiado o campo narrativa para que nÆo ocorra o erro progress 444 
+**
+**             Exemplo chamada para inclusÆo:
+**             {cnp/cnapi020.i1 "1" "1" "CN0302A" "" "medicao-contrat" "b-medicao-contrat"} 
+**             {cnp/cnapi020.i1 "3" "1" "CN0302A" "" "medicao-contrat" "b-medicao-contrat"}
+**
+*******************************************************************************/
+
+&IF '{&bf_mat_versao_ems}' >= '2.04' &THEN
+     
+     IF  AVAIL {6} THEN DO:
+
+         /* Transfere o conte£do para uma temp-table para depois retornar para         **
+         ** o campo raw, pois se passar direto da tabela gera problemas na base oracle */
+
+         FOR EACH tt-integra-cn-{5}: DELETE tt-integra-cn-{5}. END.
+         CREATE tt-integra-cn-{5}.
+         BUFFER-COPY {6} {7} TO tt-integra-cn-{5}.
+         RAW-TRANSFER tt-integra-cn-{5} TO raw-tt-integra-cn.
+
+         RUN cnp/cnapi020a.p (INPUT {1},
+                              INPUT {2},
+                              INPUT "{3}",
+                              INPUT "{4}",
+                              INPUT "{5}",
+                              INPUT ROWID({6}),
+                              INPUT raw-tt-integra-cn,
+                              INPUT-OUTPUT TABLE tt-integra-cn,
+                              INPUT-OUTPUT TABLE rowErrors).
+     END.
+
+&ENDIF
+
+

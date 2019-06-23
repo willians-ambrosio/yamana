@@ -1,0 +1,16 @@
++----------------------------------------------------------------+                                                                  
+|          Xtivity - Layout para Importacao de Dados             |                                                                  
+|----------------------------------------------------------------|                                                                  
+|              Nome do Arquivo: A ser informado                  |                                                                  
+|                      Formato: TXT                              |                                                                  
+|                  Delimitador: ";"                              |                                                                  
+|----------------------------------------------------------------|                                                                  
+| Ordem | Descricao                                              |                                                                  
+|-------+--------------------------------------------------------|                                                                  
+|    1  | Codigo do Estabelecimento                              |                                                                  
+|    2  | Codigo do Item                                         |                                                                  
+|    3  | Estoque de Seguranca                                   |                                                                  
+|    4  | Tempo de Ressuprimento                                 |                                                                  
+|    5  | Ponto de Encomenda                                     |                                                                  
++----------------------------------------------------------------+                                                                  
+

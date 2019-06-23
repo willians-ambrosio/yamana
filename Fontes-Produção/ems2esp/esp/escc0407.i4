@@ -1,0 +1,44 @@
+/***************************************************************************
+**
+**  escc0407.i4 - Imprime o Texto Livre do Item
+**
+***************************************************************************/
+
+put skip(1).
+for each  lin-texto use-index codigo 
+    where lin-texto.it-codigo  = tt-ordem.it-codigo
+    and   lin-texto.tipo       = tt-param.c-tipo-texto
+    and   lin-texto.sequencia >= 0 no-lock
+    break by lin-texto.it-codigo by lin-texto.tipo:
+
+    if  first-of (lin-texto.tipo) then do:
+        if  line-counter > 63 then do:
+            page.
+            {&display}
+        end.
+        put unformatted
+            c-lb-texto     to 30 " -"
+            lin-texto.tipo at 34.
+    end.
+
+    if  lin-texto.linha <> "" then do:
+        assign i-salta-narra = 1.
+        run pi-print-editor (input lin-texto.linha, input 60).
+        for each tt-editor with frame f-narrativa:
+            if  tt-editor.linha = 1 then
+                put unformatted
+                    fill("-", 19) at 52
+                    c-lb-texto    at 72
+                    fill("-", 18) at 92.
+                disp tt-editor.conteudo when avail tt-editor
+                     with frame f-narrativa.
+                down with frame f-narrativa.
+        end.
+        if  line-counter >= 63 then do:
+            page.
+            {&display}
+        end.
+    end.
+end.
+
+/* escc0407.i4 */

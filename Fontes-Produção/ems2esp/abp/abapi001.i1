@@ -1,0 +1,39 @@
+/********************************************************************************
+** Copyright DATASUL S.A. (1997)
+** Todos os Direitos Reservados.
+**
+** Este fonte e de propriedade exclusiva da DATASUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+*****************************************************************************
+**
+**       PROGRAMA: ABAPI001.i1
+**
+**       DATA....: Junlho de 2003
+**
+**       AUTOR...: Marcio Willwock - Manufatura - DATASUL S.A.
+**
+**       OBJETIVO: API para Atualiza‡Æo de Apontamentos de Abastecimento e
+**                 Lubrifica‡Æo
+**
+*****************************************************************************/
+
+{abp/ab9004.i} /** Defini‡Æo da Temp-table RowErrors **/
+
+define temp-table ttEqpto no-undo like mab-eqpto
+    field r-rowid            as rowid
+    field consumo-padrao     as decimal
+    field consumo-padrao-sec as decimal
+    field consumo-real       as decimal
+    field consumo-real-sec   as decimal /*(Valida‡Æo contador Secund rio)*/
+    field uso-real           as decimal
+    field uso-real-sec       as decimal /*(Valida‡Æo contador Secund rio)*/
+    field tp-consumo         as integer
+    field tp-consumo-sec     as integer /*(Valida‡Æo contador Secund rio)*/
+    field qtd-abast          as decimal
+    field log-primario       as logical.
+    
+/*****************************************************************************/
+                                                         /** Fim da Include **/
+
+

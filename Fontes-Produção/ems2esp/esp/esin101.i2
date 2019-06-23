@@ -1,0 +1,587 @@
+/*******************************************************************************
+* esin101.I2 - Defini‡Æo / Tradu‡Æo
+********************************************************************************/
+  
+def new shared temp-table t-controle no-undo
+    field ep-codigo    like controle-verba.ep-codigo
+    field cod-est-exec like controle-verba.cod-est-exec
+    field num-projeto  like controle-verba.num-projeto
+    field num-ordem    like controle-verba.num-ordem    
+    field dt-trans     as   date format "99/99/9999"
+    field dt-contrato  as   date format "99/99/9999"
+    field it-codigo    like item.it-codigo
+    field num-ord-magnus like plano-aprov.num-ord-magnus
+    field seq          as   integer
+    field tipo-doc     as   char 
+    field solicitacao  like requisicao.nr-requisicao
+    field num-ord-comp like ordem-compra.numero-ordem
+    field seq-comp     like plano-aprov.seq-comp
+    field num-pedido   like pedido-compr.num-pedido
+    field nr-contrato  like ordem-compra.nr-contrato
+    field cod-emitente like pedido-compr.cod-emitente
+    field esp-docto    as   char
+    field num-docto    as   char
+    field nat-operacao as   char
+    field serie        as   char
+    field sequencia    as   int 
+    field descricao    as   char
+    field valor        as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Comprometido" 
+    field ent-comp     as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Valor Movto" 
+    field valor-cont   as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Valor contrato"
+    field sai-comp     as   dec format "->>>,>>>,>>9.99"  
+    field ent-real     as   dec format "->>>,>>>,>>9.99"  
+    field sai-real     as   dec format "->>>,>>>,>>9.99"  
+    field acum-comp    as   dec format "->>>,>>>,>>9.99"  
+    field acum-real    as   dec format "->>>,>>>,>>9.99" 
+    field imposto      as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" /* 519 */
+    field pis          as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field cofins       as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field icm          as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field ipi          as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field preco-total  as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto"          
+    field vl-jan       as   dec format "->>>,>>>,>>9.99"
+    field vl-fev       as   dec format "->>>,>>>,>>9.99"
+    field vl-mar       as   dec format "->>>,>>>,>>9.99"
+    field vl-abr       as   dec format "->>>,>>>,>>9.99"
+    field vl-mai       as   dec format "->>>,>>>,>>9.99"
+    field vl-jun       as   dec format "->>>,>>>,>>9.99"
+    field vl-jul       as   dec format "->>>,>>>,>>9.99"
+    field vl-ago       as   dec format "->>>,>>>,>>9.99"
+    field vl-set       as   dec format "->>>,>>>,>>9.99"
+    field vl-out       as   dec format "->>>,>>>,>>9.99"
+    field vl-nov       as   dec format "->>>,>>>,>>9.99"
+    field vl-dez       as   dec format "->>>,>>>,>>9.99"
+    field l-nota       as log
+    field nome-emit    like emitente.nome-emit
+    index t-controle ep-codigo
+                     cod-est-exec
+                     num-projeto
+                     num-ordem.
+                
+def new shared temp-table t-controle-3 no-undo
+    field ep-codigo    like controle-verba.ep-codigo
+    field cod-est-exec like controle-verba.cod-est-exec
+    field num-projeto  like controle-verba.num-projeto
+    field num-ordem    like controle-verba.num-ordem    
+    field dt-trans     as   date format "99/99/9999"
+    field it-codigo    like item.it-codigo
+    field num-ord-magnus like plano-aprov.num-ord-magnus
+    field seq          as   integer
+    field tipo-doc     as   char 
+    field solicitacao  like requisicao.nr-requisicao
+    field num-ord-comp like ordem-compra.numero-ordem
+    field seq-comp     like plano-aprov.seq-comp
+    field num-pedido   like pedido-compr.num-pedido
+    field nr-contrato  like ordem-compra.nr-contrato
+    field cod-emitente like pedido-compr.cod-emitente
+    field esp-docto    as   char
+    field num-docto    as   char
+    field descricao    as   char
+    field valor        as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Comprometido" 
+    field imposto      as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field pis          as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field cofins       as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field icm          as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field ipi          as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field preco-total  as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field ent-comp     as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Valor Movto" 
+    field valor-cont   as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Valor contrato"
+    field sai-comp     as   dec format "->>>,>>>,>>9.99"  
+    field ent-real     as   dec format "->>>,>>>,>>9.99"  
+    field sai-real     as   dec format "->>>,>>>,>>9.99"  
+    field acum-comp    as   dec format "->>>,>>>,>>9.99"  
+    field acum-real    as   dec format "->>>,>>>,>>9.99"  
+    field l-nota       as   log
+    field vl-jan       as   dec format "->>>,>>>,>>9.99"
+    field vl-fev       as   dec format "->>>,>>>,>>9.99"
+    field vl-mar       as   dec format "->>>,>>>,>>9.99"
+    field vl-abr       as   dec format "->>>,>>>,>>9.99"
+    field vl-mai       as   dec format "->>>,>>>,>>9.99"
+    field vl-jun       as   dec format "->>>,>>>,>>9.99"
+    field vl-jul       as   dec format "->>>,>>>,>>9.99"
+    field vl-ago       as   dec format "->>>,>>>,>>9.99"
+    field vl-set       as   dec format "->>>,>>>,>>9.99"
+    field vl-out       as   dec format "->>>,>>>,>>9.99"
+    field vl-nov       as   dec format "->>>,>>>,>>9.99"
+    field vl-dez       as   dec format "->>>,>>>,>>9.99"
+    index t-controle ep-codigo
+                     cod-est-exec
+                     num-projeto
+                     num-ordem.
+
+
+    
+def buffer bf-controle for t-controle.
+
+def new shared temp-table t-controle-1 no-undo
+    field ep-codigo    like controle-verba.ep-codigo
+    field cod-est-exec like controle-verba.cod-est-exec
+    field num-projeto  like controle-verba.num-projeto
+    field num-ordem    like controle-verba.num-ordem    
+    field dt-trans     as   date format "99/99/9999"
+    field dt-contrato  as   date format "99/99/9999"
+    field it-codigo    like item.it-codigo
+    field num-ord-magnus like plano-aprov.num-ord-magnus
+    field seq          as   integer
+    field tipo-doc     as   char 
+    field solicitacao  like requisicao.nr-requisicao
+    field num-ord-comp like ordem-compra.numero-ordem
+    field seq-comp     like plano-aprov.seq-comp
+    field num-pedido   like pedido-compr.num-pedido 
+    field nr-contrato  like ordem-compra.nr-contrato
+    field cod-emitente like pedido-compr.cod-emitente
+    field esp-docto    as   char
+    field num-docto    as   char
+    field descricao    as   char
+    field valor        as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Comprometido" 
+    field ent-comp     as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Valor Movto" 
+    field valor-cont   as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Valor contrato"
+    field sai-comp     as   dec format "->>>,>>>,>>9.99"  
+    field ent-real     as   dec format "->>>,>>>,>>9.99"  
+    field sai-real     as   dec format "->>>,>>>,>>9.99"  
+    field acum-comp    as   dec format "->>>,>>>,>>9.99"  
+    field acum-real    as   dec format "->>>,>>>,>>9.99"
+     field vl-jan       as   dec format "->>>,>>>,>>9.99"
+    field vl-fev       as   dec format "->>>,>>>,>>9.99"
+    field vl-mar       as   dec format "->>>,>>>,>>9.99"
+    field vl-abr       as   dec format "->>>,>>>,>>9.99"
+    field vl-mai       as   dec format "->>>,>>>,>>9.99"
+    field vl-jun       as   dec format "->>>,>>>,>>9.99"
+    field vl-jul       as   dec format "->>>,>>>,>>9.99"
+    field vl-ago       as   dec format "->>>,>>>,>>9.99"
+    field vl-set       as   dec format "->>>,>>>,>>9.99"
+    field vl-out       as   dec format "->>>,>>>,>>9.99"
+    field vl-nov       as   dec format "->>>,>>>,>>9.99"
+    field vl-dez       as   dec format "->>>,>>>,>>9.99"  
+    field nome-emit    like emitente.nome-emit
+    /*index t-controle is primary unique
+                     ep-codigo
+                     cod-est-exec
+                     num-projeto
+                     num-ord-magnus
+                     cod-emitente
+                     num-pedido
+                     nr-contrato. */
+    index t-controle is primary unique
+                     ep-codigo
+                     cod-est-exec
+                     num-projeto
+                     num-ordem
+                     it-codigo
+                     num-pedido
+                     num-ord-magnus 
+                     cod-emitente.
+                   
+
+form t-controle.dt-trans     format "99/99/9999"
+     t-controle.it-codigo    format "x(16)"
+     t-controle.num-ord-magnus format ">>>,>>>" space(5)
+     t-controle.tipo-doc     format "x(10)" 
+     t-controle.solicitacao  format ">>>,>>>"
+     t-controle.num-ord-comp format ">>>>>>,>>"
+     t-controle.num-pedido   format ">>>>>,>>>"
+     t-controle.esp-docto    format "x(3)"     
+     t-controle.num-docto    format "x(25)"
+     t-controle.ent-comp     format "->>>>,>>>,>>9.99"     
+     t-controle.sai-comp     format "->>>>,>>>,>>9.99"
+     t-controle.ent-real     format "->>>>,>>>,>>9.99"
+     t-controle.sai-real     format "->>>>,>>>,>>9.99"
+     t-controle.acum-comp    format "->>>>>,>>>,>>9.99"
+     t-controle.acum-real    format "->>>>>,>>>,>>9.99" 
+     with width 233 no-label stream-io down no-box frame f-controle.
+     
+
+{utp/ut-liter.i Num_Ord_EMS * r}  
+assign c-lb-num-ord-magnus = trim(return-value).
+{utp/ut-liter.i Data * r } 
+assign c-lb-dt-trans = trim(return-value).       
+{utp/ut-liter.i Tipo * r } 
+assign c-lb-tipo-doc = Trim(return-value).
+{utp/ut-liter.i S‚rie * r } 
+assign c-lb-serie = trim(return-value).  
+{utp/ut-liter.i Solicit * r } 
+assign c-lb-solicitacao = trim(return-value).       
+{utp/ut-liter.i Ordem * r } 
+assign c-lb-ordem = trim(return-value).
+{utp/ut-liter.i Pedido * r } 
+assign c-lb-pedido = trim(return-value).
+{utp/ut-liter.i Esp * r } 
+assign c-lb-especie = trim(return-value).
+{utp/ut-liter.i Documento r } 
+assign c-lb-docto = trim(return-value).       
+{utp/ut-liter.i Item * r } 
+assign c-lb-item = trim(return-value).
+{utp/ut-liter.i Ent_Comp * r } 
+assign c-lb-ent-comp = fill(" ", 16 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Sai_Comp * r } 
+assign c-lb-sai-comp = fill(" ", 16 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Ent_Realiz * r } 
+assign c-lb-ent-real = fill(" ", 16 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Sai_Realiz * r } 
+assign c-lb-sai-real = fill(" ", 16 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Saldo_Comp * r } 
+assign c-lb-acum-comp = fill(" ", 17 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Saldo_Real * r } 
+assign c-lb-acum-real = fill(" ", 17 - length(trim(return-value))) + trim(return-value).
+
+{utp/ut-liter.i Proj * r } 
+assign c-lb-proj = trim(return-value) + ": ".
+{utp/ut-liter.i Ativa * r } 
+assign c-situacao-1 = trim(return-value).
+{utp/ut-liter.i Cancelada * r } 
+assign c-situacao-2 = trim(return-value).
+{utp/ut-liter.i Imprimindo... * r } 
+assign c-imprimindo = trim(return-value).
+{utp/ut-liter.i Processando... * r } 
+assign c-processando = trim(return-value).
+{utp/ut-liter.i IMPRESSÇO * r }
+assign c-titulo-i = return-value.                       
+{utp/ut-liter.i PAR¶METRO * r}
+assign c-titulo-p = return-value.
+{utp/ut-liter.i CLASSIFICA€ÇO * r}
+assign c-titulo-c = return-value.
+{utp/ut-liter.i SELE€ÇO * r }
+assign c-titulo-s = return-value.
+{utp/ut-liter.i Destino * r}
+assign c-lb-dest = return-value.
+{utp/ut-liter.i Usu rio * r}
+assign c-lb-usuar = return-value.
+{utp/ut-liter.i Classifica‡Æo * r }
+assign c-geral = trim(return-value).
+{utp/ut-liter.i Verba * r }
+assign c-verba  = trim(return-value).
+if tt-param.i-moeda-par = 1 then do:
+{utp/ut-liter.i Principal * r }
+end.
+if tt-param.i-moeda-par = 2 then do:
+{utp/ut-liter.i Alternativa_1 * r }
+end.
+if tt-param.i-moeda-par = 3 then do:
+{utp/ut-liter.i Alternativa_2 * r }
+end.
+assign c-exib-moeda = trim(return-value).
+{utp/ut-liter.i Exibir_Valores_na_Moeda * r }
+assign c-lb-exib-moeda = trim(return-value).
+{utp/ut-liter.i Empresa * r }
+assign c-emp-sel = trim(return-value).
+{utp/ut-liter.i Estabelec * r }
+assign c-est-sel = trim(return-value).
+{utp/ut-liter.i Projeto * r }
+assign c-proj-sel = trim(return-value).
+{utp/ut-liter.i Ordem * r }
+assign c-ord-sel = trim(return-value).
+{utp/ut-liter.i Atualiza * r }
+assign c-lb-atualiza = return-value.
+{utp/ut-liter.i Total * r }
+assign c-lb-total = return-value.
+if tt-param.atualiza then do:
+   {utp/ut-liter.i Sim * r }
+end.   
+else do:
+   {utp/ut-liter.i NÆo * r }
+end.
+assign c-atualiza = return-value.
+
+
+form    
+   controle-verba.ep-codigo       colon 25 " - " at 33
+   empresa.nome               no-label skip
+   controle-verba.cod-est-exec    colon 25  " - " at 33
+   estabelec.nome             no-label skip
+   controle-verba.num-projeto     colon 25 " - " at 33
+   proj-inv.descricao         no-label skip
+   controle-verba.num-ordem       colon 25 " - " at 33
+   ordem-inv.descricao        no-label skip
+   c-situacao                                colon 25  space(20)
+   c-moeda-controle                          colon 100    skip
+   controle-verba.vl-verba[i-moeda-par]      colon 25  space(20)
+   controle-verba.vl-verba-orig[i-moeda-par] colon 100   skip
+   controle-verba.vl-comp[i-moeda-par]       colon 25  space(20)
+   controle-verba.vl-real[i-moeda-par]       colon 100 space(10)
+   c-lb-total format "x(5)" no-label space(0) ":"  
+   de-total format "->>>,>>>,>>>,>>9.99" no-label skip(2)
+   
+   c-lb-dt-trans    format "x(10)" no-label
+   c-lb-item        format "x(16)" no-label
+   c-lb-num-ord-magnus format "x(11)" no-label
+   c-lb-tipo-doc    format "x(10)" no-label
+   c-lb-solicitacao format "x(7)"  no-label
+   c-lb-ordem       format "x(9)"  no-label
+   c-lb-pedido      format "x(9)"  no-label
+   c-lb-especie     format "x(03)" no-label
+   c-lb-docto       format "x(25)" no-label
+   c-lb-ent-comp    format "x(16)" no-label     
+   c-lb-sai-comp    format "x(16)" no-label
+   c-lb-ent-real    format "x(16)" no-label
+   c-lb-sai-real    format "x(16)" no-label
+   c-lb-acum-comp   format "x(17)" no-label
+   c-lb-acum-real   format "x(17)" no-label skip
+   "---------- ---------------- ----------- ---------- ------- --------- --------- --- -------------------------"
+   "---------------- ---------------- ---------------- ----------------"
+   "-----------------" "-----------------" 
+   with stream-io down width 233 no-box side-labels frame f-cab-controle.
+   
+{utp/ut-liter.i Situa‡Æo * r } 
+assign c-situacao:label in frame f-cab-controle = trim(return-value).
+{utp/ut-liter.i Moeda_Controle * r } 
+assign c-moeda-controle:label in frame f-cab-controle = trim(return-value).
+   
+   
+form   
+   "---------------------------------" at 180 skip
+   c-lb-total at 182
+   de-acum-tot at 198  format "->>>>>>>,>>9.99" 
+   with stream-io width 233 no-labels no-box frame f-total.
+   
+  /********** esin0519 ******
+  
+/*******************************************************************************
+* esin0519.I2 - Defini‡Æo / Tradu‡Æo
+********************************************************************************/
+  
+def new shared temp-table t-controle no-undo
+    field ep-codigo    like controle-verba.ep-codigo
+    field cod-est-exec like controle-verba.cod-est-exec
+    field num-projeto  like controle-verba.num-projeto
+    field num-ordem    like controle-verba.num-ordem    
+    field dt-trans     as   date format "99/99/9999"
+    field it-codigo    like item.it-codigo
+    field num-ord-magnus like plano-aprov.num-ord-magnus
+    field seq          as   integer
+    field tipo-doc     as   char 
+    field solicitacao  like requisicao.nr-requisicao
+    field num-ord-comp like ordem-compra.numero-ordem
+    field seq-comp     like plano-aprov.seq-comp
+    field num-pedido   like pedido-compr.num-pedido
+    field nr-contrato  like ordem-compra.nr-contrato
+    field cod-emitente like pedido-compr.cod-emitente
+    field esp-docto    as   char
+    field num-docto    as   char
+    field descricao    as   char
+    field valor        as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Comprometido" 
+    field imposto      as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field pis      as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field cofins   as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field icm      as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field ipi      as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field preco-total   as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field ent-comp     as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Valor Movto" 
+    field valor-cont   as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Valor contrato"
+    field sai-comp     as   dec format "->>>,>>>,>>9.99"  
+    field ent-real     as   dec format "->>>,>>>,>>9.99"  
+    field sai-real     as   dec format "->>>,>>>,>>9.99"  
+    field acum-comp    as   dec format "->>>,>>>,>>9.99"  
+    field acum-real    as   dec format "->>>,>>>,>>9.99"  
+    field l-nota      as log
+    index t-controle ep-codigo
+                     cod-est-exec
+                     num-projeto
+                     num-ordem.
+    
+def buffer bf-controle for t-controle.
+
+def new shared temp-table t-controle-1 no-undo
+    field ep-codigo    like controle-verba.ep-codigo
+    field cod-est-exec like controle-verba.cod-est-exec
+    field num-projeto  like controle-verba.num-projeto
+    field num-ordem    like controle-verba.num-ordem    
+    field dt-trans     as   date format "99/99/9999"
+    field it-codigo    like item.it-codigo
+    field num-ord-magnus like plano-aprov.num-ord-magnus
+    field seq          as   integer
+    field tipo-doc     as   char 
+    field solicitacao  like requisicao.nr-requisicao
+    field num-ord-comp like ordem-compra.numero-ordem
+    field seq-comp     like plano-aprov.seq-comp
+    field num-pedido   like pedido-compr.num-pedido
+    field nr-contrato  like ordem-compra.nr-contrato
+    field cod-emitente like pedido-compr.cod-emitente
+    field esp-docto    as   char
+    field num-docto    as   char
+    field descricao    as   char
+    field valor        as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Comprometido" 
+    field imposto      as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field pis      as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field cofins   as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field icm      as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field ipi      as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field preco-total   as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Imposto" 
+    field ent-comp     as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Valor Movto" 
+    field valor-cont   as   dec format "->>>,>>>,>>9.99" COLUMN-LABEL "Valor contrato"
+    field sai-comp     as   dec format "->>>,>>>,>>9.99"  
+    field ent-real     as   dec format "->>>,>>>,>>9.99"  
+    field sai-real     as   dec format "->>>,>>>,>>9.99"  
+    field acum-comp    as   dec format "->>>,>>>,>>9.99"  
+    field acum-real    as   dec format "->>>,>>>,>>9.99"  
+    index t-controle is primary
+                     ep-codigo
+                     cod-est-exec
+                     num-projeto
+                     num-ord-magnus
+                     cod-emitente
+                     num-pedido.
+    
+
+   
+form t-controle.dt-trans     format "99/99/9999"
+     t-controle.it-codigo    format "x(16)"
+     t-controle.num-ord-magnus format ">>>,>>>" space(5)
+     t-controle.tipo-doc     format "x(10)" 
+     t-controle.solicitacao  format ">>>,>>>"
+     t-controle.num-ord-comp format ">>>>>>,>>"
+     t-controle.num-pedido   format ">>>>>,>>>"
+     t-controle.esp-docto    format "x(3)"     
+     t-controle.num-docto    format "x(25)"
+     t-controle.ent-comp     format "->>>>,>>>,>>9.99"     
+     t-controle.sai-comp     format "->>>>,>>>,>>9.99"
+     t-controle.ent-real     format "->>>>,>>>,>>9.99"
+     t-controle.sai-real     format "->>>>,>>>,>>9.99"
+     t-controle.acum-comp    format "->>>>>,>>>,>>9.99"
+     t-controle.acum-real    format "->>>>>,>>>,>>9.99" 
+     with width 233 no-label stream-io down no-box frame f-controle.
+     
+
+{utp/ut-liter.i Num_Ord_EMS * r}  
+assign c-lb-num-ord-magnus = trim(return-value).
+{utp/ut-liter.i Data * r } 
+assign c-lb-dt-trans = trim(return-value).       
+{utp/ut-liter.i Tipo * r } 
+assign c-lb-tipo-doc = Trim(return-value).
+{utp/ut-liter.i S‚rie * r } 
+assign c-lb-serie = trim(return-value).  
+{utp/ut-liter.i Solicit * r } 
+assign c-lb-solicitacao = trim(return-value).       
+{utp/ut-liter.i Ordem * r } 
+assign c-lb-ordem = trim(return-value).
+{utp/ut-liter.i Pedido * r } 
+assign c-lb-pedido = trim(return-value).
+{utp/ut-liter.i Esp * r } 
+assign c-lb-especie = trim(return-value).
+{utp/ut-liter.i Documento r } 
+assign c-lb-docto = trim(return-value).       
+{utp/ut-liter.i Item * r } 
+assign c-lb-item = trim(return-value).
+{utp/ut-liter.i Ent_Comp * r } 
+assign c-lb-ent-comp = fill(" ", 16 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Sai_Comp * r } 
+assign c-lb-sai-comp = fill(" ", 16 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Ent_Realiz * r } 
+assign c-lb-ent-real = fill(" ", 16 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Sai_Realiz * r } 
+assign c-lb-sai-real = fill(" ", 16 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Saldo_Comp * r } 
+assign c-lb-acum-comp = fill(" ", 17 - length(trim(return-value))) + trim(return-value).
+{utp/ut-liter.i Saldo_Real * r } 
+assign c-lb-acum-real = fill(" ", 17 - length(trim(return-value))) + trim(return-value).
+
+{utp/ut-liter.i Proj * r } 
+assign c-lb-proj = trim(return-value) + ": ".
+{utp/ut-liter.i Ativa * r } 
+assign c-situacao-1 = trim(return-value).
+{utp/ut-liter.i Cancelada * r } 
+assign c-situacao-2 = trim(return-value).
+{utp/ut-liter.i Imprimindo... * r } 
+assign c-imprimindo = trim(return-value).
+{utp/ut-liter.i Processando... * r } 
+assign c-processando = trim(return-value).
+{utp/ut-liter.i IMPRESSÇO * r }
+assign c-titulo-i = return-value.                       
+{utp/ut-liter.i PAR¶METRO * r}
+assign c-titulo-p = return-value.
+{utp/ut-liter.i CLASSIFICA€ÇO * r}
+assign c-titulo-c = return-value.
+{utp/ut-liter.i SELE€ÇO * r }
+assign c-titulo-s = return-value.
+{utp/ut-liter.i Destino * r}
+assign c-lb-dest = return-value.
+{utp/ut-liter.i Usu rio * r}
+assign c-lb-usuar = return-value.
+{utp/ut-liter.i Classifica‡Æo * r }
+assign c-geral = trim(return-value).
+{utp/ut-liter.i Verba * r }
+assign c-verba  = trim(return-value).
+if tt-param.i-moeda-par = 1 then do:
+{utp/ut-liter.i Principal * r }
+end.
+if tt-param.i-moeda-par = 2 then do:
+{utp/ut-liter.i Alternativa_1 * r }
+end.
+if tt-param.i-moeda-par = 3 then do:
+{utp/ut-liter.i Alternativa_2 * r }
+end.
+assign c-exib-moeda = trim(return-value).
+{utp/ut-liter.i Exibir_Valores_na_Moeda * r }
+assign c-lb-exib-moeda = trim(return-value).
+{utp/ut-liter.i Empresa * r }
+assign c-emp-sel = trim(return-value).
+{utp/ut-liter.i Estabelec * r }
+assign c-est-sel = trim(return-value).
+{utp/ut-liter.i Projeto * r }
+assign c-proj-sel = trim(return-value).
+{utp/ut-liter.i Ordem * r }
+assign c-ord-sel = trim(return-value).
+{utp/ut-liter.i Atualiza * r }
+assign c-lb-atualiza = return-value.
+{utp/ut-liter.i Total * r }
+assign c-lb-total = return-value.
+if tt-param.atualiza then do:
+   {utp/ut-liter.i Sim * r }
+end.   
+else do:
+   {utp/ut-liter.i NÆo * r }
+end.
+assign c-atualiza = return-value.
+
+
+form    
+   controle-verba.ep-codigo       colon 25 " - " at 33
+   empresa.nome               no-label skip
+   controle-verba.cod-est-exec    colon 25  " - " at 33
+   estabelec.nome             no-label skip
+   controle-verba.num-projeto     colon 25 " - " at 33
+   proj-inv.descricao         no-label skip
+   controle-verba.num-ordem       colon 25 " - " at 33
+   ordem-inv.descricao        no-label skip
+   c-situacao                                colon 25  space(20)
+   c-moeda-controle                          colon 100    skip
+   controle-verba.vl-verba[i-moeda-par]      colon 25  space(20)
+   controle-verba.vl-verba-orig[i-moeda-par] colon 100   skip
+   controle-verba.vl-comp[i-moeda-par]       colon 25  space(20)
+   controle-verba.vl-real[i-moeda-par]       colon 100 space(10)
+   c-lb-total format "x(5)" no-label space(0) ":"  
+   de-total format "->>>,>>>,>>>,>>9.99" no-label skip(2)
+   
+   c-lb-dt-trans    format "x(10)" no-label
+   c-lb-item        format "x(16)" no-label
+   c-lb-num-ord-magnus format "x(11)" no-label
+   c-lb-tipo-doc    format "x(10)" no-label
+   c-lb-solicitacao format "x(7)"  no-label
+   c-lb-ordem       format "x(9)"  no-label
+   c-lb-pedido      format "x(9)"  no-label
+   c-lb-especie     format "x(03)" no-label
+   c-lb-docto       format "x(25)" no-label
+   c-lb-ent-comp    format "x(16)" no-label     
+   c-lb-sai-comp    format "x(16)" no-label
+   c-lb-ent-real    format "x(16)" no-label
+   c-lb-sai-real    format "x(16)" no-label
+   c-lb-acum-comp   format "x(17)" no-label
+   c-lb-acum-real   format "x(17)" no-label skip
+   "---------- ---------------- ----------- ---------- ------- --------- --------- --- -------------------------"
+   "---------------- ---------------- ---------------- ----------------"
+   "-----------------" "-----------------" 
+   with stream-io down width 233 no-box side-labels frame f-cab-controle.
+   
+{utp/ut-liter.i Situa‡Æo * r } 
+assign c-situacao:label in frame f-cab-controle = trim(return-value).
+{utp/ut-liter.i Moeda_Controle * r } 
+assign c-moeda-controle:label in frame f-cab-controle = trim(return-value).
+   
+   
+form   
+   "---------------------------------" at 180 skip
+   c-lb-total at 182
+   de-acum-tot at 198  format "->>>>>>>,>>9.99" 
+   with stream-io width 233 no-labels no-box frame f-total.
+   
+
+**********/

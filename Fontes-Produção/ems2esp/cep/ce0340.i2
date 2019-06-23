@@ -1,0 +1,222 @@
+/*******************************************************************************
+**
+**    CE0340.I2 - geracao das ordens de compra por ressuprimento peri¢dico
+**
+******************************************************************************/
+procedure pi-periodico:
+    /*def input parameter  rw-item-uni-estab as rowid no-undo.
+    def input parameter  i-param           as integer no-undo.*/
+    def output parameter da-data-aux       as date format "99/99/9999" no-undo.
+
+    def var l-per-cc       as logical   no-undo init no. /* indica se o material est  em per¡odo de compras */
+    def var l-ultrapassou  as logical   no-undo init no. /* indica se o material ultrapassou o per. compras */
+    def var de-qt-req-aux  as decimal   no-undo.
+    def var de-qt-sol-aux  as decimal   no-undo.
+    def var de-qt-saldo    as decimal   no-undo.
+
+    def buffer b-tt-entrega for tt-entrega.
+
+    /* a flag l-per-cc tem por fun‡Æo identificar e o item se encontra em per¡odo
+       de compras ou nao */
+
+    if  valid-handle (h-acomp) then do:
+        put skip.
+        {utp/ut-field.i mgind item-uni-estab it-codigo 1}
+        assign c-acompanha = return-value + ": " + c-it-codigo-aux.
+        {utp/ut-field.i mgadm estabelec cod-estabel 1} 
+        assign c-acompanha = c-acompanha  + " " + return-value + ": " + c-cod-estabel-aux.
+        run pi-acompanhar in h-acomp (input c-acompanha).
+    end.
+
+    for each tt-entrega:
+        delete tt-entrega.
+    end.
+    run cnp/cn9012.p (input i-cd-freq-aux,
+                      input da-ult-ressup-aux,
+                      input 2,
+                      input-output table tt-entrega).
+    find last tt-entrega no-lock no-error.                      
+    for first frequencia fields (dt-ref cd-freq tp-freq intervalo) where
+         frequencia.cd-freq = i-cd-freq-aux no-lock: end.
+    if avail frequencia and
+       avail tt-entrega then do:
+        if frequencia.tp-freq = 1 or               /* Frequencia Normal/Di ria */
+           frequencia.tp-freq = 2 then do:
+            if da-ult-ressup-aux = tt-entrega.dat-entrega then
+                assign l-per-cc = yes.
+        end.
+        else                
+        if frequencia.tp-freq = 3 then do:         /* Frequencia Semanal */
+            if today >= tt-entrega.dat-entrega and
+               today <  tt-entrega.dat-entrega + 8 then
+                assign l-per-cc      = yes
+                       l-ultrapassou = no.
+            else do: 
+                if (da-ult-ressup-aux >= tt-entrega.dat-entrega - frequencia.intervalo and
+                    da-ult-ressup-aux <  (tt-entrega.dat-entrega - frequencia.intervalo + 8)) then
+                    assign l-per-cc      = yes
+                           l-ultrapassou = no.
+                if today >= tt-entrega.dat-entrega + 8 then
+                    assign l-per-cc = no
+                           l-ultrapassou = yes.
+            end.
+        end.
+        else
+        if frequencia.tp-freq = 4 then do:
+            if today >= tt-entrega.dat-entrega and   /* Frequencia Quinzenal */
+               today <  tt-entrega.dat-entrega + 16 then
+                assign l-per-cc      = yes
+                       l-ultrapassou = no.
+            else if today >= tt-entrega.dat-entrega + 16 then
+                assign l-per-cc = no
+                       l-ultrapassou = yes.
+        end.
+        else
+        if frequencia.tp-freq = 5 or                      /* Frequencia Mensal/Informada */
+           frequencia.tp-freq = 6 then do:
+            
+            if frequencia.dt-ref <> 4 and (today <= tt-entrega.dat-entrega + 2 and
+               today >= tt-entrega.dat-entrega - 31) then 
+                assign l-per-cc      = yes
+                       l-ultrapassou = no.
+            else do: 
+                if month(today) = month(da-ult-ressup-aux) then
+                    assign l-per-cc      = yes
+                           l-ultrapassou = no.
+                find first b-tt-entrega no-lock no-error.
+                if today > (b-tt-entrega.dat-entrega + frequencia.intervalo) and
+                   month(today) <> MONTH(b-tt-entrega.dat-entrega + frequencia.intervalo) then
+                    assign l-per-cc = no
+                           l-ultrapassou = yes.
+            end.
+            /** Teste executado quando hÿ vÿrios per­odos ultrapassados ***/
+
+            IF tt-entrega.dat-entrega < today AND
+              (tt-entrega.dat-entrega + frequencia.intervalo) < today 
+               THEN DO WHILE (tt-entrega.dat-entrega < today) and
+                            ((MONTH(tt-entrega.dat-entrega) <> MONTH(today)) or
+                             (YEAR(tt-entrega.dat-entrega)  <> YEAR(today))):
+                
+                /** se estiver 2 dias antes do mes de compra, considera
+                    como mes de compra ****/
+
+                IF (MONTH(tt-entrega.dat-entrega + 1) = MONTH(today)) THEN do:
+                    ASSIGN tt-entrega.dat-entrega = tt-entrega.dat-entrega + 2
+                           l-ultrapassou = NO
+                           l-per-cc = YES.
+                    LEAVE.
+                END.
+
+                ASSIGN tt-entrega.dat-entrega = tt-entrega.dat-entrega +
+                       frequencia.intervalo.
+                IF (MONTH(tt-entrega.dat-entrega + 1) = MONTH(today)) THEN 
+                    ASSIGN l-ultrapassou = no
+                           l-per-cc = yes.
+               
+            END. 
+        end.
+        
+        IF l-per-cc = NO THEN
+            if frequencia.dt-ref = 4 then do: /* ref mensal */
+               find first b-tt-entrega no-lock no-error.
+               if day(tt-entrega.dat-entrega) = 31 and    /* periodo fim */
+                  day(b-tt-entrega.dat-entrega) = 1 then  /* periodo inicial */
+                  assign tt-entrega.dat-entrega =
+                         tt-entrega.dat-entrega + 1.
+               if month(today) = month(tt-entrega.dat-entrega) then  
+                  assign l-per-cc = yes
+                         l-ultrapassou = no.
+                     
+        end.
+
+        /* Considera para Saldo Requisicoes e Solicitacoes de Compras Aprovadas */
+        if  tt-param.l-solcomp then
+            assign de-qt-sol-aux = de-qt-sol.
+        else
+            assign de-qt-sol-aux = 0.
+        if  tt-param.l-reqest then
+            assign de-qt-req-aux = de-qt-req.
+        else
+            assign de-qt-req-aux = 0.
+
+        assign de-qt-saldo = (de-qt-estoque + de-qt-cc + de-qt-sol-aux - de-qt-req-aux).
+
+        if de-consumo-prev-aux = 0 and
+           (de-qt-saldo > de-pto-enc-aux) then 
+           next.
+
+        if not l-per-cc and
+           (de-qt-saldo > de-pto-enc-aux) then 
+            next.
+
+        assign de-cons-proj = (de-consumo-prev-aux / 30) * frequencia.intervalo.
+
+        if de-qt-saldo <= de-pto-enc-aux then 
+            assign de-qt-nec = de-cons-proj + (de-pto-enc-aux - 
+                                               de-qt-saldo).
+        else
+            assign de-qt-nec = de-cons-proj - (de-qt-saldo -
+                                                de-pto-enc-aux).
+
+        if (de-qt-nec + de-qt-saldo > 
+            de-lote-max-aux) or
+            de-consumo-prev-aux = 0 then 
+             assign de-qt-nec = de-lote-max-aux - 
+                                de-qt-saldo.
+
+        if de-qt-nec <= 0 then
+            next.
+        assign de-qt-nec = (de-qt-nec / (1 - (de-fator-refugo-aux / 100)))
+                         + de-quant-perda-aux. 
+        if de-lote-economi-aux <> 0 then do:    
+            assign de-nr-lotes = (de-qt-nec / de-lote-economi-aux).
+            if de-nr-lotes - truncate(de-nr-lotes,0) <> 0 then
+               assign de-nr-lotes = truncate(de-nr-lotes,0) + 1.
+            assign de-qt-nec = de-nr-lotes * de-lote-economi-aux.
+            if de-qt-nec = 0 then
+                assign de-qt-nec = de-lote-economi-aux.
+        end.
+        if de-qt-nec + de-qt-saldo > 
+           de-lote-max-aux then 
+            assign de-qt-nec = de-lote-max-aux - 
+                               de-qt-saldo.
+        if de-lote-minimo-aux > de-qt-nec then
+            assign de-qt-nec = de-lote-minimo-aux.            
+
+        if de-lote-multipl-aux <> 0 then do:    
+            assign de-nr-lotes = (de-qt-nec / de-lote-multipl-aux).
+            if de-nr-lotes - truncate(de-nr-lotes,0) <> 0 then
+               assign de-nr-lotes = truncate(de-nr-lotes,0) + 1.
+            assign de-qt-nec = de-nr-lotes * de-lote-multipl-aux.
+            if de-qt-nec = 0 then
+                assign de-qt-nec = de-lote-multipl-aux.
+        end.
+
+        if de-qt-nec > 0 then do:
+            create necessidade-oc.
+            assign necessidade-oc.cod-estabel   = c-cod-estabel-aux
+                   necessidade-oc.it-codigo     = c-it-codigo-aux
+                   necessidade-oc.dec-1         = de-consumo-prev-aux
+                   necessidade-oc.data-geracao  = today
+                   necessidade-oc.data-entrega  = (today             +
+                                                  i-res-int-comp-aux +
+                                                  i-res-for-comp-aux)
+                   necessidade-oc.estoque-dispo = de-qt-estoque
+                   necessidade-oc.qt-orig       = de-qt-nec
+                   necessidade-oc.qt-ordem      = de-qt-nec
+                   necessidade-oc.qt-pendente   = de-qt-nec
+                   necessidade-oc.qt-compras    = de-qt-cc
+                   necessidade-oc.tp-geracao    = if l-per-cc then 2 /* Per¡odo de Compras */
+                                                  else 3             /* Rompimento */            
+                   l-gerou-necessidade          = yes.                     
+            /* Atualiza a data do £ltimo ressuprimento do item */
+            if l-per-cc then
+                assign da-data-aux = today.                        
+        end.
+        if not l-per-cc and
+           l-ultrapassou then 
+            assign da-data-aux = tt-entrega.dat-entrega - 1.
+    end.
+end.
+
+/* Fim da Include */   

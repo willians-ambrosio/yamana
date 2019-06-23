@@ -1,0 +1,34 @@
+/***************************************************************************
+**
+**  ESCC0406.i7 - Imprime a Narrativa
+**
+***************************************************************************/
+
+if  avail item and avail narrativa then do:
+    if  item.it-codigo = "" and  narrativa.descricao <> "" then do:
+        run pi-print-editor (input narrativa.descricao, input 60).
+
+        for each tt-editor with stream-io frame f-narrativa:
+            if  tt-editor.linha = 1 then
+                put "-------------------------------- " at 52
+                    c-lb-nar-it  format "x(17)"
+                    " ------------------------------".
+            disp tt-editor.conteudo with stream-io frame f-narrativa.
+            down with stream-io frame f-narrativa.
+        end.
+    end.
+    put skip(1).
+end.
+if  ordem-compra.narrativa <> "" then do:
+    run pi-print-editor (input ordem-compra.narrativa, input 60).
+    for each tt-editor with stream-io frame f-narrativa:
+        if  tt-editor.linha = 1 then
+            put "-------------------------- " at 52
+                c-lb-nar-ord  format "x(18)"
+                " -------------------------".
+        disp tt-editor.conteudo with stream-io frame f-narrativa.
+        down with stream-io frame f-narrativa.
+    end.
+end.
+
+/* ESCC0406.i7 */

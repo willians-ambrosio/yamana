@@ -1,0 +1,26 @@
+/*******************************************************************************
+**
+**    CE0340.I4 - Assign das variaveis utilizadas nos algoritmos de ressuprimento
+**
+******************************************************************************/
+
+assign c-it-codigo-aux     = item-uni-estab.it-codigo
+       c-cod-estabel-aux   = item-uni-estab.cod-estabel
+       de-consumo-prev-aux = item-uni-estab.consumo-prev
+       i-tipo-est-seg-aux  = item-uni-estab.tipo-est-seg
+       de-quant-segur-aux  = item-uni-estab.quant-segur
+       i-tempo-segur-aux   = item-uni-estab.tempo-segur
+       i-res-int-comp-aux  = item-uni-estab.res-int-comp
+       i-res-for-comp-aux  = item-uni-estab.res-for-comp
+       i-res-cq-comp-aux   = item-uni-estab.res-cq-comp
+       de-pto-enc-aux      = item-uni-estab.ponto-encomenda
+       de-fator-refugo-aux = item-uni-estab.fator-refugo
+       de-quant-perda-aux  = item-uni-estab.quant-perda
+       de-lote-economi-aux = item-uni-estab.lote-economi
+       de-lote-minimo-aux  = item-uni-estab.lote-minimo
+       de-lote-multipl-aux = item-uni-estab.lote-multipl
+       i-cd-freq-aux       = item-uni-estab.cd-freq
+       da-ult-ressup-aux   = item-uni-estab.data-ult-ressup
+       de-lote-max-aux     = item-uni-estab.lote-per-max.
+                           
+/* Fim da include */                           

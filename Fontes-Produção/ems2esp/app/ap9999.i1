@@ -1,0 +1,91 @@
+/*********************************************************************************
+***
+*** app/ap9999.i1 - Atualizaá∆o campos de valores do t°tulo.
+***
+***                 {1} ===> tit-ap, b-tit-ap, etc.
+***                 {2} ===> Moeda para Impress∆o do Relat¢rio.
+***
+*********************************************************************************/
+
+/* Miniflexibilizacao EMS203 */
+{cdp/cdcfgfin.i}
+
+
+assign de-calc-vl-original   = {1}.vl-original
+       de-calc-valor-saldo   = {1}.valor-saldo
+       de-calc-vl-liquido    = {1}.vl-liquido
+       de-calc-vl-juros-dia  = {1}.vl-juros-dia
+       de-calc-vl-desconto   = {1}.vl-desconto
+       &if defined(BF_FIN_MULTA_ABATIMENTO) &then
+       de-calc-valor-multa   = {1}.vl-multa-tot
+       de-calc-valor-abat    = {1}.vl-abatimento-tot
+       &endif
+       de-calc-diversos      = {1}.diversos
+       de-calc-frete         = {1}.frete.
+        
+if  {2} <> 0 then do:
+    if  {2} = {1}.moeda then do:
+        assign de-calc-vl-original   = {1}.vl-orig-me
+               de-calc-valor-saldo   = {1}.vl-saldo-me
+               de-calc-vl-liquido    = {1}.vl-liquido-me
+               de-calc-vl-juros-dia  = {1}.vl-juros-dia-me
+               de-calc-vl-desconto   = {1}.vl-desconto-me
+               &if defined(BF_FIN_MULTA_ABATIMENTO) &then
+               de-calc-valor-multa   = {1}.vl-multa-tot-me
+               de-calc-valor-abat    = {1}.vl-abatimento-tot-me
+               &endif
+               de-calc-diversos      = {1}.diversos-me
+               de-calc-frete         = {1}.frete-me.
+    end.
+    else do:
+        assign de-calc-vl-original   = fn_ajust_dec(fn_conv_moedas(
+                                                        {1}.vl-original,
+                                                        de-calc-cotacao,
+                                                        0,
+                                                        {2}),{2}).
+        assign de-calc-valor-saldo   = fn_ajust_dec(fn_conv_moedas (
+                                                        {1}.valor-saldo,
+                                                        de-calc-cotacao,
+                                                        0,
+                                                        {2}),{2}).
+        assign de-calc-vl-liquido    = fn_ajust_dec(fn_conv_moedas (
+                                                        {1}.vl-liquido,
+                                                        de-calc-cotacao,
+                                                        0,
+                                                        {2}),{2}).
+        assign de-calc-vl-juros-dia  = fn_ajust_dec(fn_conv_moedas (
+                                                        {1}.vl-juros-dia,
+                                                        de-calc-cotacao,
+                                                        0,
+                                                        {2}),{2}).
+        assign de-calc-vl-desconto   = fn_ajust_dec(fn_conv_moedas (
+                                                        {1}.vl-desconto,
+                                                        de-calc-cotacao,
+                                                        0,
+                                                        {2}),{2}).
+        &if defined(BF_FIN_MULTA_ABATIMENTO) &then
+          assign de-calc-valor-multa   = fn_ajust_dec(fn_conv_moedas (
+                                                          {1}.vl-multa-tot,
+                                                          de-calc-cotacao,
+                                                          0,
+                                                          {2}),{2}).
+          assign de-calc-valor-abat    = fn_ajust_dec(fn_conv_moedas (
+                                                           {1}.vl-abatimento-tot,
+                                                           de-calc-cotacao,
+                                                           0,
+                                                           {2}),{2}).
+        &endif
+        assign de-calc-diversos      = fn_ajust_dec(fn_conv_moedas (
+                                                          {1}.diversos,
+                                                          de-calc-cotacao,
+                                                          0,
+                                                          {2}),{2}).
+        assign de-calc-frete         = fn_ajust_dec(fn_conv_moedas (
+                                                          {1}.frete,
+                                                          de-calc-cotacao,
+                                                          0,
+                                                          {2}),{2}).
+    end.
+end.
+
+/* Fim de Include */

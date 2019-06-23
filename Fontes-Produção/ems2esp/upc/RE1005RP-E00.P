@@ -1,0 +1,37 @@
+/****************************************************************************************** 
+** 	       Programa: re1005rp-e00.p
+**   	      Autor: Daniela Campos
+**   	 Fornecedor: DKP
+**    	 Data: 17/11/2018
+** Change/Chamado: REQ06
+**       Objetivo: Efetua chamadas das epcïs re1005rp-e01.p e re1005rp-e02.p
+**
+******************************** CONTROLE DE ALTERA€åES *********************************
+** 
+** Data         Autor   		Fornecedor  Change/Chamado Descri‡Æo da Altera‡Æo
+**
+**
+
+****************************** INFORMA€åES ADICIONAIS ************************************
+** PAR¶METROS DE ENTRADA: p-ind-event
+** PAR¶METROS DE SAÖDA: tt-epc
+** CADASTRADO NO FONTE TOTVS: RE1005RP
+** CADASTRADO NA TABELA: N/A
+******************************************************************************************/
+
+{utp/ut-glob.i}
+{include/i-prgvrs.i RE1005RP-E00 2.06.00.000}
+{include/i-epc200.i} 
+
+DEFINE INPUT PARAM p-ind-event  AS CHARACTER NO-UNDO.
+DEFINE INPUT-OUTPUT PARAM TABLE FOR tt-epc.
+
+
+/* Programa Pendˆncia de aprova‡Æo - documentos atualizados do data de vencimento inferior a 21 dias */
+RUN upc\re1005rp-e01.p (INPUT p-ind-event,
+                        INPUT-OUTPUT TABLE tt-epc).
+
+/* Tratamento para reten‡äes de contratos */
+RUN upc\re1005rp-e02.p (INPUT p-ind-event,
+                        INPUT-OUTPUT TABLE tt-epc).
+

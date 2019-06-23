@@ -1,0 +1,198 @@
+DEFINE VARIABLE c-emitente-pedido     AS CHARACTER FORMAT "x(25)" NO-UNDO.
+DEFINE VARIABLE c-situacao-ordem      AS CHARACTER FORMAT "x(15)" NO-UNDO.
+DEFINE VARIABLE c-situacao-parcela    AS CHARACTER FORMAT "x(15)" NO-UNDO.
+DEFINE VARIABLE c-destino-impressao   AS CHARACTER NO-UNDO.
+
+DEFINE VARIABLE c-lbl-erros           AS CHARACTER FORMAT "x(8)"  NO-UNDO.
+DEFINE VARIABLE c-lbl-sim             AS CHARACTER FORMAT "x(3)"  NO-UNDO.
+DEFINE VARIABLE c-lbl-nao             AS CHARACTER FORMAT "x(3)"  NO-UNDO.
+
+DEFINE VARIABLE c-lbl-selecao         AS CHARACTER FORMAT "x(17)" NO-UNDO.
+DEFINE VARIABLE c-lbl-pedido          AS CHARACTER FORMAT "x(17)" NO-UNDO.
+DEFINE VARIABLE c-lbl-data            AS CHARACTER FORMAT "x(17)" NO-UNDO.
+DEFINE VARIABLE c-lbl-fornecedor      AS CHARACTER FORMAT "x(17)" NO-UNDO.
+DEFINE VARIABLE c-lbl-estabelecimento AS CHARACTER FORMAT "x(17)" NO-UNDO.
+DEFINE VARIABLE c-lbl-responsavel     AS CHARACTER FORMAT "x(17)" NO-UNDO.
+DEFINE VARIABLE c-lbl-ordem           AS CHARACTER FORMAT "x(17)" NO-UNDO.
+DEFINE VARIABLE c-lbl-parcela         AS CHARACTER FORMAT "x(17)" NO-UNDO.
+DEFINE VARIABLE c-lbl-data-entrega    AS CHARACTER FORMAT "x(17)" NO-UNDO.
+
+DEFINE VARIABLE c-lbl-parametros             AS CHARACTER FORMAT "x(33)" NO-UNDO.
+DEFINE VARIABLE c-lbl-zera-saldo             AS CHARACTER FORMAT "x(38)" NO-UNDO.
+DEFINE VARIABLE c-lbl-atualiza-situacao      AS CHARACTER FORMAT "x(38)" NO-UNDO.
+DEFINE VARIABLE c-lbl-atualiza-parc-lote     AS CHARACTER FORMAT "x(38)" NO-UNDO.
+DEFINE VARIABLE c-lbl-atualiza-parc-lote-min AS CHARACTER FORMAT "x(38)" NO-UNDO.
+DEFINE VARIABLE c-lbl-nao-gera-pend          AS CHARACTER FORMAT "x(38)" NO-UNDO.
+DEFINE VARIABLE c-lbl-intervalo-validacao    AS CHARACTER FORMAT "x(38)" NO-UNDO.
+DEFINE VARIABLE c-lbl-simular                AS CHARACTER FORMAT "x(38)" NO-UNDO.
+
+
+DEFINE VARIABLE c-lbl-impressao         AS CHARACTER FORMAT "x(10)" NO-UNDO.
+DEFINE VARIABLE c-lbl-destino           AS CHARACTER FORMAT "x(10)" NO-UNDO.
+DEFINE VARIABLE c-lbl-arquivo           AS CHARACTER FORMAT "x(10)" NO-UNDO.
+DEFINE VARIABLE c-lbl-usuario           AS CHARACTER FORMAT "x(10)" NO-UNDO.
+DEFINE VARIABLE c-lbl-execucao          AS CHARACTER FORMAT "x(10)" NO-UNDO.
+
+FORM
+    tt-pedido-compr-processado.num-pedido   
+    tt-pedido-compr-processado.data-pedido 
+    c-emitente-pedido                          
+    tt-pedido-compr-processado.cod-estabel 
+    tt-pedido-compr-processado.responsavel
+WITH FRAME f-pedido DOWN STREAM-IO WIDTH 132.
+
+FORM
+    tt-ordem-compra-processado.numero-ordem AT 7
+    tt-ordem-compra-processado.it-codigo
+    item.desc-item
+    prazo-compra.un
+    tt-ordem-compra-processado.qt-solic
+    c-situacao-ordem
+WITH FRAME f-ordem DOWN STREAM-IO WIDTH 132.
+
+FORM
+    tt-prazo-compra-processado.parcela AT 15
+    tt-prazo-compra-processado.data-entrega
+    c-situacao-parcela
+    tt-prazo-compra-processado.quantidade
+    tt-prazo-compra-processado.qtd-sal-forn
+WITH FRAME f-parcela DOWN STREAM-IO WIDTH 132.
+
+FORM
+    RowErrorsParcelas.ErrorNumber AT 7  " - "
+    RowErrorsParcelas.tipo AT 22 FORMAT "x(13)"  " - "
+    RowErrorsParcelas.ErrorDescription AT 40 FORMAT "x(90)"
+WITH FRAME f-erros DOWN NO-LABEL STREAM-IO WIDTH 132.
+
+FORM
+    c-lbl-selecao               AT 5 SKIP(1)
+    c-lbl-pedido                AT 10
+    tt-param.iPedidoIni         TO 40   "|< >|" AT 42   tt-param.iPedidoFim      
+    c-lbl-data                  AT 10
+    tt-param.daDataIni          TO 40   "|< >|" AT 42   tt-param.daDataFim     
+    c-lbl-fornecedor            AT 10  
+    tt-param.iEmitenteIni       TO 40   "|< >|" AT 42   tt-param.iEmitenteFim
+    c-lbl-estabelecimento       AT 10
+    tt-param.cEstabelecIni      TO 40   "|< >|" AT 42   tt-param.cEstabelecFim
+    c-lbl-responsavel           AT 10
+    tt-param.cResponsavelIni    TO 40   "|< >|" AT 42   tt-param.cResponsavelFim    
+    c-lbl-ordem                 AT 10
+    tt-param.iOrdemIni          TO 40   "|< >|" AT 42   tt-param.iOrdemFim
+    c-lbl-parcela               AT 10
+    tt-param.iParcelaIni        TO 40   "|< >|" AT 42   tt-param.iParcelaFim        
+    c-lbl-data-entrega          AT 10
+    tt-param.daDataEntregaIni   TO 40   "|< >|" AT 42   tt-param.daDataEntregaFim   
+WITH stream-io overlay row 1 column 1 width 132 NO-LABEL frame f-selecao.
+
+FORM
+    c-lbl-parametros             AT 5  SKIP(1)
+    c-lbl-zera-saldo             AT 10 tt-param.lZeraSaldo       
+    c-lbl-atualiza-situacao      AT 10 tt-param.lAtualizaSituacao 
+    c-lbl-atualiza-parc-lote     AT 10 tt-param.lAtualizaParcLote
+    c-lbl-atualiza-parc-lote-min AT 10 tt-param.lAtualizaParcLoteMin
+    c-lbl-intervalo-validacao    AT 10 tt-param.daIntervaloIni AT 49 "|< >|" AT 60 tt-param.daIntervaloFim AT 66
+    c-lbl-nao-gera-pend          AT 10 tt-param.lNGeraPend        
+    c-lbl-simular                AT 10 tt-param.lSimula           
+WITH stream-io overlay row 1 column 1 width 132 NO-LABEL frame f-param.     
+
+FORM
+    c-lbl-impressao             AT 5  SKIP(1)
+    c-lbl-destino               AT 10 c-destino-impressao TO 30        
+    c-lbl-arquivo               AT 10 tt-param.arquivo    TO 57
+    c-lbl-usuario               AT 10 tt-param.usuario    TO 34
+    c-lbl-execucao              AT 10 tt-param.execution  TO 32
+WITH stream-io overlay row 1 column 1 width 132 NO-LABEL frame f-impressao.
+
+/* Tradu‡äes */
+{utp/ut-liter.i "Pedido"}
+ASSIGN tt-pedido-compr-processado.num-pedido   :LABEL IN FRAME f-pedido = RETURN-VALUE.
+{utp/ut-liter.i "Data"}
+ASSIGN tt-pedido-compr-processado.data-pedido  :LABEL IN FRAME f-pedido = RETURN-VALUE.
+{utp/ut-liter.i "Fornecedor"}
+ASSIGN c-emitente-pedido                      :LABEL IN FRAME f-pedido = RETURN-VALUE.
+{utp/ut-liter.i "Estab"}
+ASSIGN tt-pedido-compr-processado.cod-estabel  :LABEL IN FRAME f-pedido = RETURN-VALUE.
+{utp/ut-liter.i "Respons vel"}
+ASSIGN tt-pedido-compr-processado.responsavel  :LABEL IN FRAME f-pedido = RETURN-VALUE.
+
+{utp/ut-liter.i "Ordem"}
+ASSIGN tt-ordem-compra-processado.numero-ordem :LABEL IN FRAME f-ordem = RETURN-VALUE.
+{utp/ut-liter.i "Item"}
+ASSIGN tt-ordem-compra-processado.it-codigo    :LABEL IN FRAME f-ordem = RETURN-VALUE.
+{utp/ut-liter.i "Descri‡Æo"}
+ASSIGN item.desc-item                         :LABEL IN FRAME f-ordem = RETURN-VALUE.
+{utp/ut-liter.i "UN"}
+ASSIGN prazo-compra.un                        :LABEL IN FRAME f-ordem = RETURN-VALUE.
+{utp/ut-liter.i "Qtde"}
+ASSIGN tt-ordem-compra-processado.qt-solic     :LABEL IN FRAME f-ordem = RETURN-VALUE.
+{utp/ut-liter.i "Situa‡Æo"}
+ASSIGN c-situacao-ordem                       :LABEL IN FRAME f-ordem = RETURN-VALUE.
+
+{utp/ut-liter.i "Parc"}
+tt-prazo-compra-processado.parcela             :LABEL IN FRAME f-parcela = RETURN-VALUE.
+{utp/ut-liter.i "Dt Entrega"}
+tt-prazo-compra-processado.data-entrega        :LABEL IN FRAME f-parcela = RETURN-VALUE.
+{utp/ut-liter.i "Situa‡Æo"}
+c-situacao-parcela                            :LABEL IN FRAME f-parcela = RETURN-VALUE.
+{utp/ut-liter.i "Qtde"}
+tt-prazo-compra-processado.quantidade          :LABEL IN FRAME f-parcela = RETURN-VALUE.
+{utp/ut-liter.i "Qtde Saldo"}
+tt-prazo-compra-processado.qtd-sal-forn        :LABEL IN FRAME f-parcela = RETURN-VALUE.
+
+{utp/ut-liter.i "Erros:"}
+ASSIGN c-lbl-erros = RETURN-VALUE.
+
+{utp/ut-liter.i "Sele‡Æo:"}
+ASSIGN c-lbl-selecao = RETURN-VALUE.
+{utp/ut-liter.i "Parƒmetros:"}
+ASSIGN c-lbl-parametros = RETURN-VALUE.
+
+{utp/ut-liter.i "Pedido:"}
+ASSIGN c-lbl-pedido = RETURN-VALUE.
+{utp/ut-liter.i "Data:"}
+ASSIGN c-lbl-data = RETURN-VALUE.
+{utp/ut-liter.i "Fornecedor:"}
+ASSIGN c-lbl-fornecedor = RETURN-VALUE.
+{utp/ut-liter.i "Estabelecimento:"}
+ASSIGN c-lbl-estabelecimento = RETURN-VALUE.
+{utp/ut-liter.i "Respons vel:"}
+ASSIGN c-lbl-responsavel = RETURN-VALUE.
+{utp/ut-liter.i "Ordem:"}
+ASSIGN c-lbl-ordem = RETURN-VALUE.
+{utp/ut-liter.i "Parcela:"}
+ASSIGN c-lbl-parcela = RETURN-VALUE.
+{utp/ut-liter.i "Data Entrega:"}
+ASSIGN c-lbl-data-entrega = RETURN-VALUE.
+
+{utp/ut-liter.i "Zera saldo:"}
+ASSIGN c-lbl-zera-saldo = RETURN-VALUE.
+{utp/ut-liter.i "Atualiza situa‡Æo para recebida:"}
+ASSIGN c-lbl-atualiza-situacao = RETURN-VALUE.
+{utp/ut-liter.i "Atualiza qtd diferente lote m£ltiplo:"}
+assign c-lbl-atualiza-parc-lote = return-value.
+{utp/ut-liter.i "Atualiza qtd menor que lote m¡nimo:"}
+assign c-lbl-atualiza-parc-lote-min = return-value.
+{utp/ut-liter.i "Intervalo valida‡Æo data parcelas:"}
+assign c-lbl-intervalo-validacao = return-value.  
+{utp/ut-liter.i "NÆo gera pendˆncia de aprova‡Æo:"}
+ASSIGN c-lbl-nao-gera-pend = RETURN-VALUE.
+{utp/ut-liter.i "Simular:"}
+ASSIGN c-lbl-simular = RETURN-VALUE.
+
+{utp/ut-liter.i "Sim"}
+ASSIGN c-lbl-sim = RETURN-VALUE.
+{utp/ut-liter.i "NÆo"}
+ASSIGN c-lbl-nao = RETURN-VALUE.
+
+{utp/ut-liter.i "Destino:"}
+ASSIGN c-lbl-destino = RETURN-VALUE.
+{utp/ut-liter.i "Arquivo:"}
+ASSIGN c-lbl-arquivo = RETURN-VALUE.
+{utp/ut-liter.i "Usu rio:"}
+ASSIGN c-lbl-usuario = RETURN-VALUE.
+{utp/ut-liter.i "Execu‡Æo:"}
+ASSIGN c-lbl-execucao = RETURN-VALUE.
+{utp/ut-liter.i "ImpressÆo:"}
+ASSIGN c-lbl-impressao = RETURN-VALUE.
+{utp/ut-liter.i "Zerar Saldo de Pedido de Compra"}
+assign c-titulo-relat = return-value.

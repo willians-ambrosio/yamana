@@ -1,0 +1,27 @@
+/*******************************************************************************
+** Executa a API de integra‡Æo, valida os erros e desfaz a transa‡Æo
+**
+** Parƒmetros: {1} = comando para retorno de erro ("NOK", "ADM-ERROR", ...)
+**                   Se passar " " nÆo desfaz transa‡Æo nem aplica o return.
+**             {2} = Indica se apresenta mensagens de erro (yes ou no)
+**
+*******************************************************************************/
+
+&IF '{&bf_mat_versao_ems}' >= '2.04' &THEN
+
+    RUN cnp/cnapi020.p (INPUT-OUTPUT l-erro-integra-cn,
+                        INPUT {2},
+                        INPUT-OUTPUT TABLE tt-integra-cn,
+                        INPUT-OUTPUT TABLE rowErrors).
+
+    IF  l-erro-integra-cn THEN DO:
+        IF  "{1}" <> " " THEN DO:
+            UNDO, RETURN "{1}":U.
+        END.
+    END.
+
+&ENDIF
+
+
+
+

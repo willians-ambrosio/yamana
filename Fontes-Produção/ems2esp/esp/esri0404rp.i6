@@ -1,0 +1,85 @@
+/*********************************************************************************
+**
+** rip/ri0404rp.i6 - calcula valor da parcela mensal
+**
+*********************************************************************************/    
+PROCEDURE pi-calcula-valor-parcela-mensal:
+
+    DEF INPUT  PARAM p-l-icms               AS   LOGICAL                    NO-UNDO.
+    DEF INPUT  PARAM p-de-valor-atual-bem   LIKE ri-valor-bem.val-imposto   NO-UNDO.
+    DEF INPUT  PARAM p-i-nr-parc-cred       AS   INTE                       NO-UNDO.
+    DEF INPUT  PARAM p-i-num-meses          AS   INTE                       NO-UNDO.
+    DEF OUTPUT PARAM p-de-vl-parcela        LIKE ri-valor-bem.val-imposto   NO-UNDO.
+
+    DEF VAR de-vl-bem-recalc    LIKE ri-valor-bem.val-imposto       NO-UNDO.
+
+    ASSIGN p-de-vl-parcela = ROUND(p-de-valor-atual-bem / p-i-num-meses, 02).
+    IF  p-de-valor-atual-bem = 0 THEN
+        ASSIGN p-de-vl-parcela = 0.
+
+    ELSE DO:
+        IF  p-de-valor-atual-bem < ROUND(p-i-num-meses * 0.01,2) THEN
+            /* a parcela do mºs atingiu o valor total do imposto */
+                ASSIGN p-de-vl-parcela = 0.01.
+        ELSE DO:
+            /*Imposto ICMS*/
+            IF p-l-icms THEN DO:
+                IF  p-i-nr-parc-cred = p-i-num-meses THEN DO:
+                    /* ajuste da ultima parcela devido ao arredondamento */
+                    ASSIGN de-vl-bem-recalc = ROUND(p-de-vl-parcela * p-i-num-meses, 2).
+                    IF  de-vl-bem-recalc > p-de-valor-atual-bem THEN
+                        ASSIGN p-de-vl-parcela = p-de-vl-parcela - (de-vl-bem-recalc - p-de-valor-atual-bem).
+                END.
+                ELSE DO:
+                    /* casos em que atingiu o credito total antes do decurso */
+                    ASSIGN de-vl-bem-recalc = ROUND(p-de-vl-parcela * p-i-nr-parc-cred, 2).
+                    IF  de-vl-bem-recalc > p-de-valor-atual-bem THEN 
+                        ASSIGN de-vl-bem-recalc = ROUND(p-de-vl-parcela * ( p-i-nr-parc-cred - 1), 2)
+                               p-de-vl-parcela  = p-de-valor-atual-bem - de-vl-bem-recalc.
+                END.
+            END.
+            /*Imposto PIS/COFINS*/
+            /*Para PIS e COFINS n∆o existe a conta de imposto nao recuperavel, por esse motivo o calculo da parcela mensal deve ser diferente*/
+            ELSE DO:
+                
+                IF (ROUND(p-de-valor-atual-bem / p-i-num-meses, 2) * p-i-num-meses) < p-de-valor-atual-bem THEN DO: 
+                    ASSIGN p-de-vl-parcela = TRUNC(p-de-valor-atual-bem / p-i-num-meses, 2) + 0.01. 
+
+                    IF  p-i-nr-parc-cred = p-i-num-meses THEN DO:
+                        /* ajuste da ultima parcela devido ao arredondamento */
+                        ASSIGN de-vl-bem-recalc = ROUND(p-de-vl-parcela * p-i-num-meses, 2).
+                        IF  de-vl-bem-recalc > p-de-valor-atual-bem THEN
+                            ASSIGN p-de-vl-parcela = p-de-vl-parcela - (de-vl-bem-recalc - p-de-valor-atual-bem).
+                        
+                    END.
+                    ELSE IF p-i-nr-parc-cred < p-i-num-meses THEN DO:
+                        /* casos em que atingiu o credito total antes do decurso */
+                        ASSIGN de-vl-bem-recalc = ROUND(p-de-vl-parcela * p-i-nr-parc-cred, 2).
+                        IF  de-vl-bem-recalc > p-de-valor-atual-bem THEN 
+                            ASSIGN de-vl-bem-recalc = ROUND(p-de-vl-parcela * ( p-i-nr-parc-cred - 1), 2)
+                                   p-de-vl-parcela  = p-de-valor-atual-bem - de-vl-bem-recalc.
+                    END.
+                    ELSE ASSIGN  p-de-vl-parcela = 0. 
+                END.
+                ELSE DO:
+                    IF  p-i-nr-parc-cred = p-i-num-meses THEN DO:
+                        /* ajuste da ultima parcela devido ao arredondamento */
+                        ASSIGN de-vl-bem-recalc = ROUND(p-de-vl-parcela * p-i-num-meses, 2).
+                        IF  de-vl-bem-recalc > p-de-valor-atual-bem THEN
+                            ASSIGN p-de-vl-parcela = p-de-vl-parcela - (de-vl-bem-recalc - p-de-valor-atual-bem).
+                    END.
+                    ELSE DO:
+                        /* casos em que atingiu o credito total antes do decurso */
+                        ASSIGN de-vl-bem-recalc = ROUND(p-de-vl-parcela * p-i-nr-parc-cred, 2).
+                        IF  de-vl-bem-recalc > p-de-valor-atual-bem THEN 
+                            ASSIGN de-vl-bem-recalc = ROUND(p-de-vl-parcela * ( p-i-nr-parc-cred - 1), 2)
+                                   p-de-vl-parcela  = p-de-valor-atual-bem - de-vl-bem-recalc.
+
+                    END.
+                END.
+
+            END.
+        END.
+    END.
+
+END PROCEDURE.

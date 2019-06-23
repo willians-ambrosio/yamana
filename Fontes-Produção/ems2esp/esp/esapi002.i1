@@ -1,0 +1,111 @@
+/******************************************************************************
+**
+**       Programa: ESAPI002.I1
+**
+**       Data....: 10/06/2009
+**
+**       Autor...: JULIANA K. OLIVEIRA
+**
+**       Objetivo: Integracao MI - Frotas x Investimentos
+**
+**       Versao..: 1.00.000 - Juliana K. Oliveira
+**
+*******************************************************************************/
+
+/** INICIALIZA€ÇO VARIAVEIS **/
+{utp/ut-liter.i INVESTIMENTO}
+assign c-sistema      = trim(return-value).
+{utp/ut-liter.i Transferˆncia_Valores_para_Investimento}
+assign c-titulo-relat = return-value.
+{utp/ut-field.i movind ord-prod nr-ord-produ 1}
+assign c-lb-ord = trim(return-value).   
+{utp/ut-liter.i Per¡odo *}
+assign c-lb-periodo = trim(return-value).
+{utp/ut-liter.i Transferir_Requisi‡äes *}
+assign c-lb-requis = trim(return-value).
+{utp/ut-liter.i Transferir_Ordens_Produ‡Æo/Manuten‡Æo *}
+assign c-lb-ordens = trim(return-value).
+{utp/ut-liter.i Manute‡Æo_Frotas * r}
+assign c-lb-producao = "( " + trim(return-value) + " )".
+{utp/ut-liter.i EmissÆo * r}
+assign c-lb-emissao = trim(return-value).
+{utp/ut-liter.i Ord_Frotas * r}
+assign c-lb-ord-prod = trim(return-value).
+{utp/ut-liter.i Item}
+assign c-lb-it-cod = trim(return-value).
+{utp/ut-liter.i Vl_Material}
+assign c-lb-vl-mat = fill(" ", int(15 - length(trim(return-value)))) + trim(return-value).
+{utp/ut-liter.i Vl_Servi‡o}
+assign c-lb-vl-ser = fill(" ", int(15 - length(trim(return-value)))) + trim(return-value).
+{utp/ut-liter.i Vl_GGF}
+assign c-lb-vl-ggf = fill(" ", int(15 - length(trim(return-value)))) + trim(return-value).
+{utp/ut-liter.i Vl_MÆo-de-Obra}
+assign c-lb-vl-mob = fill(" ", int(15 - length(trim(return-value)))) + trim(return-value).
+{utp/ut-liter.i Quantidade}
+assign c-lb-quant = fill(" ", int(13 - length(trim(return-value)))) + trim(return-value).
+{utp/ut-liter.i Horas}
+assign c-lb-horas = fill(" ", int(12 - length(trim(return-value)))) + trim(return-value).
+{utp/ut-liter.i SELE€ÇO * r}
+assign c-lb-selec = trim(return-value).
+{utp/ut-liter.i IMPRESSÇO * r}
+assign c-lb-impr = trim(return-value).
+{utp/ut-liter.i Destino * r}
+assign c-lb-dest = trim(return-value).
+{utp/ut-liter.i Usu rio * r}
+assign c-lb-usuar = trim(return-value).
+{utp/ut-liter.i PAR¶METROS * r}
+assign c-lb-par = trim(return-value).
+/***************/
+
+/** FORMS **/
+form header
+   c-lb-producao
+   skip(1)
+   c-lb-ord-prod
+   c-lb-emissao
+   c-lb-it-cod
+   c-lb-vl-mat
+   c-lb-vl-ser
+   c-lb-vl-mob
+   c-lb-vl-ggf
+   c-lb-quant
+   c-lb-horas skip
+   "----------- ---------- ---------------- --------------- ---------------"
+   "--------------- --------------- ------------- ------------" skip
+   with stream-io width 132 no-box page-top no-labels frame f-cab-prod.    
+
+form 
+   ord-prod.nr-ord-prod
+   ord-prod.dt-emissao
+   ord-prod.it-codigo
+   de-vl-mat-tot[1] format "->>>,>>>,>>9.99"
+   de-vl-ser-tot[1] format "->>>,>>>,>>9.99"
+   de-vl-mob-tot[1] format "->>>,>>>,>>9.99"
+   de-vl-ggf-tot[1] format "->>>,>>>,>>9.99"
+   de-quantidade    format "->>>>>,>>9.99"
+   de-horas         format "->>>>,>>9.99" skip
+   with stream-io width 132 no-box no-labels frame f-prod.
+/***************/
+
+if tt-param.l-requisicoes then do:
+   {utp/ut-liter.i Sim *}
+end.
+else do:
+  {utp/ut-liter.i NÆo *}
+end.
+assign c-lb-par-requis = trim(return-value).
+if tt-param.l-ordens then do:
+   {utp/ut-liter.i Sim *}
+end.
+else do:
+  {utp/ut-liter.i NÆo *}
+end.
+assign c-lb-par-ordens = trim(return-value).
+
+run utp/ut-trfrrp.p (input frame f-prod:handle).
+run utp/ut-trfrrp.p (input frame f-cab-prod:handle).
+{include/i-rpcab.i}
+{include/i-rpout.i}  
+
+view frame f-cabec.
+view frame f-rodape.

@@ -1,0 +1,51 @@
+/************************************************************************** 
+**
+**   CE0108.I2 - Cria registro TT-MOVTO
+**
+**************************************************************************/
+
+create tt-movto.
+assign tt-movto.it-codigo        = item.it-codigo
+       tt-movto.cod-versao-integ = 1
+       tt-movto.un               = item.un
+       tt-movto.cod-estabel      = item-estab.cod-estabel
+       tt-movto.dt-trans         = tt-param.da-inipa-x
+       tt-movto.tipo-trans       = if l-tipo[{3}] = yes 
+                                   then 2
+                                   else 1
+       tt-movto.esp-docto        = 6
+       tt-movto.cod-depos        = if {&tabela}.deposito-pad = ""    
+                                   then  c-depos-pad                   
+                                   else  {&tabela}.deposito-pad   
+       tt-movto.nro-docto        = tt-param.docto1
+       tt-movto.serie-docto      = if {ininc/i09in122.i 06 tt-param.parametro} = 1
+                                   then "TF"
+                                   else "TD"
+       tt-movto.tipo-valor       = 1
+       tt-movto.cod-localiz      = {&tabela}.cod-localiz
+       tt-movto.conta-contabil   = cta_ctbl_integr.cod_cta_ctbl
+       tt-movto.ct-codigo        = cta_ctbl_integr.cod_cta_ctbl
+       tt-movto.sc-codigo        = ""
+       tt-movto.cod-prog-orig    = "ESCE0108"
+       tt-movto.lote             = c-lote.
+
+if item.tipo-con-est = 4 then 
+    assign tt-movto.cod-refer = c-cod-refer.
+
+do  i-x = 1 to 3:
+    assign tt-movto.{1}[i-x]=
+                    if l-tipo[{3}] then {2}[i-x]
+                    else {2}[i-x] * (-1).
+end.
+/*run cep/ceapi001.p (input-output table tt-movto,  */
+/*                    input-output table tt-erro,   */
+/*                    input yes).                   */ 
+/* find first tt-erro no-lock no-error.             */
+/* if avail tt-erro then do:                        */
+/*     run cdp/cd0666.w (input table tt-erro).      */
+/*     undo, return "NOK".                          */
+/* end.                                             */
+/* find first tt-movto no-error.                    */
+/* if avail tt-movto then                           */
+/*     delete tt-movto.                             */
+

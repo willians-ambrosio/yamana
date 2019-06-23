@@ -1,0 +1,170 @@
+/*****************************************************************************
+** Include: cn0206.i2
+**          gera relacionamento de item e ordem de contrato
+*****************************************************************************/
+    if  not avail param-contrat then
+        find first param-contrat no-lock no-error.
+    if contrato-for.ind-control-rec = 2 then
+       find item where item.it-codigo = item-contrat.it-codigo no-lock
+       no-error.     
+    else
+    find item where item.it-codigo = param-contrat.it-codigo no-lock no-error.
+
+    if contrato-for.ind-control-rec = 1 then
+    find first ordem-compra where
+         ordem-compra.cod-estabel  = pedido-compr.cod-estabel and
+         ordem-compra.nr-contrato   = item-contrat.nr-contrato  and
+         ordem-compra.num-seq-item = 0                        and
+         ordem-compra.it-codigo    = param-contrat.it-codigo  no-lock no-error.
+
+    else
+    find first ordem-compra where
+         ordem-compra.cod-estabel  = pedido-compr.cod-estabel and
+         ordem-compra.nr-contrato   = item-contrat.nr-contrato   and
+         ordem-compra.num-seq-item = item-contrat.num-seq-item and
+         ordem-compra.it-codigo    = item-contrat.it-codigo    no-lock no-error.
+
+    if avail ordem-compra then next.
+
+    &IF "{&bf_mat_versao_ems}" < "2.08" &THEN
+    /* Numeracao de ordens disponivel */
+    find last ordem-compra
+         where ordem-compra.numero-ordem <= (param-compra.ult-ord-man * 100) 
+         no-lock no-error.  
+    if available ordem-compra then do:
+       assign i-num-ord = truncate(ordem-compra.numero-ordem / 100,0) + 1.
+       if  i-num-ord > param-compra.ult-ord-man  then
+           assign i-num-ord = param-compra.prim-ord-man. 
+       else
+           if i-num-ord < param-compra.prim-ord-man then 
+              assign i-num-ord = param-compra.prim-ord-man.
+    end.
+    else do:
+         assign i-num-ord = param-compra.prim-ord-man.
+    end.
+    assign i-numero-ordem = (i-num-ord + 1) * 100.
+
+    &ELSE
+
+        run ccp/ccapi333.p(input  YES,
+                           output i-numero-ordem ).
+
+    &ENDIF
+    find ordem-compra where ordem-compra.numero-ordem = i-numero-ordem 
+         exclusive-lock no-wait no-error.
+    if  available ordem-compra or locked ordem-compra 
+    then next.
+        /* Nao existe numeracao de ordem disponivel para o contrato.*/
+    else
+    if not available ordem-compra or contrato-for.ind-control-rec = 2
+       then do:
+        if  contrato-for.ind-control-rec  = 1 then do:
+            create ordem-compra.
+            assign ordem-compra.numero-ordem  = i-numero-ordem
+                   ordem-compra.situacao      = 2
+                   ordem-compra.cod-comprado  = contrato-for.cod-comprado
+                   ordem-compra.cod-cond-pag  = contrato-for.cod-cond-pag
+                   ordem-compra.cod-emitente  = contrato-for.cod-emitente
+                   ordem-compra.cod-estabel   = pedido-compr.cod-estabel
+                   ordem-compra.it-codigo     = param-contrat.it-codigo
+                   ordem-compra.num-pedido    = pedido-compr.num-pedido
+                   ordem-compra.narrativa     = item.desc-item
+                   ordem-compra.dep-almoxar   = item.deposito-pad
+                   ordem-compra.aliquota-icm = 0
+                   ordem-compra.aliquota-ipi = 0
+                   ordem-compra.aliquota-iss = 0
+                   ordem-compra.valor-frete  = 0
+                   ordem-compra.valor-taxa   = 0
+                   ordem-compra.perc-descto  = 0
+                   ordem-compra.cod-cond-pag = contrato-for.cod-cond-pag
+                   ordem-compra.preco-unit   = 0
+                   ordem-compra.preco-orig   = 0
+                   i-num-ord                  = i-numero-ordem / 100.
+        end.
+        else do:
+            create cotacao-item.
+            assign cotacao-item.cot-aprovada = yes
+                   cotacao-item.it-codigo    = item-contrat.it-codigo
+                   cotacao-item.data-cotacao = item-contrat.dat-cotac
+                   cotacao-item.cod-emitente = contrato-for.cod-emite
+                   cotacao-item.un           = item-contrat.un
+                   cotacao-item.preco-fornec = item-contrat.preco-fornec
+                   cotacao-item.pre-unit-for = item-contrat.pre-unit-for
+                   cotacao-item.preco-unit   = item-contrat.preco-unit
+                   cotacao-item.mo-codigo    = item-contrat.mo-codigo
+                   cotacao-item.codigo-ipi   = item-contrat.codigo-ipi
+                   cotacao-item.aliquota-ipi = item-contrat.aliquota-ipi
+                   cotacao-item.codigo-icm   = item-contrat.codigo-icm
+                   cotacao-item.aliquota-icm = item-contrat.aliquota-icm
+                   cotacao-item.aliquota-iss = item-contrat.aliquota-iss
+                   cotacao-item.frete        = item-contrat.frete
+                   cotacao-item.valor-frete  = item-contrat.val-frete
+                   cotacao-item.taxa-financ  = item-contrat.taxa-financ
+                   cotacao-item.valor-taxa   = item-contrat.val-taxa
+                   cotacao-item.perc-descto  = item-contrat.perc-desconto
+                   cotacao-item.cod-cond-pag = item-contrat.cod-cond-pag
+                   cotacao-item.prazo-entreg = item-contrat.prazo-ent
+                   cotacao-item.contato      = item-contrat.contato
+                   cotacao-item.cod-comprado = item-contrat.cod-comprado
+                   cotacao-item.numero-ordem = i-numero-ordem.
+
+            create ordem-compra.
+            assign ordem-compra.numero-ordem = i-numero-ordem
+                   ordem-compra.situacao     = 2
+                   ordem-compra.cod-emitente = contrato-for.cod-emitente
+                   ordem-compra.data-cotacao = item-contrat.dat-cotac
+                   ordem-compra.pre-unit-for = item-contrat.pre-unit-for
+                   ordem-compra.preco-fornec = item-contrat.preco-fornec
+                   ordem-compra.mo-codigo    = item-contrat.mo-codigo
+                   ordem-compra.codigo-ipi   = item-contrat.codigo-ipi
+                   ordem-compra.aliquota-ipi = item-contrat.aliquota-ipi
+                   ordem-compra.codigo-icm   = item-contrat.codigo-icm
+                   ordem-compra.aliquota-icm = item-contrat.aliquota-icm
+                   ordem-compra.aliquota-iss = item-contrat.aliquota-iss
+                   ordem-compra.frete        = item-contrat.frete
+                   ordem-compra.valor-frete  = item-contrat.val-frete
+                   ordem-compra.taxa-financ  = item-contrat.taxa-financ
+                   ordem-compra.valor-taxa   = item-contrat.val-taxa
+                   ordem-compra.perc-descto  = item-contrat.perc-desconto
+                   ordem-compra.cod-cond-pag = 
+                   if avail pedido-compr then pedido-compr.cod-cond-pag
+                   else item-contrat.cod-cond-pag
+                   ordem-compra.prazo-entreg = item-contrat.prazo-ent
+                   ordem-compra.contato      = item-contrat.contato
+                   ordem-compra.cod-comprado = item-contrat.cod-comprado
+                   ordem-compra.preco-unit   = item-contrat.preco-unit
+                   ordem-compra.preco-orig   = item-contrat.preco-unit
+                   ordem-compra.it-codigo    = item-contrat.it-codigo
+                   ordem-compra.num-pedido   = pedido-compr.num-pedido
+                   ordem-compra.cod-estabel  = pedido-compr.cod-estabel
+                   ordem-compra.dep-almoxar  = item-contrat.cod-depos
+                   ordem-compra.narrativa    = item-contrat.narrat-item
+                   i-num-ord                 = i-numero-ordem / 100.
+        end.
+
+        if  avail ordem-compra then do:
+            assign ordem-compra.nr-contrato = pedido-compr.nr-contrato
+                   ordem-compra.it-codigo = 
+            if contrato-for.ind-control-rec = 1
+               then param-contrat.it-codigo
+            else item-contrat.it-codigo.
+
+            if contrato-for.ind-control-rec = 1 then do:
+               assign ordem-compra.num-seq-item = 0.
+            end.
+            else
+               assign ordem-compra.num-seq-item = item-contrat.num-seq-item.
+
+            create prazo-compra.
+            assign prazo-compra.numero-ordem = ordem-compra.numero-ordem
+                   prazo-compra.parcela      = 1
+                   prazo-compra.it-codigo    = ordem-compra.it-codigo
+                   prazo-compra.natureza     = ordem-compra.natureza
+                   prazo-compra.situacao     = 2
+                   prazo-compra.data-alter   = &IF "{&ems_dbtype}":U = "MSS":U &THEN 01/01/1800 &ELSE 01/01/0001 &ENDIF 
+                   prazo-compra.data-orig    = &IF "{&ems_dbtype}":U = "MSS":U &THEN 01/01/1800 &ELSE 01/01/0001 &ENDIF 
+                   prazo-compra.data-entrega = &IF "{&ems_dbtype}":U = "MSS":U &THEN 01/01/1800 &ELSE 01/01/0001 &ENDIF .
+        end.
+    end.
+/* Fim cn0206.i2 */
+

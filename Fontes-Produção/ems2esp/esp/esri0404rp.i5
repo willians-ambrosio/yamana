@@ -1,0 +1,55 @@
+
+/*********************************************************************************
+**
+** rip/ri0404rp.i5 - calcula valor atual do bem
+**
+** Registro necess rios
+**
+** RI-BEM-GRUPO
+** RI-ESTAB-GRUPOS
+**
+*********************************************************************************/    
+PROCEDURE pi-calcula-valor-atual-bem:
+
+    DEF INPUT  PARAM p-da-data-corte        AS   DATE                       NO-UNDO.
+    DEF OUTPUT PARAM p-de-valor-atual-bem   LIKE ri-valor-bem.val-imposto   NO-UNDO.
+
+    DEF VAR de-valor-aux        LIKE ri-valor-bem.val-imposto   NO-UNDO.
+
+    ASSIGN p-de-valor-atual-bem = 0
+           de-valor-aux         = 0.
+
+    /* Acumula os valores at‚ o mˆs anterior … data da £ltima contabiliza‡Æo */
+    saldo:
+    FOR EACH  ri-valor-bem NO-LOCK
+        WHERE ri-valor-bem.id-bem     = ri-bem-grupo.id-bem
+        AND   ri-valor-bem.cod-grupo  = ri-bem-grupo.cod-grupo
+        AND   ri-valor-bem.dat-movto <= p-da-data-corte
+        BREAK BY ri-valor-bem.nr-sequencia:
+
+        IF  FIRST-OF(ri-valor-bem.nr-sequencia) THEN 
+            ASSIGN de-valor-aux = 0.
+
+        /* se contabiliza no mes da baixa ENTAO devo desconsiderar os movimentos de baixa e devo colocar YES */
+        IF  ri-estab-grupos.log-1 THEN
+            FOR FIRST ri-movto-bem NO-LOCK
+                WHERE ri-movto-bem.id-bem             = ri-valor-bem.id-bem
+                AND   ri-movto-bem.nr-sequencia-movto = ri-valor-bem.nr-sequencia
+                AND   MONTH(ri-movto-bem.dat-movto)   = MONTH(ri-valor-bem.dat-movto)
+                AND   YEAR(ri-movto-bem.dat-movto)    = YEAR(ri-valor-bem.dat-movto) 
+                AND   MONTH(ri-movto-bem.dat-movto)   = MONTH(p-da-data-corte)
+                AND   YEAR(ri-movto-bem.dat-movto)    = YEAR(p-da-data-corte) 
+                AND   ri-movto-bem.log-tipo-movto     = NO /* saida */:
+
+                NEXT saldo.
+            END.
+
+        ASSIGN de-valor-aux = de-valor-aux + ri-valor-bem.val-imposto.
+
+        IF  LAST-OF(ri-valor-bem.nr-sequencia) THEN DO:
+            RELEASE ri-valor-bem.
+            ASSIGN p-de-valor-atual-bem = de-valor-aux.                                            
+        END.    
+    END. 
+
+END PROCEDURE.

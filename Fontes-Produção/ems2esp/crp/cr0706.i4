@@ -1,0 +1,30 @@
+/*******************************************************************************
+**
+**  CR0706.I4 
+**
+**  Buscar cota‡Æo da moeda informada.
+**
+*******************************************************************************/
+
+assign {2} = 1.
+
+if  {1} <> 0 then do:
+    if  {1} <> titulo.mo-codigo then do:
+        find first cotacao
+            where  cotacao.mo-codigo   = {1}
+            and    cotacao.ano-periodo = string(year({3})) + string(month({3}),"99")
+            and    cotacao.cotacao[int(day({3}))] <> 0 no-lock no-error.
+    
+        if  avail cotacao then do:
+            assign {2} = cotacao.cotacao[int(day({3}))].
+        end.
+        else do:
+            run utp/ut-msgs.p (input "help",
+                               input 1175,
+                               input string({1}) + "~~" + 
+                                     string({3})).
+        end.
+    end.
+end.
+
+/*  fim   */

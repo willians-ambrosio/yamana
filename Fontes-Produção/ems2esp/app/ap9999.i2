@@ -1,0 +1,85 @@
+/*********************************************************************************
+***
+*** app/ap9999.i2 - Atualiza‡Æo valores dos campos movimento.
+***
+***                 {1} ===> mov-ap, b-mov-ap, etc.
+***                 {2} ===> Moeda para ImpressÆo do Relat¢rio.
+***                 {3} ===> tit-ap, b-tit-ap, etc.
+***
+*********************************************************************************/
+
+/* Miniflexibilizacao EMS203 */
+{cdp/cdcfgfin.i}
+
+            
+assign de-calc-valor-mov     = {1}.valor-mov
+       de-calc-valor-juros   = {1}.valor-juros
+       de-calc-vl-desconto   = {1}.vl-desconto
+       &if defined(BF_FIN_MULTA_ABATIMENTO) &then
+       de-calc-valor-multa   = {1}.vl-multa
+       de-calc-valor-abat    = {1}.vl-abatimento
+       &endif
+       de-calc-diversos      = {1}.diversos
+       de-calc-frete         = {1}.frete
+       de-calc-vl-antecip    = {1}.vl-antecip.
+       
+if  {2} <> 0 then do:
+    if  {2} = {3}.moeda then do:
+        assign de-calc-valor-mov     = {1}.valor-mov-me
+               de-calc-valor-juros   = {1}.valor-juros-me
+               de-calc-vl-desconto   = {1}.vl-desconto-me
+               &if defined(BF_FIN_MULTA_ABATIMENTO) &then
+               de-calc-valor-multa   = {1}.vl-multa-me
+               de-calc-valor-abat    = {1}.vl-abatimento-me
+               &endif
+               de-calc-diversos      = {1}.diversos-me
+               de-calc-frete         = {1}.frete-me
+               de-calc-vl-antecip    = {1}.vl-antecip-me.
+    end.
+    else do:
+        assign de-calc-valor-mov     = fn_ajust_dec(fn_conv_moedas (
+                                                        {1}.valor-mov,
+                                                        de-calc-cotacao,
+                                                        0,
+                                                        {2}),{2}).
+        assign de-calc-valor-juros   = fn_ajust_dec(fn_conv_moedas (
+                                                        {1}.valor-juros,
+                                                        de-calc-cotacao,
+                                                        0,
+                                                        {2}),{2}).
+        assign de-calc-vl-desconto   = fn_ajust_dec(fn_conv_moedas (
+                                                        {1}.vl-desconto,
+                                                        de-calc-cotacao,
+                                                        0,
+                                                        {2}),{2}).
+               &if defined(BF_FIN_MULTA_ABATIMENTO) &then
+               assign de-calc-valor-multa   = fn_ajust_dec(fn_conv_moedas (
+                                                        {1}.vl-multa,
+                                                        de-calc-cotacao,
+                                                        0,
+                                                        {2}),{2}).
+               assign de-calc-valor-abat    = fn_ajust_dec(fn_conv_moedas (
+                                                        {1}.vl-abatimento,
+                                                        de-calc-cotacao,
+                                                        0,
+                                                        {2}),{2}).
+               &endif
+        assign de-calc-diversos      = fn_ajust_dec(fn_conv_moedas (
+                                                        {1}.diversos,
+                                                        de-calc-cotacao,
+                                                        0,
+                                                        {2}),{2}).
+        assign de-calc-frete         = fn_ajust_dec(fn_conv_moedas (
+                                                        {1}.frete,
+                                                        de-calc-cotacao,
+                                                        0,
+                                                        {2}),{2}).
+        assign de-calc-vl-antecip    = fn_ajust_dec(fn_conv_moedas (
+                                                        {1}.vl-antecip,
+                                                        de-calc-cotacao,
+                                                        0,
+                                                        {2}),{2}).
+    end.
+end.
+
+/* Fim de Include */

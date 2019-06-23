@@ -1,0 +1,45 @@
+/********************************************************************************
+** DSC PRAXIS (2015)
+** YAMANA
+** esp-esmv0616.i1
+** Joao B. C. Bisneto
+** Consulta Gerencial de Indicadores
+** 
+*******************************************************************************/
+define temp-table ttSelecao no-undo
+    field empresa-ini    like mab-eqpto.ep-codigo
+    field empresa-fim    like mab-eqpto.ep-codigo
+    field equipto-ini    like mab-eqpto.cod-eqpto
+    field equipto-fim    like mab-eqpto.cod-eqpto
+    field grupo-ini      like mab-eqpto.cod-grp-eqpto
+    field grupo-fim      like mab-eqpto.cod-grp-eqpto
+    field modelo-ini     like mab-eqpto.cod-model
+    field modelo-fim     like mab-eqpto.cod-model
+    field estab-ini      like mab-eqpto.cod-estabel
+    field estab-fim      like mab-eqpto.cod-estabel
+    field ano-fabric-ini like mab-eqpto.vli-ano-fabric
+    field ano-fabric-fim like mab-eqpto.vli-ano-fabric
+    field estrut-ini     like mab-eqpto.cod-estrut-mec
+    field estrut-fim     like mab-eqpto.cod-estrut-mec
+    field tag-ini        like mab-eqpto.cd-tag
+    field tag-fim        like mab-eqpto.cd-tag
+    field cc-ini         like mab-histor-ativid.cc-codigo
+    field cc-fim         like mab-histor-ativid.cc-codigo
+    field periodo-ini    as date
+    field periodo-fim    as date
+    FIELD dt-trans-ini   AS DATE
+    FIELD dt-trans-fim   AS DATE
+    field lMtbf          as logical
+    field lMttr          as logical
+    field lDispo         as logical
+    field lPmpl          as logical
+    field iIndicador     as integer
+    FIELD iTipoDispo     AS INTEGER
+    field lMat           as logical
+    field lGGF           as logical
+    field lServ          as logical
+    field lContratos     as logical
+    field lCusto         as logical
+    field lTotal         as logical
+    field lMatMesAnt     as logical
+    field iNivTag        as integer.

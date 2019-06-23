@@ -1,0 +1,175 @@
+/*******************************************************************************
+**
+**  CRAPI011.I4 - C lculo Estatistica.
+**
+********************************************************************************/
+
+for each titulo use-index emitente
+    where titulo.cod-emitente = {1}.cod-emitente no-lock:
+    
+    assign i-tit = i-tit + 1.
+    
+    if  i-tit mod 100 = 0 then
+        run pi-acompanhar in h-acomp (input "Verificando Dados Estatistica... - " + string(i-tit)).
+        
+    if  titulo.tipo = 3
+    or  titulo.dt-emissao > today then next.
+
+    if  titulo.tipo <> 2 then do:
+        
+        /*--- ND/NC ---*/
+        if (titulo.tipo = 4  or
+            titulo.tipo = 5) then
+            next.
+            
+        assign tt-estatistica-a.fi-saldo-aberto = tt-estatistica-a.fi-saldo-aberto 
+                                              + titulo.vl-saldo.
+                
+        if titulo.dt-vencimen < today then
+                assign tt-estatistica-a.fi-saldo-venc = tt-estatistica-a.fi-saldo-venc + titulo.vl-saldo.
+        
+        if  titulo.dt-ult-pagto > today then do:
+            for each mov-tit use-index codigo
+                where mov-tit.ep-codigo   = titulo.ep-codigo
+                and   mov-tit.cod-estabel = titulo.cod-estabel
+                and   mov-tit.cod-esp     = titulo.cod-esp
+                and   mov-tit.serie       = titulo.serie
+                and   mov-tit.nr-docto    = titulo.nr-docto
+                and   mov-tit.parcela     = titulo.parcela
+                and  (mov-tit.transacao   = 2
+                or    mov-tit.transacao   = 21
+                or    mov-tit.transacao   = 22
+                or    mov-tit.transacao   = 23
+                or    mov-tit.transacao   = 3) no-lock:
+                
+                if  mov-tit.dt-credito > today  then do:
+                    assign tt-estatistica-a.fi-saldo-aberto = tt-estatistica-a.fi-saldo-aberto 
+                                                          + mov-tit.vl-baixa.
+                                                          
+                    if titulo.dt-vencimen < today then
+                        assign tt-estatistica-a.fi-saldo-venc = tt-estatistica-a.fi-saldo-venc + mov-tit.vl-baixa.
+                end.
+            end.
+        end.
+    end.
+    else do:
+
+        assign tt-estatistica-a.fi-saldo-aberto = tt-estatistica-a.fi-saldo-aberto 
+                                              - titulo.vl-saldo.
+                                              
+        for each mov-tit use-index ch-antecip
+            where mov-tit.ep-codigo     = titulo.ep-codigo
+            and   mov-tit.cod-est       = titulo.cod-estabel
+            and   mov-tit.esp-antecip   = titulo.cod-esp
+            and   mov-tit.serie-antecip = titulo.serie
+            and   mov-tit.doc-antecip   = titulo.nr-docto
+            and   mov-tit.parc-antecip  = titulo.parcela
+            and   mov-tit.transacao     = 2 no-lock:
+            
+            if  mov-tit.dt-credito > today then do:
+                assign fi-saldo-aberto = fi-saldo-aberto
+                                       - mov-tit.vl-antecip.
+            end.
+        end.
+        
+        for each mov-tit
+            where mov-tit.ep-codigo   = titulo.ep-codigo
+            and   mov-tit.cod-est     = titulo.cod-estabel
+            and   mov-tit.cod-esp     = titulo.cod-esp
+            and   mov-tit.serie       = titulo.serie
+            and   mov-tit.nr-docto    = titulo.nr-docto
+            and   mov-tit.parcela     = titulo.parcela
+            and   (mov-tit.transacao  = 1 
+            or     mov-tit.transacao  = 13) no-lock:
+               
+            if  mov-tit.dt-credito > today then do:
+                if  mov-tit.transacao = 1 then do:
+                    assign tt-estatistica-a.fi-saldo-aberto = tt-estatistica-a.fi-saldo-aberto 
+                                                          - mov-tit.vl-baixa.
+                end.
+                
+                if  mov-tit.transacao = 13 then do:
+                    if  mov-tit.lancamento = 1 then do:
+                        assign tt-estatistica-a.fi-saldo-aberto = tt-estatistica-a.fi-saldo-aberto 
+                                                              - mov-tit.vl-baixa.
+                    end.
+                    else do:
+                        assign tt-estatistica-a.fi-saldo-aberto = tt-estatistica-a.fi-saldo-aberto 
+                                                              + mov-tit.vl-baixa.
+                    end.       
+                end.
+            end.
+        end.
+   end. 
+end.
+
+find first emit-estat
+     where emit-estat.cod-emitente = {1}.cod-emitente
+     and   emit-estat.cod-gr-emit  = {1}.cod-gr-cli
+     and   emit-estat.data         = da-fim-est no-lock no-error.
+     
+if  avail emit-estat then
+    assign tt-estatistica-a.fi-vendas = emit-estat.vl-vendas.
+
+if  tt-estatistica-a.fi-vendas = ? then
+    assign tt-estatistica-a.fi-vendas = 0.
+
+if  tt-estatistica-a.fi-vendas-acumuladas = ? then
+    assign tt-estatistica-a.fi-vendas-acumuladas = 0.
+
+if  tt-estatistica-a.fi-saldo-aberto = ? then
+    assign tt-estatistica-a.fi-saldo-aberto = 0.
+
+do  i-cont = 1 to 12:
+    assign da-ini-est = if  month(da-ini-est) = 12 then
+                            date(1,1,year(da-ini-est) + 1)
+                        else
+                            date(month(da-ini-est) + 1,1, year(da-ini-est)).
+                     
+        
+    assign c-per-atraso[i-cont]  = string(month(da-ini-est),"99") + "/"
+                                 + string(year(da-ini-est),"9999") + " -".
+                                 
+    find first emit-estat
+         where emit-estat.cod-emitente = {1}.cod-emitente
+         and   emit-estat.cod-gr-emit  = {1}.cod-gr-cli
+         and   emit-estat.data         = da-ini-est no-lock no-error.
+
+    if  avail emit-estat then do:
+        assign de-atraso-acum        = de-atraso-acum + emit-estat.valor-rec
+               de-atraso-a           = de-atraso-a    + emit-estat.vl-tot-rec
+               de-atraso-pmr         = de-atraso-pmr  + emit-estat.dec-1
+               de-prazo-acum         = de-prazo-acum  + emit-estat.vl-pr-rec
+               de-vendas[13]         = de-vendas[13]  + emit-estat.vl-vendas.
+               
+        assign tt-estatistica-a.fi-vendas-acumuladas  = tt-estatistica-a.fi-vendas-acumuladas 
+                                                    + emit-estat.vl-vendas.
+                                                    
+        if avail tt-dados then do:
+           if tt-dados.tipo-consulta = 2 then do: /*Se for consulta matriz*/
+              /* acumular por matriz e fazer a media podenrada no final */
+              assign de-vl-tot-rec[i-cont] = de-vl-tot-rec[i-cont] + emit-estat.vl-tot-rec
+                     de-valor-rec[i-cont]  = de-valor-rec[i-cont]  + emit-estat.valor-rec
+                     de-dec-1[i-cont]      = de-dec-1[i-cont]      + emit-estat.dec-1
+                     de-vl-pr-rec[i-cont]  = de-vl-pr-rec[i-cont]  + emit-estat.vl-pr-rec
+                     de-vendas[i-cont]     = de-vendas[i-cont]     + emit-estat.vl-vendas.                                                   
+              
+           end.
+           else do:
+               assign i-atraso[i-cont]  = if  emit-estat.vl-tot-rec <> 0 then
+                                          emit-estat.valor-rec /
+                                          emit-estat.vl-tot-rec
+                                          else 0
+                      i-recebimento[i-cont] = if  emit-estat.dec-1 <> 0 then
+                                              emit-estat.vl-pr-rec /
+                                              emit-estat.dec-1
+                                              else 0
+                      de-vendas[i-cont]     = emit-estat.vl-vendas.
+           
+           end.                                   
+        end. 
+    end.
+end.
+
+/* Fim de Include */
+

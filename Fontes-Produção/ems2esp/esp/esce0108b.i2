@@ -1,0 +1,1545 @@
+/*********************** INICIO INCLUDE ESCE0108B.I2 *****************************/
+
+    FOR EACH tt-movto: DELETE tt-movto. END.
+
+    find first saldo-estoq where
+         saldo-estoq.it-codigo = item.it-codigo no-lock no-error.
+    if avail saldo-estoq then
+        assign c-cod-refer = saldo-estoq.cod-refer
+               c-lote      = saldo-estoq.lote.  
+    else do:
+        find first referencia no-lock no-error.
+        if avail referencia then
+           assign c-cod-refer = referencia.cod-refer.
+    end.
+
+    for each saldo-estoq 
+       where saldo-estoq.it-codigo   = item-uni-estab.it-codigo
+         and saldo-estoq.cod-estabel = item-uni-estab.cod-estabel
+       no-lock:
+         assign de-quant = de-quant + saldo-estoq.qtidade-atu.
+    end.
+
+    &if defined (bf_mat_fech_estab) &then
+        if param-estoq.tp-fech = 2 then do:
+           find estab-mat 
+                where estab-mat.cod-estabel = item-uni-estab.cod-estabel
+                no-lock no-error.
+           if avail estab-mat then
+              assign da-ult-per = estab-mat.ult-per-fech.
+        end.
+        else
+           assign da-ult-per = param-estoq.ult-per-fech.
+    &else
+          assign da-ult-per = param-estoq.ult-per-fech.
+    &endif
+    run cdp/cdapi005.p (input  da-ult-per    ,
+                       output da-iniper-x   ,
+                       output da-fimper-x   ,
+                       output i-per-corrente,
+                       output i-ano-corrente,
+                       output da-aux        ,
+                       output da-aux        ).
+    assign tt-param.da-inipa-x = da-iniper-x.
+    
+    find first estab-mat where estab-mat.cod-estabel = item-uni-estab.cod-estabel no-lock no-error.
+
+    /* Fisico -> Total */
+    if item.tipo-contr = 1 and tt-param.i-movto-tipo /*tipo*/ = 2  AND de-quant      > 0 then do : 
+       create tt-movto.
+       assign tt-movto.it-codigo    = item.it-codigo
+              tt-movto.cod-versao-integ = 1
+              tt-movto.un           = item.un
+              tt-movto.cod-estabel  = {&tabela}.cod-estabel
+              tt-movto.dt-trans     = da-inipa-x
+              tt-movto.tipo-trans   = 1
+              tt-movto.esp-docto    = 6 /*"DIV"*/
+              tt-movto.cod-depos    = if {&tabela}.deposito-pad = ""    
+                                      then  c-depos-pad                   
+                                      else  {&tabela}.deposito-pad   
+              tt-movto.nro-docto    = tt-param.docto1
+              tt-movto.serie-docto  = "FT"
+              tt-movto.tipo-valor   = 1
+              tt-movto.cod-localiz  = {&tabela}.cod-localiz
+              tt-movto.ct-codigo    = conta-contab.ct-codigo
+              tt-movto.sc-codigo    = conta-contab.sc-codigo
+              tt-movto.conta-db     = tt-param.c-conta-contabil
+              tt-movto.lote         = c-lote.
+       if item.tipo-con-est = 4 then
+          assign tt-movto.cod-refer = c-cod-refer.
+       if estab-mat.custo-contab = 1 then do:
+          assign tt-movto.valor-mat-m[1] = fn_ajust_dec(( de-quant * tt-param.medio-mat[1] ),unid-monet[1]).
+          assign tt-movto.valor-mat-m[2] = fn_ajust_dec(( de-quant * tt-param.medio-mat[2] ),unid-monet[2]).
+          assign tt-movto.valor-mat-m[3] = fn_ajust_dec(( de-quant * tt-param.medio-mat[3] ),unid-monet[3]).
+          assign tt-movto.valor-mob-m[1] = fn_ajust_dec(( de-quant * tt-param.medio-mob[1] ),unid-monet[1]).
+          assign tt-movto.valor-mob-m[2] = fn_ajust_dec(( de-quant * tt-param.medio-mob[2] ),unid-monet[2]).
+          assign tt-movto.valor-mob-m[3] = fn_ajust_dec(( de-quant * tt-param.medio-mob[3] ),unid-monet[3]).
+          assign tt-movto.valor-ggf-m[1] = fn_ajust_dec(( de-quant * tt-param.medio-ggf[1] ),unid-monet[1]).
+          assign tt-movto.valor-ggf-m[2] = fn_ajust_dec(( de-quant * tt-param.medio-ggf[2] ),unid-monet[2]).
+          assign tt-movto.valor-ggf-m[3] = fn_ajust_dec(( de-quant * tt-param.medio-ggf[3] ),unid-monet[3]).
+       end.
+       if estab-mat.custo-contab = 2 then do:
+          assign tt-movto.valor-mat-o[1] = fn_ajust_dec(( de-quant * tt-param.medio-mat[1] ),unid-monet[1]).
+          assign tt-movto.valor-mat-o[2] = fn_ajust_dec(( de-quant * tt-param.medio-mat[2] ),unid-monet[2]).
+          assign tt-movto.valor-mat-o[3] = fn_ajust_dec(( de-quant * tt-param.medio-mat[3] ),unid-monet[3]).
+          assign tt-movto.valor-mob-o[1] = fn_ajust_dec(( de-quant * tt-param.medio-mob[1] ),unid-monet[1]).
+          assign tt-movto.valor-mob-o[2] = fn_ajust_dec(( de-quant * tt-param.medio-mob[2] ),unid-monet[2]).
+          assign tt-movto.valor-mob-o[3] = fn_ajust_dec(( de-quant * tt-param.medio-mob[3] ),unid-monet[3]).
+          assign tt-movto.valor-ggf-o[1] = fn_ajust_dec(( de-quant * tt-param.medio-ggf[1] ),unid-monet[1]).
+          assign tt-movto.valor-ggf-o[2] = fn_ajust_dec(( de-quant * tt-param.medio-ggf[2] ),unid-monet[2]).
+          assign tt-movto.valor-ggf-o[3] = fn_ajust_dec(( de-quant * tt-param.medio-ggf[3] ),unid-monet[3]).
+       end.
+
+       for each tt-movto:
+         assign tt-movto.cod-prog-orig = "CE0108"
+                tt-movto.usuario       = c-seg-usuario.
+       end.
+
+    end.
+
+    /* T -> F  ou  T -> D */
+    if  (item.tipo-contr = 2 and tt-param.tipo = 1) 
+        /* or (item.tipo-contr = 2 and tt-param.tipo = 4) */ then do:
+
+        for each item-estab where item-estab.it-codigo = item.it-codigo NO-LOCK:
+
+            &if "{&bf_mat_versao_ems}":U >= "2.04":U &then
+            FIND FIRST item-uni-estab
+                WHERE item-uni-estab.cod-estabel = item-estab.cod-estabel
+                AND   item-uni-estab.it-codigo   = item-estab.it-codigo NO-LOCK NO-ERROR.
+            &endif
+      
+            &if defined (bf_mat_fech_estab) &then
+              if param-estoq.tp-fech = 2 then do:
+                 find estab-mat 
+                      where estab-mat.cod-estabel = item-estab.cod-estabel
+                      no-lock no-error.
+                 if avail estab-mat then
+                    assign da-ult-per = estab-mat.ult-per-fech.
+              end.
+              else
+                 assign da-ult-per = param-estoq.ult-per-fech.
+            &else
+                assign da-ult-per = param-estoq.ult-per-fech.
+            &endif
+            run cdp/cdapi005.p (input  da-ult-per    ,
+                                output da-iniper-x   ,
+                                output da-fimper-x   ,
+                                output i-per-corrente,
+                                output i-ano-corrente,
+                                output da-aux        ,
+                                output da-aux        ).
+            assign tt-param.da-inipa-x = da-iniper-x.
+  
+            find first estab-mat where
+                 estab-mat.cod-estabel = item-estab.cod-estabel 
+                 no-lock no-error.
+            repeat preselect each saldo-estoq 
+               where saldo-estoq.cod-estabel = item-estab.cod-estabel
+                 and saldo-estoq.it-codigo   = item-estab.it-codigo:
+         
+               find next saldo-estoq 
+                  where saldo-estoq.cod-estabel = item-estab.cod-estabel
+                    and saldo-estoq.it-codigo   = item-estab.it-codigo.
+             
+               for each movto-estoq 
+                  where movto-estoq.it-codigo   = item-estab.it-codigo
+                    and movto-estoq.cod-estabel = item-estab.cod-estabel
+                    and movto-estoq.cod-depos   = saldo-estoq.cod-depos
+                    and movto-estoq.cod-localiz = saldo-estoq.cod-localiz
+                    and movto-estoq.lote        = saldo-estoq.lote
+                    and movto-estoq.cod-refer   = saldo-estoq.cod-refer
+                    and movto-estoq.dt-trans   >=  tt-param.da-inipa-x 
+                    and movto-estoq.esp-docto   <> 1 /* "ACA" */
+                    and  movto-estoq.esp-docto  <> 8 /* "EAC" */ no-lock
+                    break by movto-estoq.it-codigo
+                          by  year(movto-estoq.dt-trans)
+                          by month(movto-estoq.dt-trans):
+       
+                    if  first-of(month(movto-estoq.dt-trans)) then
+                         assign de-vl-mat-m = 0
+                                de-vl-mob-m = 0
+                                de-vl-ggf-m = 0
+                                de-vl-mat-p = 0
+                                de-vl-mob-p = 0
+                                de-vl-ggf-p = 0
+                                de-vl-mat-o = 0
+                                de-vl-mob-o = 0
+                                de-vl-ggf-o = 0
+                                de-quant    = 0.
+                   
+                    if  movto-estoq.tipo-trans = 1 then do i-x = 1 to 3:
+                         assign de-vl-mat-m[i-x] = de-vl-mat-m[i-x] + movto-estoq.valor-mat-m[i-x]
+                                de-vl-mob-m[i-x] = de-vl-mob-m[i-x] + movto-estoq.valor-mob-m[i-x]
+                                de-vl-ggf-m[i-x] = de-vl-ggf-m[i-x] + movto-estoq.valor-ggf-m[i-x]
+                                de-vl-mat-o[i-x] = de-vl-mat-o[i-x] + movto-estoq.valor-mat-o[i-x]
+                                de-vl-mob-o[i-x] = de-vl-mob-o[i-x] + movto-estoq.valor-mob-o[i-x]
+                                de-vl-ggf-o[i-x] = de-vl-ggf-o[i-x] + movto-estoq.valor-ggf-o[i-x]
+                                de-vl-mat-p[i-x] = de-vl-mat-p[i-x] + movto-estoq.valor-mat-p[i-x]
+                                de-vl-mob-p[i-x] = de-vl-mob-p[i-x] + movto-estoq.valor-mob-p[i-x]
+                                de-vl-ggf-p[i-x] = de-vl-ggf-p[i-x] + movto-estoq.valor-ggf-p[i-x].
+                    end.
+                    else do  i-x = 1 to 3:
+                         assign de-vl-mat-m[i-x] = de-vl-mat-m[i-x] - movto-estoq.valor-mat-m[i-x]                               
+                                de-vl-mob-m[i-x] = de-vl-mob-m[i-x] - movto-estoq.valor-mob-m[i-x]
+                                de-vl-ggf-m[i-x] = de-vl-ggf-m[i-x] - movto-estoq.valor-ggf-m[i-x]
+                                de-vl-mat-o[i-x] = de-vl-mat-o[i-x] - movto-estoq.valor-mat-o[i-x]
+                                de-vl-mob-o[i-x] = de-vl-mob-o[i-x] - movto-estoq.valor-mob-o[i-x]
+                                de-vl-ggf-o[i-x] = de-vl-ggf-o[i-x] - movto-estoq.valor-ggf-o[i-x]
+                                de-vl-mat-p[i-x] = de-vl-mat-p[i-x] - movto-estoq.valor-mat-p[i-x]
+                                de-vl-mob-p[i-x] = de-vl-mob-p[i-x] - movto-estoq.valor-mob-p[i-x]
+                                de-vl-ggf-p[i-x] = de-vl-ggf-p[i-x] - movto-estoq.valor-ggf-p[i-x].
+                    end.
+
+                    if  last-of(month(movto-estoq.dt-trans)) 
+                    and (de-vl-mat-m[1] <> 0 or   de-vl-mob-m[1] <> 0 or   de-vl-ggf-m[1] <> 0 or   de-vl-mat-p[1] <> 0
+                    or   de-vl-mob-p[1] <> 0 or   de-vl-ggf-p[1] <> 0 or   de-vl-mat-o[1] <> 0 or   de-vl-mob-o[1] <> 0 
+                    or   de-vl-ggf-o[1] <> 0 or   de-quant     <> 0) then do:
+                         if  month(movto-estoq.dt-trans) = 12 then
+                             assign da-data = date(12,01,year(movto-estoq.dt-trans)).
+                         else
+                             assign da-data = date(month(movto-estoq.dt-trans),01,
+                                 year(movto-estoq.dt-trans)).
+                         assign l-tipo = no.
+                  
+                         if estab-mat.custo-contab = 1 then do:
+                             if de-vl-mat-m[1] >= 0 then
+                                 assign l-tipo[1] = yes.
+                             if  de-vl-mat-m[1] <> 0  then do: 
+                                   {cep/esce0108.i1 "valor-mat-m" "de-vl-mat-m" "1"}
+                             end.
+                         
+                             if de-vl-mob-m[1] >= 0 then  
+                                 assign l-tipo[2] = yes. 
+                             if  de-vl-mob-m[1] <> 0 then do: 
+                                   {cep/esce0108.i1 "valor-mob-m" "de-vl-mob-m" "2"}
+                             end.
+
+                             if de-vl-ggf-m[1] >= 0 then  
+                                 assign l-tipo[3] = yes. 
+                             if  de-vl-ggf-m[1] <> 0 then do: 
+                                   {cep/esce0108.i1 "valor-ggf-m" "de-vl-ggf-m" "3"}
+                             end.
+                         end.
+       
+                         if  estab-mat.custo-contab = 2 then do:     
+                             if de-vl-mat-o[1] >= 0 then
+                                 assign l-tipo[7] = yes.
+                             if de-vl-mat-o[1] <> 0 then do: 
+                                   {cep/esce0108.i1 "valor-mat-o" "de-vl-mat-o" "7"}
+                             end.
+              
+                             if de-vl-mob-o[1] >= 0 then  
+                                 assign l-tipo[8] = yes. 
+                             if de-vl-mob-o[1] <> 0 then do: 
+                                   {cep/esce0108.i1 "valor-mob-o" "de-vl-mob-o" "8"}
+                             end.
+                    
+                             if de-vl-ggf-o[1] >= 0 then  
+                                 assign l-tipo[9] = yes. 
+                             if de-vl-ggf-o[1] <> 0 then do: 
+                                   {cep/esce0108.i1 "valor-ggf-o" "de-vl-ggf-o" "9"}
+                             end.   
+                         end.
+                    end. /* if  last-of(month(movto-estoq.dt-trans))  */
+               end. /* for each movto-estoq  */
+    
+               for each movto-estoq 
+                  where movto-estoq.it-codigo   = item-estab.it-codigo
+                    and movto-estoq.cod-estabel = item-estab.cod-estabel
+                    and movto-estoq.cod-depos   = saldo-estoq.cod-depos
+                    and movto-estoq.cod-localiz = saldo-estoq.cod-localiz
+                    and movto-estoq.lote        = saldo-estoq.lote
+                    and movto-estoq.cod-refer   = saldo-estoq.cod-refer
+                    and movto-estoq.dt-trans   >= da-inipa-x
+                    and (movto-estoq.esp-docto   = 1 /*"ACA"*/
+                     or  movto-estoq.esp-docto   = 8 /*"EAC"*/ ) no-lock:
+               
+                  if  month(movto-estoq.dt-trans) = 12 then
+                      assign da-data =
+                            date(12,01,year(movto-estoq.dt-trans)).
+                  else
+                      assign da-data =
+                            date(month(movto-estoq.dt-trans),01,
+                            year(movto-estoq.dt-trans)).
+                  create tt-movto.
+                  assign tt-movto.it-codigo    = movto-estoq.it-codigo
+                         tt-movto.cod-versao-integ = 1
+                         tt-movto.cod-refer    = movto-estoq.cod-refer
+                         tt-movto.cod-estabel  = movto-estoq.cod-estabel
+                         tt-movto.dt-trans     = da-data
+                         tt-movto.cod-depos    = movto-estoq.cod-depos
+                         tt-movto.cod-localiz  = movto-estoq.cod-localiz
+                         tt-movto.lote         = movto-estoq.lote
+                         tt-movto.tipo-trans   = 
+                                             if movto-estoq.esp-docto = 1
+                                             then 2
+                                             else 1
+                         tt-movto.nr-ord-produ = movto-estoq.nr-ord-produ
+                         tt-movto.conta-contabil = conta-contab.conta-contabil
+                         tt-movto.ct-codigo    = conta-contab.ct-codigo
+                         tt-movto.sc-codigo    = conta-contab.sc-codigo
+                         tt-movto.tipo-valor   = 1
+                         tt-movto.serie-docto  = if item.tipo-contr = 2 and 
+                                                    tt-param.tipo = 1 then
+                                                   "TF"
+                                                else "TD"
+                         tt-movto.esp-docto    = if item.tipo-contr = 2 and 
+                                                    tt-param.tipo = 1 THEN 29 /*"RFS"*/ 
+                                              else 27 /*"RDD"*/
+                         tt-movto.un           = movto-estoq.un
+                         tt-movto.nro-docto    = movto-estoq.nro-docto
+                         tt-movto.num-sequen   = movto-estoq.num-sequen
+                         tt-movto.cod-prog-orig = "CE0108"
+                         tt-movto.usuario       = c-seg-usuario.
+                  if item.tipo-con-est = 4 then 
+                      assign tt-movto.cod-refer = c-cod-refer.
+                  if item.tipo-contr = 2 and tt-param.tipo = 4 then do:
+                      assign tt-movto.quantidade = movto-estoq.quantidade.
+                  end.    
+                  if item.tipo-contr = 2 and tt-param.tipo = 4 then do:
+                      assign tt-movto.quantidade = movto-estoq.quantidade. 
+                  end.
+              
+               end. /* for each movto-estoq  */
+            end. /* repeat preselect each saldo-estoq  */
+  
+            assign l-tipo = no.
+            if item-estab.sald-ini-mat-m[1] >= 0 then assign l-tipo[1] = yes.
+            if item-estab.sald-ini-mob-m[1] >= 0 then assign l-tipo[2] = yes.
+            if item-estab.sald-ini-ggf-m[1] >= 0 then assign l-tipo[3] = yes.
+            if item-estab.sald-ini-mat-o[1] >= 0 then assign l-tipo[4] = yes.
+            if item-estab.sald-ini-mob-o[1] >= 0 then assign l-tipo[5] = yes.
+            if item-estab.sald-ini-ggf-o[1] >= 0 then assign l-tipo[6] = yes.
+            if item-estab.sald-ini-mat-p[1] >= 0 then assign l-tipo[7] = yes.
+            if item-estab.sald-ini-mob-p[1] >= 0 then assign l-tipo[8] = yes.
+            if item-estab.sald-ini-ggf-p[1] >= 0 then assign l-tipo[9] = yes.
+
+            if  estab-mat.custo-contab = 1 then do:
+
+                if  item-estab.sald-ini-mat-m[1] <> 0 then do: 
+                     {cep/esce0108.i2 "valor-mat-m" "item-estab.sald-ini-mat-m" "1"}
+                end.
+     
+                if  item-estab.sald-ini-mob-m[1] <> 0 then do: 
+                     {cep/esce0108.i2 "valor-mob-m" "item-estab.sald-ini-mob-m" "2"}
+                end.                                                
+         
+                if  item-estab.sald-ini-ggf-m[1] <> 0 then do: 
+                     {cep/esce0108.i2 "valor-ggf-m" "item-estab.sald-ini-ggf-m" "3"}
+                end.    
+            end.
+
+            if estab-mat.custo-contab = 2 then do:     
+                if  item-estab.sald-ini-mat-o[1] <> 0 then do: 
+                     {cep/esce0108.i2 "valor-mat-o" "item-estab.sald-ini-mat-o" "7"}
+                end.                                            
+     
+                if  item-estab.sald-ini-mob-o[1] <> 0 then do: 
+                     {cep/esce0108.i2 "valor-mob-o" "item-estab.sald-ini-mob-o" "8"}
+                end.
+         
+                if  item-estab.sald-ini-ggf-o[1] <> 0 then do: 
+                     {cep/esce0108.i2 "valor-ggf-o" "item-estab.sald-ini-ggf-o" "9"}
+                end.
+            end.
+        end. /* for each item-estab where item-estab.it-codigo = item.it-codigo NO-LOCK: */
+    end.  /* if  (item.tipo-contr = 2 and tt-param.tipo = 1)  */
+
+
+/*******************************************************************************
+** Valida‡äes necess rias para Tabela (req-ord-produc)
+*******************************************************************************/
+
+    define variable l-ordem-requis as logical no-undo.
+    define variable i-num-tarefa   as integer no-undo.
+
+    /** Valida se Registros de Movimentos de Estoque do tipo 7 (DRM) e 30 (RM)
+        cont‚m a extensÆo <req-ord-produc> para a tabela <it-requisicao> **/
+    &IF '{&bf_mat_versao_ems}' >= '2.05' &THEN
+        assign l-ordem-requis = yes.
+    &else
+        assign l-ordem-requis = no.
+        &IF '{&bf_mat_versao_ems}' >= '2.04' &THEN
+            for first funcao
+                where funcao.cd-funcao = "spp-int-req-om":U
+                and   funcao.ativo     = yes no-lock:
+                assign l-ordem-requis = yes.
+            end.
+        &ENDIF
+    &ENDIF
+    /************************************************************/
+
+
+    for each tt-movto
+        where tt-movto.l-mov-erro = no by tt-movto.tipo-trans:
+        /** Valida se Registros de Movimentos de Estoque do tipo 7 (DRM) e 30 (RM)
+            cont‚m a extensÆo <req-ord-produc> para a tabela <it-requisicao> **/
+        if l-ordem-requis and tt-movto.nr-ord-produ = 0 and (tt-movto.esp-docto = 7 or 
+                                                             tt-movto.esp-docto = 30) then do:
+            run cdp/cd0740.p (input  tt-movto.nro-docto,
+                              input  tt-movto.num-sequen,
+                              output tt-movto.nr-ord-produ,
+                              output i-num-tarefa).
+            /*******************************************
+            ** Retirada a atualiza‡Æo do campo op-seq, 
+            ** para nÆo ocorrerem erros no c lculo do 
+            ** m‚dio com os saldos das ordens de manuten‡Æo 
+            ** industrial e frotas 
+            *******************************************/
+        end.
+
+        &if defined(bf_mat_tipo_ressup) &then
+            /*************************************************************
+            ** Este bloco e executado para a release 2.02 ou superiores **
+            *************************************************************/
+            find estab-mat where estab-mat.cod-estabel = tt-movto.cod-estabel
+                 no-lock no-error.
+            if not avail estab-mat then do:
+                {utp/ut-table.i mgind estab-mat 1}
+                run pi-gera-temp-erro (input 2, input return-value + "~~" + string(tt-movto.cod-estabel)).
+            end.        
+        &endif
+
+        /*************************************************************
+        ** Este bloco e executado para a release 2.03 ou superiores **
+        *************************************************************/
+        if l-fech-estab and 
+           avail estab-mat then
+            /** API para calcular a data inicial e final do mes em curso **/
+            run cdp/cdapi005.p (input  estab-mat.ult-per-fech,
+                                output da-iniper-x,
+                                output da-fimper-x,
+                                output i-per-corrente,
+                                output i-ano-corrente,
+                                output da-iniper-fech,
+                                output da-fimper-fech).
+
+        if not avail tt-ext-movto then
+           find first tt-ext-movto no-error.
+
+        /* Verifica versao de integracao =========================================*/
+/*         if tt-movto.cod-versao-integracao <> i-versao-integ then */
+/*              run pi-gera-temp-erro (input 3941, input "").       */
+
+        /* Efetua validacao sobre o ITEM =========================================*/
+        for first item fields (cod-obsoleto
+                               fraciona
+                               tipo-con-est
+                               un
+                               it-codigo
+                               tipo-contr
+                               ge-codigo                   
+                               perm-saldo-neg
+                               pm-ja-calc 
+
+                               &if defined(bf_mat_fech_estab) &then              
+                                  item.niv-mais-bai          
+                               &endif 
+                               &IF DEFINED (bf_man_per_ppm) &THEN
+                                  item.tipo-formula
+                                  item.per-ppm
+                               &endif
+                               ) 
+             where item.it-codigo = tt-movto.it-codigo no-lock: end.
+
+        if  not avail item then
+            run pi-gera-temp-erro (input 90, input tt-movto.it-codigo).
+        else do:
+/*             /*****************************************************************    */
+/*             ** A partir da 2.04A e obrigatoria a definicao do tipo de con-  **    */
+/*             ** trole do item. O conteudo inicial para esta informacao pas-  **    */
+/*             ** sou a ser 'Nao Definido'                                     **    */
+/*             *****************************************************************/    */
+            IF ITEM.tipo-contr = 5 THEN
+                run pi-gera-temp-erro (input 26340, input tt-movto.it-codigo).
+
+            /***************************************************************** 
+            * A partir do EMS 2.03 e obrigatoria a existencia do registro    *
+            * item-uni-estab movimentado                                     *
+            *****************************************************************/
+
+            for first item-uni-estab fields(it-codigo      cod-estabel 
+                                            metodo-custeio cod-obsoleto
+                                            perm-saldo-neg) where
+                item-uni-estab.it-codigo   = tt-movto.it-codigo and
+                item-uni-estab.cod-estabel = tt-movto.cod-estabel
+                no-lock: end.
+            if not avail item-uni-estab then 
+                run pi-gera-temp-erro (input 25904,
+                                       input string(tt-movto.it-codigo) + '~~' +
+                                             string(tt-movto.cod-estabel)).
+
+            else do:
+                /* 
+                   A partir do EMS 2.05 e obrigatoria a definicao do  
+                   metodo de custeio do registro item x estabelecimento
+                   movimentado
+                */
+                if item.tipo-contr = 2   and
+                   avail estab-mat       and
+                   estab-mat.usa-on-line and
+                   item-uni-estab.metodo-custeio = 1 then 
+                    run pi-gera-temp-erro (input 25905,
+                                           input string(tt-movto.it-codigo) + '~~' +
+                                                 string(tt-movto.cod-estabel)).
+                else 
+                    if avail estab-mat                   and
+                       estab-mat.usa-on-line             and
+                       item-uni-estab.metodo-custeio = 6 and
+                       item.tipo-con-est = 1 then 
+                        run pi-gera-temp-erro (input 25993,
+                                               input string(tt-movto.it-codigo) + '~~' +
+                                                     string(tt-movto.cod-estabel)).
+            end.                                                                 
+
+            /* Verifica se o item esta obsoleto ----------------------------------
+               So permite movimentar itens obsoletos se a transacao for de acerto
+               gerado pelo calculo do preco medio ------------------------------*/
+            /***************************************************************** 
+            ** verifica se a ocorrencia 'item-uni-estab' esta obsoleta para **
+            ** movimentacao                                                 **
+            *****************************************************************/
+
+            /*********************************************************************************
+            ** Include.: CEAPI001.I4                                                        **
+            ** Objetivo: Validar a obsolescencia da ocorrencia 'item-uni-estab' movimentada **
+            ** Ps.: somente executada para releases a partir da 2.03                        **
+            *********************************************************************************/
+
+            if avail item-uni-estab and
+               can-find(estabelec where 
+                        estabelec.cod-estabel = tt-movto.cod-estabel no-lock) then do:
+                if item-uni-estab.cod-obsoleto =       4    and
+                   tt-movto.esp-docto          <> {&ACT}    and
+                   tt-movto.esp-docto          <> {&INV}    and
+                   tt-movto.esp-docto          <> {&NFS}    then
+                   run pi-gera-temp-erro (input 25983,
+                                           input string(tt-movto.it-codigo) + '~~' +
+                                                 string(tt-movto.cod-estabel)).
+            end.        
+
+
+            /* Fim da include */
+
+            /*******************************
+             * Chamada EPC para Faturamento *
+             *******************************/
+            assign l-fraciona = item.fraciona.
+            if can-find(funcao no-lock where funcao.cd-funcao = "spp-fraciona_item") AND 
+               (tt-movto.cod-prog-orig = "CPAPI001" OR tt-movto.cod-prog-orig  = "cpapi011") THEN /* Reporte e estorno de producao */
+               ASSIGN l-fraciona = YES.
+
+            if not(l-fraciona) then do:
+            end.            
+
+            /* Verifica se a quantidade fracionada e' permitida ------------------
+               So permite movimentar qtds fracionadas se for uma transacao de
+               acerto to medio -------------------------------------------------*/
+
+            if not(l-fraciona)                                     and
+               tt-movto.quantidade <> integer(tt-movto.quantidade) and
+               tt-movto.esp-docto  <> {&ACT}                       and
+               tt-movto.esp-docto  <> {&MOB} then
+                run pi-gera-temp-erro (input 4569, input string(tt-movto.quantidade)).
+
+            /* Verifica se quantidades maiores que um sao permitidas -------------*/
+            if item.tipo-con-est    = 2 and
+               tt-movto.quantidade <> 0 and
+               tt-movto.quantidade <> 1 then
+                run pi-gera-temp-erro (input 17547, input item.it-codigo).
+
+            /* Verifica se quantidades para item controlado por serie j  movimentou qtde um -------------*/
+
+            for first saldo-estoq fields (it-codigo
+                                          cod-estabel
+                                          cod-depos
+                                          cod-localiz
+                                          lote
+                                          cod-refer
+                                          qtidade-atu)
+                where saldo-estoq.it-codigo   = tt-movto.it-codigo
+                  and saldo-estoq.cod-estabel = tt-movto.cod-estabel
+                  and saldo-estoq.cod-depos   = tt-movto.cod-depos
+                  and saldo-estoq.cod-localiz = tt-movto.cod-localiz
+                  and saldo-estoq.lote        = tt-movto.lote 
+                  and saldo-estoq.cod-refer   = tt-movto.cod-refer no-lock: end.
+
+            if  avail saldo-estoq then do:
+                if item.tipo-con-est   =  2 and
+                   tt-movto.esp-docto  <> 2 and 
+                   tt-movto.quantidade <> 0 and
+                   tt-movto.referencia <> "RecFis":U then do :  /* Nao deve consistir as notas de entrada provenientes do rec fisico que geraram movto-estoq pelo f¡sico */ 
+                   if (tt-movto.tipo-trans     =   2 /* Saida   */  and
+                       saldo-estoq.qtidade-atu <= -1 ) 
+                   or (tt-movto.tipo-trans     =   1 /* Entrada */  and
+                       saldo-estoq.qtidade-atu >=  1 ) 
+                   then do :
+                         run pi-gera-temp-erro (input 8995, input string(tt-movto.it-codigo + " N£mero de Serie " + tt-movto.lote + " j  ")).
+                   end.
+                end.
+            end.
+
+            IF tt-movto.referencia = "RecFis":U THEN
+               ASSIGN tt-movto.referencia = "".
+
+            /* Verifica se a unidade de medida do item esta correta --------------*/
+            if tt-movto.un    <> item.un and
+               item.it-codigo <> " "     then
+                run pi-gera-temp-erro (input 4568, input tt-movto.un + "~~" +
+                                                         item.it-codigo).
+
+    /*    end. Fim do If item avail, 
+          foi passado pra baixo, antes do fim do for each */
+
+
+            /* Efetua validacao sobre o Deposito =====================================*/
+            if not avail tt-ext-movto or
+               tt-ext-movto.cod-depos     <> tt-movto.cod-depos then do:
+                &IF "{&bf_mat_versao_ems}" >= "2.05" &THEN 
+                    for first deposito fields(cod-depos log-gera-wms) where 
+                &ELSE
+                    for first deposito fields(cod-depos log-2) where 
+                &ENDIF
+                   deposito.cod-depos = tt-movto.cod-depos no-lock: end.
+               if not avail deposito then
+                   run pi-gera-temp-erro (input 15142, input string(tt-movto.cod-depos)).
+               else do:
+
+                   /*******************************************************************
+                   ** Verificacao de movimentacao para deposito considerado como WMS **
+                   ** Somente os programas CE0220, RE1005, RE2005, FT2100, CE0401,   **
+                   ** CE9701 e WM0552 podem movimentar depositos considerados como   **
+                   ** WMS. Duvidas, procurar a equipe que da suporte ao respectivo   **
+                   ** modulo                                                         **
+                   *******************************************************************/
+                   &IF "{&bf_mat_versao_ems}" >= "2.05" &THEN 
+                    if  deposito.log-gera-wms                            and /*Deposito WMS*/
+                   &ELSE
+                    if  deposito.log-2                                   and /*Deposito WMS*/
+                   &ENDIF
+                       tt-movto.cod-prog-orig <> "v07in218"              and /*CE0220*/
+                       tt-movto.cod-prog-orig <> "RE1005"                and /*Recebimento*/
+                       tt-movto.cod-prog-orig <> "RE2005"                and /*Recebimento Fisico*/
+                       tt-movto.cod-prog-orig <> "FT2100"                and /*Faturamento*/
+                       tt-movto.cod-prog-orig <> "CE9701"                and /*TRA Estoque x WMS*/
+                       tt-movto.cod-prog-orig <> "CE9702"                and /*TRA WMS x Estoque*/
+                       tt-movto.cod-prog-orig <> "CQ0210"                and /* WMS x CQ - CQ0210*/
+                       tt-movto.cod-prog-orig <> "V03in218"              and /* WMS x CQ - CQ0210*/
+                       tt-movto.cod-prog-orig <> "V06in218"              and /* WMS x CQ - CQ0210*/ 
+                       tt-movto.cod-prog-orig <> "BC9006D"               and /* Data Collection  */
+                       l-programa-origem       =  NO                     and /* EPC  */
+                       tt-movto.cod-prog-orig <> "CE0220A"               and /* Importacao Trans Diversas */
+                       tt-movto.cod-prog-orig <> "CD4391"                and /* Geracao de Movtos de Saida por Requisicao */
+                       tt-movto.cod-prog-orig <> "CPAPI001"              and 
+                       tt-movto.cod-prog-orig <> "CPAPI009"              and 
+                       tt-movto.cod-prog-orig <> "CPAPI011"              and 
+                       tt-movto.cod-prog-orig <> "CP0326"                and 
+                       tt-movto.quantidade     > 0                       AND
+                       index(string(tt-movto.cod-prog-orig), "0401") = 0 and /*Medio*/ 
+                       index(string(tt-movto.cod-prog-orig), "0802") = 0 then
+                       run pi-gera-temp-erro (input 27607, input string(tt-movto.cod-depos)).
+
+                    IF   tt-movto.cod-prog-orig = "CPAPI001"  OR
+                         tt-movto.cod-prog-orig = "CPAPI009"  OR 
+                         tt-movto.cod-prog-orig = "CPAPI011"  OR 
+                         tt-movto.cod-prog-orig = "CP0326"    THEN DO: 
+
+                        FIND FIRST param-cp NO-LOCK NO-ERROR.
+                        IF SUBSTRING(param-cp.char-2,11,1) = "2" AND 
+                            &If '{&BF_MAT_VERSAO_EMS}' >= '2.05' &THEN deposito.log-gera-wms &else deposito.log-2 &endif  /*Deposito WMS*/ THEN DO:
+                            run pi-gera-temp-erro (input 30432, input "").
+                            RETURN "NOK":U.
+                        END.
+                    END.
+
+                    &IF "{&bf_mat_versao_ems}" >= "2.05" &THEN 
+                    if deposito.log-gera-wms = yes and
+                    &ELSE
+                    if deposito.log-2 = yes and
+                    &ENDIF
+                      tt-movto.quantidade > 0 and
+                      tt-movto.cod-localiz <> " " and
+                      tt-movto.cod-localiz <> ? then do:
+                       run pi-gera-temp-erro (input 54, input "bin for wms warehouse").
+                   end.
+                end.
+            end.
+
+            /* Efetua validacao sobre o Estabelecimento ------------------------------*/
+            if not avail estabelec or
+               not avail tt-ext-movto or
+               tt-ext-movto.cod-estabel <> tt-movto.cod-estabel or
+               tt-ext-movto.dt-trans    <> tt-movto.dt-trans then do:
+               for first estabelec fields (cod-estabel
+                                           usa-mensal
+                                           usa-on-line
+                                           usa-padrao
+                                           custo-contab)
+                   where estabelec.cod-estabel = tt-movto.cod-estabel no-lock: end.
+               if not avail estabelec then
+                  run pi-gera-temp-erro (input 13, input string(tt-movto.cod-estabel)).
+               else do:
+                    /* Verifica Custo medio mensal ---------------------------------------*/
+                    if param-estoq.log-1 then do: /* Usa medio mensal */
+                       /* Verifica Data de c lculo do medio =================================*/        
+                       if tt-movto.dt-trans       > today      and
+                          tt-movto.cod-prog-orig <> "CE0407B"  and
+                          tt-movto.esp-docto     <> {&ACA}     and
+                          tt-movto.esp-docto     <> {&ACT}     and
+                          tt-movto.esp-docto     <> {&EAC}     and
+                          tt-movto.esp-docto     <> {&MOB}     and
+                          tt-movto.esp-docto     <> {&RDD}     then
+                          run pi-gera-temp-erro (input 1788,
+                                                  input "").   
+
+                         /* Este procedimento foi alterado por Ceir Brognara em 14/03/2002, a fim de 
+                            inserir o tratamento a rotina de descalculo do pre‡o m‚dio por item, 
+                            desenvolvida para a Grendene. Com esta nova rotina passa a ser poss¡vel a
+                            movimenta‡Æo para itens com data inferior a data do m‚dio mensal e pre‡o 
+                            m‚dio descalculado (item-estab.pm-ja-calc = no), para isso ² utilizada a 
+                            fun‡Æo spp-desc-med-item, ou seja, somente clientes com esta fun‡Æo ativa 
+                            (cd7070) serÆo afetados. */
+
+                       if l-fech-estab then do:                       
+                          &if defined(bf_mat_fech_estab) &then 
+
+                             for first item-estab fields (pm-ja-calc)
+                                 where item-estab.it-codigo   = tt-movto.it-codigo 
+                                   and item-estab.cod-estabel = tt-movto.cod-estabel no-lock: end.
+
+                             /* 1) data movimento menor/igual £ltimo dia fechado*/
+                             IF  (tt-movto.dt-trans <=  estab-mat.ult-fech-dia)
+                             /* 2) nÆo existe ITEM-ESTAB e data movimento menor/igual data m‚dio */
+                             OR  (    NOT AVAIL item-estab
+                                  AND tt-movto.dt-trans <= estab-mat.mensal-ate)
+                             /* 3) data movimento menor/igual data m‚dio e pre‡o m‚dio do item j  calculado */
+                             OR  (    tt-movto.dt-trans <= estab-mat.mensal-ate
+                                  AND item-estab.pm-ja-calc  = YES)
+                             /* 4) data movimento menor/igual data m‚dio e pre‡o m‚dio do item nÆo calculado e fun‡Æo */
+                             OR  (    tt-movto.dt-trans  <= estab-mat.mensal-ate
+                                  AND item-estab.pm-ja-calc  = NO
+                                  AND l-desc-med-item        = NO) /*Funcao especifica da Grendene Descalc p/Item */
+                             THEN DO:
+                                    IF (tt-movto.esp-docto <> {&MOB} and
+                                       index(string(tt-movto.cod-prog-orig), "0401") = 0) 
+                                       then  
+                                         run pi-gera-temp-erro (input 18896,
+                                                                input estab-mat.cod-estabel + "~~"
+                                                              + string(estab-mat.mensal-ate)).
+                             end.
+                             else do:
+                                IF l-desc-med-item = YES and
+                                    tt-movto.nr-ord-prod <> 0 AND
+                                    tt-movto.dt-trans <= estab-mat.mensal-ate then do:
+
+                                    for first bf1-ord-prod FIELDS (it-codigo cod-estabel) 
+                                        where bf1-ord-prod.nr-ord-prod = tt-movto.nr-ord-prod 
+                                        no-lock: end.
+                                    for first bf1-item-estab fields (pm-ja-calc)
+                                        where bf1-item-estab.it-codigo   = bf1-ord-prod.it-codigo 
+                                          and bf1-item-estab.cod-estabel = bf1-ord-prod.cod-estabel
+                                        no-lock: end.
+                                    IF AVAIL bf1-item-estab      
+                                         AND bf1-item-estab.pm-ja-calc = YES THEN
+                                       /* O m‚dio do item pai da ordem deve ser descalculado */
+                                       run pi-gera-temp-erro (input 0,
+                                                              input tt-movto.it-codigo + "~~"
+                                                            + estab-mat.cod-estabel). 
+                                end.
+                             end.
+                          &endif         
+                       end.
+                       else do:
+                         if (tt-movto.dt-trans <=  param-estoq.ult-fech-dia) OR
+
+                            (tt-movto.dt-trans <= param-estoq.mensal-ate     AND
+                             item.pm-ja-calc = YES)                          OR 
+
+                            (tt-movto.dt-trans <= param-estoq.mensal-ate     AND
+                             item.pm-ja-calc = NO                            AND
+                             l-desc-med-item = NO)                                         /*Fun»’o espec­fica da Grendene Descalc p/Item */
+                             THEN DO:
+
+                             IF (tt-movto.esp-docto <> {&MOB} AND
+                                 index(string(tt-movto.cod-prog-orig), "0401") = 0) then
+                                 run pi-gera-temp-erro (input 2598,
+                                                        input "").
+                         end.
+                         else do:
+                             IF l-desc-med-item = YES  AND 
+                                tt-movto.nr-ord-prod <> 0 AND 
+                                tt-movto.dt-trans    <= param-estoq.mensal-ate then do:
+                                for first bf1-ord-prod FIELDS (it-codigo cod-estabel) 
+                                    where bf1-ord-prod.nr-ord-prod = tt-movto.nr-ord-prod 
+                                    no-lock: end.
+
+                                for first bf1-item fields (pm-ja-calc)
+                                    where bf1-item.it-codigo = bf1-ord-prod.it-codigo 
+                                    no-lock: end.
+                                IF AVAIL bf1-item 
+                                     AND bf1-item.pm-ja-calc = YES THEN
+                                    /* O m‚dio do item pai da ordem deve ser descalculado */
+                                   run pi-gera-temp-erro (input 99999,
+                                                        input bf1-item.it-codigo + "~~"
+                                                      + bf1-ord-prod.cod-estabel).
+                             end.
+                         end.
+                       end.
+                    end.
+                    else do:
+
+                        /* NÆo usa C lculo do Pre‡o M‚dio Batch */
+
+                        if  l-fech-estab = no then do: /* Fechamento énico */
+                            if  tt-movto.dt-trans <= param-estoq.data-1 then /* Sum rio At‚ */
+                                run pi-gera-temp-erro (input 7186,
+                                                       input "").
+                        end.
+                        &if defined(bf_mat_fech_estab) &then
+                        else do: /* Fechamento Por Estabelecimento */
+                            if  tt-movto.dt-trans <= estab-mat.sumar-ate then
+                                run pi-gera-temp-erro (input 7186,
+                                                       input "").
+
+                        end.
+                        &endif
+                    end.
+
+                    /* Verifica Custo medio on-line --------------------------------------*/
+
+                    assign l-usa-on-line = estab-mat.usa-on-line.
+
+                    if l-usa-on-line then do:   
+                       if tt-movto.dt-trans   > today  and
+                          tt-movto.esp-docto <> {&ACT} and
+                          tt-movto.esp-docto <> {&MOB} then
+                          run pi-gera-temp-erro (input 1788, input "").
+
+                       for first item-estab fields (on-line-ate
+                                                    it-codigo
+                                                    cod-estabel
+                                                    padrao-ate)
+                           where item-estab.it-codigo = tt-movto.it-codigo
+                             and item-estab.cod-estab = tt-movto.cod-estabel no-lock: end.
+
+                       if avail(item-estab)
+                       and
+                          ( (item-estab.on-line-ate > tt-movto.dt-trans and item.tipo-contr = 2) or
+                             da-fimper-fech        >= tt-movto.dt-trans )
+                       and
+                          ( tt-movto.esp-docto <> 2 )
+                       then
+                          run pi-gera-temp-erro (input 2793, input "").
+
+                       if not avail item-estab and
+                          da-fimper-fech >= tt-movto.dt-trans then
+                          run pi-gera-temp-erro (input 6901, input "").
+
+                       /* Task 45727  */
+                       if l-fech-estab then do:
+                         &if defined(bf_mat_fech_estab) &then
+                         if tt-movto.dt-trans <= estab-mat.sumar-ate and
+                            tt-movto.esp-docto <> {&MOB} and
+                            index(string(tt-movto.cod-prog-orig), "0401") = 0 then
+                            run pi-gera-temp-erro (input 26449,
+                                                   input string(estab-mat.sumar-ate)).
+                         &endif
+                       end.
+                       else do:
+                         if tt-movto.dt-trans <= param-estoq.data-1 and
+                            tt-movto.esp-docto <> {&MOB} and
+                            index(string(tt-movto.cod-prog-orig), "0401") = 0 then
+                            run pi-gera-temp-erro (input 26449,
+                                                   input string(param-estoq.data-1)).
+                       end.                                        
+                    end.
+                end.
+            end.
+
+            /* Efetua validacao sobre a Ordem de Producao ============================*/
+            if tt-movto.nr-ord-produ > 0 then do:
+               if not avail ord-prod or
+                  not avail tt-ext-movto or
+                  tt-ext-movto.nr-ord-produ <> tt-movto.nr-ord-produ then
+               do:
+
+                     for first ord-prod fields (nr-ord-produ
+                                                estado
+                                                ct-codigo
+                                                sc-codigo
+                                                conta-ordem
+                                                cod-estabel
+                                                cod-unid-negoc)
+                            where ord-prod.nr-ord-produ = tt-movto.nr-ord-produ no-lock: end.
+
+                     if not avail ord-prod then
+                        run pi-gera-temp-erro (input 2599, input string(tt-movto.nr-ord-produ)).
+
+                     if avail ord-prod and ord-prod.cod-estabel <> tt-movto.cod-estabel then
+                         run pi-gera-temp-erro (input 6347, input string(ord-prod.nr-ord-produ)).               
+
+                     if avail ord-prod and ord-prod.estado = 8 and 
+                        /* O c lculo do preco medio deve poder gerar o "ACA" para 
+                           ordens de manutencao mesmo que a ordem esteja terminada */ 
+                        tt-movto.cod-prog-orig <> "ce0401r.p" then
+                        run pi-gera-temp-erro (input 17543, input string(ord-prod.nr-ord-produ)).
+
+               end.  
+
+               if tt-movto.esp-docto <> {&REF} AND tt-movto.esp-docto <> {&ROP} AND avail ord-prod then do:
+                   /** Atualiza O movimento de Estoque com a Conta da Ordem de Produ‡Æo **/
+                   assign tt-movto.ct-codigo      = ord-prod.ct-codigo
+                          tt-movto.sc-codigo      = ord-prod.sc-codigo
+                          tt-movto.conta-contabil = ord-prod.conta-ordem.
+
+               END.
+            end.   
+
+            /* Efetua validacao sobre a Localizacao ==================================*/
+            if not avail tt-ext-movto or
+               tt-ext-movto.cod-estabel <> tt-movto.cod-estabel or
+               tt-ext-movto.cod-depos   <> tt-movto.cod-depos or
+               tt-ext-movto.cod-localiz <> tt-movto.cod-localiz then do:
+               if not can-find(localizacao
+                         where localizacao.cod-estabel =  tt-movto.cod-estabel
+                           and localizacao.cod-depos   =  tt-movto.cod-depos
+                           and localizacao.cod-localiz =  tt-movto.cod-localiz) then do :
+                  /* Fo 344062 - Fundacao Ary
+                     Para as transacäes de acerto geradas pelo c lculo do preco medio,
+                     nao existe a necessidade que a localizacao esteja cadastrada visto
+                     que tais acertos sao estritamente de valor.
+                     A £nica excecao neste caso seria a  transacao de acerto tipo "3", 
+                     que e respons vel pelo acerto de quantidade negativa de saldo
+                     em estoque, necessitando assim que seja feita a validacao      */          
+                  if ((tt-movto.esp-docto =  {&ACT}) and
+                      (tt-movto.nro-docto <> "3"   ) or
+                       tt-movto.esp-docto = {&VAR})
+                  then do:
+                     find first localizacao where 
+                                localizacao.cod-estabel = tt-movto.cod-estabel and
+                                localizacao.cod-depos   = tt-movto.cod-depos 
+                                no-lock no-error.                       
+                     if avail(localizacao) 
+                     then
+                        assign tt-movto.cod-localiz = localizacao.cod-localiz.             
+                     else 
+                        run pi-gera-temp-erro (input 15811, input tt-movto.cod-depos   + "~~" +
+                                                                  tt-movto.cod-estabel + "~~" + 
+                                                                  tt-movto.cod-localiz).                
+                  end.
+                  else 
+                     run pi-gera-temp-erro (input 15811, input tt-movto.cod-depos   + "~~" +
+                                                               tt-movto.cod-estabel + "~~" + 
+                                                               tt-movto.cod-localiz).
+               end.
+            end.
+
+            /* Efetua validacao sobre a Conta Aplicacao ==============================*/
+
+            if ( (item.tipo-contr     = 1  or item.tipo-contr    = 3)              and
+                 (tt-movto.esp-docto = {&ACA}  or tt-movto.esp-docto = {&EAC})     and
+                  param-global.modulo-cs = yes )                                    or
+                ( (item.tipo-contr     = 1)     and
+                  ((tt-movto.valor-mat-m[1] +
+                    tt-movto.valor-mob-m[1] +
+                    tt-movto.valor-ggf-m[1])  > 0) )   or
+               item.tipo-contr = 4                                           then do:
+
+               assign i-empresa = param-global.empresa-prin.
+
+               &if defined (bf_dis_consiste_conta) &then
+
+                   find estabelec where
+                        estabelec.cod-estabel = tt-movto.cod-estabel no-lock no-error.
+
+                   run cdp/cd9970.p (input rowid(estabelec),
+                                     output i-empresa).
+               &endif
+
+               for first b-conta fields (ep-codigo
+                                         conta-contabil
+                                         ct-codigo
+                                         sc-codigo
+                                         tipo
+                                         estado
+                                         estoque)        
+                   where b-conta.ep-codigo      = i-empresa
+                     and b-conta.conta-contabil = tt-movto.conta-db no-lock: end.
+
+               if not available b-conta then
+                   run pi-gera-temp-erro (input 17651, input string(tt-movto.conta-db)).
+               else do:
+                   ASSIGN tt-movto.ct-db = b-conta.ct-codigo
+                          tt-movto.sc-db = b-conta.sc-codigo.
+
+                    if b-conta.tipo    = 6 then
+                        run pi-gera-temp-erro (input 17676, input string(tt-movto.conta-db)).
+
+                    if b-conta.estado <> 3 then
+                        run pi-gera-temp-erro (input 17552, input string(tt-movto.conta-db)).
+
+                    if b-conta.estoque = 10 then
+                        run pi-gera-temp-erro (input 17553, input string(tt-movto.conta-db)).
+
+                    if tt-movto.esp-docto  <> {&IPL} and
+                       b-conta.estoque = 9 then
+                        run pi-gera-temp-erro (input 17675, input string(tt-movto.conta-db)).
+               end.
+            end.
+
+            /* Conta Contabil ========================================================*/
+            if not avail conta-contab or
+               not avail tt-ext-movto or
+               tt-ext-movto.conta-contabil <> tt-movto.conta-contabil then do:
+
+               assign i-empresa = param-global.empresa-prin.
+
+               &if defined (bf_dis_consiste_conta) &then
+
+                   find estabelec where
+                        estabelec.cod-estabel = tt-movto.cod-estabel no-lock no-error.
+
+                   run cdp/cd9970.p (input rowid(estabelec),
+                                     output i-empresa).
+               &endif       
+
+               for first conta-contab fields (ep-codigo
+                                              conta-contabil
+                                              ct-codigo
+                                              sc-codigo
+                                              tipo
+                                              estado
+                                              estoque)        
+                   where conta-contab.ep-codigo      = i-empresa
+                     and conta-contab.conta-contabil = tt-movto.conta-contabil no-lock: end.
+
+               if not available conta-contab then
+                  run pi-gera-temp-erro (input 19, input tt-movto.conta-contabil).
+               else do:
+                   &IF '{&bf_mat_versao_ems}' >= '2.04' &THEN 
+                        
+                        IF ( (param-global.modulo-in = YES) AND 
+                            (tt-movto.esp-doc = {&RM}    OR 
+                             tt-movto.esp-doc = {&DRM}   OR
+                            ((tt-movto.esp-doc = {&DIV}) AND (tt-movto.cod-prog-orig = "v07in218" OR tt-movto.cod-prog-orig="CE0220a") AND
+                                                                ((tt-movto.nr-ord-produ <> 0  AND tt-movto.num-ord-inv  = 0)   OR
+                                                                 (tt-movto.nr-ord-produ  = 0  AND tt-movto.num-ord-inv <> 0)   OR
+                                                                 (tt-movto.nr-ord-produ  = 0  AND tt-movto.num-ord-inv  = 0))) OR
+                            (tt-movto.esp-doc = {&REQ} AND tt-movto.nr-ord-produ = 0)  OR
+                            (tt-movto.esp-doc = {&DEV} AND tt-movto.nr-ord-produ = 0))) THEN DO:
+
+                            &IF DEFINED(bf_mat_conta_contab_inp) &THEN 
+                                CREATE tt-erro-movto.
+                                &IF "{&bf_mat_versao_ems}" >= "2.04" &THEN
+                                    
+                                    IF  NOT AVAIL param-global THEN
+                                        FIND FIRST param-global NO-LOCK NO-ERROR.
+                                    
+                                    IF  param-global.modulo-in AND tt-movto.conta-contabil <> ? THEN DO:
+                                        RUN inp/inapi060.p(INPUT  tt-movto.cod-estabel,
+                                                           INPUT  tt-movto.conta-contabil,
+                                                           INPUT  tt-movto.num-ord-inv,
+                                                           INPUT  NO,
+                                                           OUTPUT TABLE tt-erro-movto).
+                                    END.
+                                &ENDIF
+                            &ENDIF.
+
+                            FIND FIRST tt-erro-movto NO-LOCK NO-ERROR.
+                            IF AVAIL tt-erro-movto THEN DO:
+                                RUN pi-gera-temp-erro (INPUT tt-erro-movto.cd-erro, INPUT STRING(tt-movto.conta-contabil)).
+                                RETURN NO-APPLY.
+                            END.
+                            ELSE DO:
+                                assign tt-movto.ct-codigo = conta-contab.ct-codigo
+                                       tt-movto.sc-codigo = conta-contab.sc-codigo.
+                            END.
+                        END.
+                        ELSE DO:
+                            ASSIGN tt-movto.ct-codigo = conta-contab.ct-codigo
+                                       tt-movto.sc-codigo = conta-contab.sc-codigo.
+                        END.
+
+                   &ELSE
+                        ASSIGN tt-movto.ct-codigo = conta-contab.ct-codigo 
+                               tt-movto.sc-codigo = conta-contab.sc-codigo.
+                   &ENDIF.
+
+                    if conta-contab.tipo = 6 then
+                       run pi-gera-temp-erro (input 17544, input string(tt-movto.conta-contabil)).
+
+                    if conta-contab.estado <> 3 then
+                       run pi-gera-temp-erro (input   638, input string(tt-movto.conta-contabil)).
+
+                    if conta-contab.estoque = 10 then
+                       run pi-gera-temp-erro (input 17545, input string(tt-movto.conta-contabil)).
+
+                   /** È feita essa verificacao pois na implantacao de saldos **
+                    ** deve permitir movimentacao para contas de saldo.       **/
+
+                    if tt-movto.esp-docto   <> {&IPL} and
+                       conta-contab.estoque  = 9  then
+                       run pi-gera-temp-erro-help (input 17546, input string(tt-movto.conta-contabil)).
+               end.
+            end.
+            else
+                assign tt-movto.ct-codigo = conta-contab.ct-codigo
+                       tt-movto.sc-codigo = conta-contab.sc-codigo.
+
+            /* Conta de saldo do item e de variacao ==================================*/
+
+            if not avail contabiliza or
+               not avail tt-ext-movto or
+               tt-ext-movto.cod-estabel <> tt-movto.cod-estabel or
+               tt-ext-movto.ge-codigo   <> item.ge-codigo or
+               tt-ext-movto.cod-depos   <> tt-movto.cod-depos then do:    
+               for first contabiliza fields (cod-estabel
+                                             cod-depos
+                                             ge-codigo
+                                             ct-var-movto
+                                             conta-contabil
+                                             conta-movto
+                                             sc-var-movto)
+                   where contabiliza.cod-estabel = tt-movto.cod-estabel
+                     and contabiliza.cod-depos   = tt-movto.cod-depos
+                     and contabiliza.ge-codigo   = item.ge-codigo no-lock: end.
+
+               if not available contabiliza then
+                  run pi-gera-temp-erro (input 15139,
+                                         input string(tt-movto.cod-estabel) + '~~' +
+                                               string(item.ge-codigo)       + '~~' +
+                                               string(tt-movto.cod-depos)).
+               else do:
+
+                   assign i-empresa = param-global.empresa-prin.
+
+                   &if defined (bf_dis_consiste_conta) &then
+
+                       find estabelec where
+                            estabelec.cod-estabel = tt-movto.cod-estabel no-lock no-error.
+
+                       run cdp/cd9970.p (input rowid(estabelec),
+                                         output i-empresa).
+                   &endif
+
+                   for first b-conta-1 fields (ep-codigo   conta-contabil   estoque)   
+                       where b-conta-1.ep-codigo      = i-empresa
+                         and b-conta-1.conta-contabil = contabiliza.conta-contabil no-lock: end.
+                   if not available b-conta-1 or
+                      (avail b-conta-1 and b-conta-1.estoque <> 9) then
+                       run pi-gera-temp-erro (input 15139, 
+                                              input string(tt-movto.cod-estabel) + '~~' +
+                                                    string(item.ge-codigo)       + '~~' +
+                                                    string(tt-movto.cod-depos)).    
+
+                   if AVAIL estab-mat       AND
+                      estab-mat.usa-on-line AND
+                      AVAIL item-uni-estab  AND
+                      (item-uni-estab.metodo-custeio = 2 or
+                       item-uni-estab.metodo-custeio = 3 OR
+                       item-uni-estab.metodo-custeio = 5) THEN DO:
+                        for first b-conta-2 fields (ep-codigo   conta-contabil)   
+                            where b-conta-2.ep-codigo      = i-empresa
+                              and b-conta-2.conta-contabil = contabiliza.conta-movto no-lock: end.
+                        IF NOT AVAIL b-conta-2 THEN 
+                            run pi-gera-temp-erro (input 6932, input "").
+                   END.
+               end.
+            end.
+
+            /**IMPLEMENTACOES UNIDADE DE NEGOCIO**/
+            IF  l-unidade-negocio THEN DO:
+
+                EMPTY TEMP-TABLE tt-erro-spp.
+
+                RUN RetornaUnidadeNegocio IN h-cdapi024 (INPUT  tt-movto.cod-estabel,
+                                                         INPUT  tt-movto.it-codigo,
+                                                         INPUT  tt-movto.cod-depos,
+                                                         OUTPUT tt-movto.cod-unid-negoc-sdo).
+
+                IF  tt-movto.cod-unid-negoc-sdo = "" THEN DO:
+                    RUN pi-gera-temp-erro (INPUT 30930,
+                                           INPUT STRING(tt-movto.cod-estabel) + '~~' +
+                                                 STRING(tt-movto.it-codigo)   + '~~' +
+                                                 STRING(tt-movto.cod-depos)).
+                END.
+
+                IF  tt-movto.nr-ord-prod <> 0 THEN DO:
+
+                    IF  NOT AVAIL ord-prod 
+                               OR ord-prod.nr-ord-produ <> tt-movto.nr-ord-produ THEN DO:
+
+                        FOR FIRST ord-prod FIELDS (nr-ord-produ
+                                                   estado
+                                                   ct-codigo
+                                                   sc-codigo
+                                                   conta-ordem
+                                                   cod-estabel
+                                                   cod-unid-negoc)
+                            WHERE ord-prod.nr-ord-produ = tt-movto.nr-ord-produ NO-LOCK: END.
+                    END.
+
+                    IF  AVAIL ord-prod THEN DO:
+
+                        ASSIGN tt-movto.cod-unid-negoc = ord-prod.cod-unid-negoc.
+
+                        IF  tt-movto.cod-unid-negoc-db = "" AND
+                            tt-movto.conta-db         <> "" THEN
+                            ASSIGN tt-movto.cod-unid-negoc-db = ord-prod.cod-unid-negoc.
+                    END.
+                END.
+
+                IF  tt-movto.cod-unid-negoc = "" THEN
+                    ASSIGN tt-movto.cod-unid-negoc = tt-movto.cod-unid-negoc-sdo.
+
+                IF  tt-movto.cod-unid-negoc-db = "" AND
+                    tt-movto.conta-db         <> "" THEN
+                    ASSIGN tt-movto.cod-unid-negoc-db = tt-movto.cod-unid-negoc-sdo.
+
+                RUN ValidaUnidadeNegocioEstabel IN h-cdapi024 (INPUT tt-movto.cod-estabel,
+                                                               INPUT tt-movto.dt-trans,
+                                                               INPUT tt-movto.cod-unid-negoc,
+                                                               OUTPUT TABLE tt-erro-spp).
+
+                IF  CAN-FIND(FIRST tt-erro-spp) THEN DO:
+                    RUN pi-gera-temp-erro (INPUT 31330,
+                                           INPUT STRING(tt-movto.cod-estabel) + '~~' +
+                                                 STRING(tt-movto.cod-unid-negoc)).
+                    EMPTY TEMP-TABLE tt-erro-spp.
+                END.
+
+                IF  tt-movto.cod-unid-negoc-db <> "" THEN DO:
+
+                    RUN ValidaUnidadeNegocioEstabel IN h-cdapi024 (INPUT tt-movto.cod-estabel,
+                                                                   INPUT tt-movto.dt-trans,
+                                                                   INPUT tt-movto.cod-unid-negoc-db,
+                                                                   OUTPUT TABLE tt-erro-spp).
+
+                    IF  CAN-FIND(FIRST tt-erro-spp) THEN DO:
+                        RUN pi-gera-temp-erro (INPUT 31330,
+                                               INPUT STRING(tt-movto.cod-estabel) + '~~' +
+                                                     "de aplica‡Æo " + STRING(tt-movto.cod-unid-negoc-db)).
+                        EMPTY TEMP-TABLE tt-erro-spp.
+                    END.
+                END.
+
+                RUN ValidaUnidadeNegocioEstabel IN h-cdapi024 (INPUT tt-movto.cod-estabel,
+                                                               INPUT tt-movto.dt-trans,
+                                                               INPUT tt-movto.cod-unid-negoc-sdo,
+                                                               OUTPUT TABLE tt-erro-spp).
+
+                IF  CAN-FIND(FIRST tt-erro-spp) THEN DO:
+                    RUN pi-gera-temp-erro (INPUT 31330,
+                                           INPUT STRING(tt-movto.cod-estabel) + '~~' +
+                                                 "de saldo " + STRING(tt-movto.cod-unid-negoc-sdo)).
+                    EMPTY TEMP-TABLE tt-erro-spp.
+                END.
+
+                IF  tt-movto.esp-docto <> 30 OR       /*RM*/
+                    tt-movto.esp-docto <> 7  THEN DO: /*DRM*/
+
+                    RUN ValidaUnidadeNegocioUsuario IN h-cdapi024 (INPUT IF tt-movto.usuario <> ""
+                                                                         THEN tt-movto.usuario
+                                                                         ELSE c-seg-usuario,
+                                                                   INPUT tt-movto.cod-unid-negoc,
+                                                                   OUTPUT TABLE tt-erro-spp).
+
+                    IF  CAN-FIND(FIRST tt-erro-spp) THEN DO:
+                        RUN pi-gera-temp-erro (INPUT 31331,
+                                               INPUT STRING(IF tt-movto.usuario <> ""
+                                                            THEN tt-movto.usuario
+                                                            ELSE c-seg-usuario) + '~~' +
+                                                     STRING(tt-movto.cod-unid-negoc)).
+                        EMPTY TEMP-TABLE tt-erro-spp.
+                    END.
+
+                    IF  tt-movto.cod-unid-negoc-db <> "" THEN DO:
+
+                        RUN ValidaUnidadeNegocioUsuario IN h-cdapi024 (INPUT IF tt-movto.usuario <> ""
+                                                                             THEN tt-movto.usuario
+                                                                             ELSE c-seg-usuario,
+                                                                       INPUT tt-movto.cod-unid-negoc-db,
+                                                                       OUTPUT TABLE tt-erro-spp).
+
+                        IF  CAN-FIND(FIRST tt-erro-spp) THEN DO:
+                            RUN pi-gera-temp-erro (INPUT 31331,
+                                                   INPUT STRING(IF tt-movto.usuario <> ""
+                                                                THEN tt-movto.usuario
+                                                                ELSE c-seg-usuario) + '~~' +
+                                                         "de aplica‡Æo " + STRING(tt-movto.cod-unid-negoc-db)).
+                            EMPTY TEMP-TABLE tt-erro-spp.
+                        END.
+                    END.
+
+                    RUN ValidaUnidadeNegocioUsuario IN h-cdapi024 (INPUT IF tt-movto.usuario <> ""
+                                                                         THEN tt-movto.usuario
+                                                                         ELSE c-seg-usuario,
+                                                                   INPUT tt-movto.cod-unid-negoc-sdo,
+                                                                   OUTPUT TABLE tt-erro-spp).
+
+                    IF  CAN-FIND(FIRST tt-erro-spp) THEN DO:
+                        RUN pi-gera-temp-erro (INPUT 31331,
+                                               INPUT STRING(IF tt-movto.usuario <> ""
+                                                            THEN tt-movto.usuario
+                                                            ELSE c-seg-usuario) + '~~' +
+                                                    "de saldo " + STRING(tt-movto.cod-unid-negoc-sdo)).
+                        EMPTY TEMP-TABLE tt-erro-spp.
+                    END.
+                END.
+            END.
+
+            /* Teste de quantidade negativa ==========================================*/
+            if tt-movto.quantidade < 0 then
+                run pi-gera-temp-erro (input 1790, input "").
+
+            /* Transforma valores iguais a ? para 0 ==================================*/
+            do i-cont = 1 to 3:
+                if tt-movto.valor-mat-m[i-cont] = ? then tt-movto.valor-mat-m[i-cont] = 0.
+                if tt-movto.valor-mob-m[i-cont] = ? then tt-movto.valor-mob-m[i-cont] = 0.
+                if tt-movto.valor-ggf-m[i-cont] = ? then tt-movto.valor-ggf-m[i-cont] = 0.
+            end.
+
+            /* Verifica Valores Negativos --------------------------------------------*/
+            if tt-movto.valor-mat-m [1] < 0 or tt-movto.valor-mat-m [2] < 0 or tt-movto.valor-mat-m [3] < 0 or 
+               tt-movto.valor-mat-o [1] < 0 or tt-movto.valor-mat-o [2] < 0 or tt-movto.valor-mat-o [3] < 0 or 
+               tt-movto.valor-mat-p [1] < 0 or tt-movto.valor-mat-p [2] < 0 or tt-movto.valor-mat-p [3] < 0 or 
+               tt-movto.valor-mob-m [1] < 0 or tt-movto.valor-mob-m [2] < 0 or tt-movto.valor-mob-m [3] < 0 or 
+               tt-movto.valor-mob-o [1] < 0 or tt-movto.valor-mob-o [2] < 0 or tt-movto.valor-mob-o [3] < 0 or 
+               tt-movto.valor-mob-p [1] < 0 or tt-movto.valor-mob-p [2] < 0 or tt-movto.valor-mob-p [3] < 0 or   
+               tt-movto.valor-ggf-m [1] < 0 or tt-movto.valor-ggf-m [2] < 0 or tt-movto.valor-ggf-m [3] < 0 or 
+               tt-movto.valor-ggf-o [1] < 0 or tt-movto.valor-ggf-o [2] < 0 or tt-movto.valor-ggf-o [3] < 0 or 
+               tt-movto.valor-ggf-p [1] < 0 or tt-movto.valor-ggf-p [2] < 0 or tt-movto.valor-ggf-p [3] < 0 or      
+               tt-movto.quantidade   < 0 then
+               run pi-gera-temp-erro (input 18929, input "").
+
+            /* Implantacao de saldos =================================================*/
+            if tt-movto.esp-docto <> {&IPL} then do:
+               for first saldo-estoq fields (it-codigo
+                                             lote
+                                             cod-refer
+                                             cod-estabel
+                                             cod-localiz
+                                             cod-depos
+                                             dt-vali-lote)                                                                         
+                   where saldo-estoq.it-codigo = item.it-codigo
+                     and saldo-estoq.lote      = tt-movto.lote no-lock: end.
+                if avail saldo-estoq then
+                    tt-movto.dt-vali-lote = saldo-estoq.dt-vali-lote.
+                else
+                    if (item.tipo-con-est = 3 or item.tipo-con-est = 4)   and
+                       tt-movto.dt-vali-lote = ?                          then do:
+                        if tt-movto.esp-docto <> {&ACT} or
+                           (tt-movto.esp-docto = {&ACT} and tt-movto.nro-docto = "3") then
+                            run pi-gera-temp-erro (input 2614, input "").
+                    end.
+            end.
+
+
+
+            /* Controle por refer¼ncia ===============================================*/
+            if item.tipo-con-est = 4  then do:
+               for first referencia fields (cod-refer) 
+                   where referencia.cod-refer = tt-movto.cod-refer no-lock: end.
+
+                if not avail referencia then 
+                   run pi-gera-temp-erro (input 7495, input string(tt-movto.cod-refer)).
+
+                if substring(param-estoq.char-2,1,1) <> "#" then do:
+                    for first saldo-estoq fields (it-codigo
+                                                  lote
+                                                  cod-refer)
+                        where saldo-estoq.it-codigo  = tt-movto.it-codigo
+                          and saldo-estoq.lote       = tt-movto.lote
+                          and saldo-estoq.cod-refer <> tt-movto.cod-refer no-lock: end.
+
+                    if avail saldo-estoq then
+                        run pi-gera-temp-erro (input 8991, input "").
+                end.
+            end.
+
+            if tt-movto.cod-refer <> "" then do:
+               for first referencia fields (cod-refer) 
+                   where referencia.cod-refer = tt-movto.cod-refer no-lock: end.
+               if not avail referencia then
+                  run pi-gera-temp-erro (input 7495, input string(tt-movto.cod-refer)).
+            end.
+
+            assign de-qt-acum = 0
+                   de-qt-aloc = 0.
+            find first tt-ext-movto
+                 where tt-ext-movto.it-codigo   = tt-movto.it-codigo
+                   and tt-ext-movto.cod-estabel = tt-movto.cod-estabel
+                   and tt-ext-movto.cod-depos   = tt-movto.cod-depos
+                   and tt-ext-movto.cod-localiz = tt-movto.cod-localiz
+                   and tt-ext-movto.cod-refer   = tt-movto.cod-refer
+                   and tt-ext-movto.lote        = tt-movto.lote no-error.
+
+            if avail tt-ext-movto then
+               assign de-qt-acum = tt-ext-movto.qt-acum
+                      de-qt-aloc = tt-ext-movto.qt-alocada.
+
+            for first saldo-estoq fields (it-codigo
+                                          cod-estabel
+                                          cod-depos
+                                          cod-localiz
+                                          lote
+                                          cod-refer
+                                          qtidade-atu
+                                          qt-alocada
+                                          qt-aloc-prod
+                                          qt-aloc-ped)
+                where saldo-estoq.it-codigo   = tt-movto.it-codigo
+                  and saldo-estoq.cod-estabel = tt-movto.cod-estabel
+                  and saldo-estoq.cod-depos   = tt-movto.cod-depos
+                  and saldo-estoq.cod-localiz = tt-movto.cod-localiz
+                  and saldo-estoq.lote        = tt-movto.lote
+                  and saldo-estoq.cod-refer   = tt-movto.cod-refer no-lock: end.
+
+            if  avail saldo-estoq then do:
+                assign de-disponivel = saldo-estoq.qtidade-atu -
+                                    (saldo-estoq.qt-alocada +
+                                     saldo-estoq.qt-aloc-prod +
+                                     saldo-estoq.qt-aloc-ped).
+
+                if tt-movto.esp-docto <> 2         AND
+                   tt-movto.quantidade > (tt-movto.qt-alocada +  /* Task 46133 */
+                                          de-qt-acum          + 
+                                          de-disponivel       ) and
+                   tt-movto.tipo-trans = 2                      and
+                   avail estab-mat                              and
+                   estab-mat.usa-on-line = yes                  and
+                   avail item-uni-estab                         and
+                   item-uni-estab.metodo-custeio <> 5           and
+                   item.tipo-contr <> 4       
+                then do:
+                   run pi-gera-temp-erro (input 6974, input "").
+                end.    
+            end.
+            else do:
+                 assign de-disponivel = 0.
+                 if  tt-movto.esp-docto <> 2         AND
+                     tt-movto.quantidade > (de-qt-acum + de-disponivel) and
+                     tt-movto.tipo-trans = 2 and
+                    (avail estab-mat         and
+                    estab-mat.usa-on-line)   and
+                    (avail item-uni-estab    and
+                     item-uni-estab.metodo-custeio <> 5) and
+                    item.tipo-contr <> 4  then do:
+                    run pi-gera-temp-erro (input 6974, input "").
+                 end.
+            end.
+
+
+            /* Saida =================================================================*/
+
+            /* Notas fiscais do recebimento para item f¡sico com ordem de producao 
+            ou produto acabado e gerado um £nico movimento tipo sa¡da, com isso
+            nao pode ser consistido o saldo */         
+
+            /* GRENDENE */
+            ASSIGN l-valida-saldo-neg-eac-ref = YES
+                   l-consiste-saldo           = YES.
+
+            IF  tt-movto.tipo-trans = 2 
+            AND (   tt-movto.esp-docto = {&EAC} 
+                 OR tt-movto.esp-docto = {&REF}
+                 OR tt-movto.esp-docto = {&ZZZ}) 
+            THEN DO: 
+                FIND FIRST funcao 
+                     WHERE funcao.cd-funcao = "spp-permite-saldo-neg-eac-ref":U
+                       AND funcao.ativo     = YES NO-LOCK NO-ERROR.
+                IF  AVAIL funcao  THEN 
+                    ASSIGN l-valida-saldo-neg-eac-ref = NO.
+            END.
+
+            IF item.tipo-contr = 4
+            or  item.it-codigo = ""  
+            or  ( item.tipo-contr = 1 
+                  and ( tt-movto.cod-prog-orig = "RE1005":U 
+                  and  ( tt-movto.nr-ord-prod <> 0 
+                         or  tt-movto.referencia = "acabado":U ) ) )
+            or  (tt-movto.cod-prog-orig = "RE1005":U AND
+                 tt-movto.referencia BEGINS "RF":U) THEN  /* nunca consiste recebimento fisico */
+                   ASSIGN l-consiste-saldo = NO.
+            ELSE
+                IF  i-pais-impto-usuario = 1 /* re4001 gera movto de saida com cod-prog-orig = re1005 */
+                AND tt-movto.cod-prog-orig <> "RE1005" THEN
+                    ASSIGN l-consiste-saldo = YES.
+
+            if  tt-movto.quantidade > 0
+            and tt-movto.tipo-trans = 2
+            and avail item-uni-estab
+            and item-uni-estab.perm-saldo-neg = 1 
+            and tt-movto.esp-docto <> {&ACT} 
+            and tt-movto.esp-docto <> {&INV}
+            and l-valida-saldo-neg-eac-ref /* GRENDENE - */ 
+            AND l-consiste-saldo then do: 
+                if  not avail saldo-estoq    then do:
+
+                   if tt-movto.quantidade > (de-qt-acum + de-disponivel) then do:
+                      run pi-desc-erro-saldo.
+                      run pi-gera-temp-erro-help (input 17529, input tt-movto.it-codigo + "~~" +
+                                                               c-desc-erro).
+                   end.                                            
+                end.
+                else do :
+                   assign c-desc-erro = c-liter-item + " " + tt-movto.it-codigo + " ".
+                   run pi-desc-erro-saldo.
+                   if  tt-movto.qt-alocada > ( saldo-estoq.qt-alocada + de-qt-aloc ) then 
+                        run pi-gera-temp-erro (input 7745, input "").
+
+                   if  tt-movto.qt-alocada <> 0 then
+                       assign de-disponivel = de-disponivel + saldo-estoq.qt-alocada.
+
+                   assign c-desc-erro = tt-movto.it-codigo + " ".
+                   run pi-desc-erro-saldo.
+                   if tt-movto.quantidade > (de-qt-acum + de-disponivel)
+                   and tt-movto.referencia <> "INF" then     /* INF indica movto de nota fiscal Fatura de Consignacao -> Cta CPV */
+                       run pi-gera-temp-erro-help (input 19360,
+                                                   input c-desc-erro +  "~~" + 
+                                                   trim(string((de-qt-acum + de-disponivel), "-ZZZZ,ZZZ,ZZ9.9999"))).
+                end.
+            end.
+
+            if avail tt-ext-movto then
+               assign tt-ext-movto.qt-acum = tt-ext-movto.qt-acum + 
+                                            (if tt-movto.tipo-trans = 1 
+                                                then tt-movto.quantidade
+                                             else (tt-movto.quantidade * -1) +
+                                                   tt-movto.qt-alocada)
+                      tt-ext-movto.qt-alocada = tt-ext-movto.qt-alocada +
+                                             (if  tt-movto.tipo-trans = 1 
+                                             then tt-movto.qt-alocada
+                                             else (tt-movto.qt-alocada * -1) ).
+
+
+            /* Cria registro na tt-ext-movto. */
+            create tt-ext-movto.
+            buffer-copy tt-movto using it-codigo
+                                       cod-estabel
+                                       cod-depos
+                                       cod-localiz
+                                       cod-refer
+                                       lote
+                                       dt-trans
+                                       conta-contabil
+                                       i-sequen
+            to tt-ext-movto
+            assign tt-ext-movto.rw-movto  = rowid (tt-movto)
+                   tt-ext-movto.ge-codigo = item.ge-codigo
+                   tt-ext-movto.qt-acum   = (if tt-movto.tipo-trans = 1
+        	                                 then tt-movto.quantidade
+        	                                 else (tt-movto.quantidade * -1) +
+        	                                       tt-movto.qt-alocada)
+                   tt-ext-movto.qt-alocada = if  tt-movto.tipo-trans = 1 
+                                             then tt-movto.qt-alocada
+                                             else (tt-movto.qt-alocada * -1)    	                                       
+        	    tt-ext-movto.sequencia = i-sequencia 
+        	    i-sequencia            = i-sequencia + 1.
+
+        end. /*if not avail item then do:*/
+        ASSIGN c-cod-prog-orig = tt-movto.cod-prog-orig.
+    end. /* for each tt-movto */
+
+/*********************** FIM INCLUDE ESCE0108B.I2 *****************************/

@@ -1,0 +1,652 @@
+ do on error undo, return error on stop  undo, return error:
+    DEFINE VARIABLE l-emite-duplic AS LOGICAL INIT NO NO-UNDO.
+
+    ASSIGN l-encontrou = NO.
+    IF  NOT VALID-HANDLE(h-bocx402) THEN 
+        RUN cxbo/bocx402.p PERSISTENT SET h-bocx402.
+    IF  NOT VALID-HANDLE(h-bocx220a) THEN 
+        RUN cxbo/bocx220a.p PERSISTENT SET h-bocx220a.
+
+    /*VERIFICA SE O EMBARQUE ESTA VINCULADO A DI*/
+    RUN verificaRelacionamentos IN h-bocx402 (INPUT cembarque, INPUT ccod-estabel, OUTPUT vnum-di-siscomex, OUTPUT l-encontrou, OUTPUT vdat-di, OUTPUT vnat-operacao).
+  
+    /*---[ Contingància NF-e ]-------------------------*/
+    IF  CAN-FIND (FIRST funcao NO-LOCK
+                  WHERE funcao.cd-funcao = "spp-nfe":U
+                  AND   funcao.ativo) THEN DO:
+    
+        RUN pi-ContingenciaNFe.
+        IF  RETURN-VALUE <> "OK":U THEN RETURN "NOK":U.
+    END.
+    /*-------------------------------------------------*/
+    
+    assign l-valida-decl-imp = yes.
+    &if '{&bf_mat_versao_ems}' >= '2.062' &then
+        if l-EMS2-IMP-MEXICO then assign l-valida-decl-imp = no.            
+    &endif        
+    
+    RUN pi-validaDados-tela.
+
+    IF  l-erro THEN DO:
+        DELETE PROCEDURE h-bocx220a.
+        DELETE PROCEDURE h-bocx225.
+        RETURN NO-APPLY.
+    END. /* IF  l-erro */
+    
+    &IF DEFINED(bf_mat_versao_ems) &THEN
+        &IF '{&bf_mat_versao_ems}' >= '2.04' &THEN
+            IF  (INPUT FRAME f-pg-cla l-nf-simples-remessa) THEN DO:
+                ASSIGN l-verifica-nota-mae      = YES.
+                IF  (INPUT FRAME f-pg-cla rs-classif-nf = 2) 
+                THEN ASSIGN l-verifica-nota-filha = YES.
+                ELSE ASSIGN l-verifica-nota-filha = NO.
+            END. /* IF  (INPUT FRAME f-pg-cla l-nf-simples-remessa) */
+            ELSE ASSIGN l-verifica-nota-filha = NO
+                        l-verifica-nota-mae   = NO.
+        &ELSE /*2.02*/
+              ASSIGN l-verifica-nota-filha = NO
+                     l-verifica-nota-mae   = NO.
+        &ENDIF.
+    &ELSE /*Magnus*/
+          ASSIGN l-verifica-nota-filha = NO
+                 l-verifica-nota-mae   = NO.
+    &ENDIF
+
+    IF  l-executar THEN DO:
+        RUN findDocumentoImp IN h-bocx220a (INPUT  ccod-estabel,
+                                            INPUT  cembarque,
+                                            INPUT  ccod-emitente,
+                                            OUTPUT c-numero-docto,
+                                            OUTPUT c-serie-docto,
+                                            OUTPUT c-emitente-docto,
+                                            OUTPUT c-nat-operacao).
+        IF  RETURN-VALUE = "" OR RETURN-VALUE = "OK":U THEN DO:
+            ASSIGN i-seq-erro = i-seq-erro + 1.
+            CREATE tt-bo-erro.
+            ASSIGN tt-bo-erro.errorsubtype = "Question".
+
+            RUN utp/ut-msgs.p (INPUT "show":U, INPUT 30152,
+                               INPUT "Embarque j† possui um documento gerado no Recebimento" + "~~" +
+                                     string(c-numero-docto)   + "~~" + string(c-serie-docto) + "~~" +
+                                     string(c-emitente-docto) + "~~" + string(c-nat-operacao)).
+            IF  RETURN-VALUE = "NO" THEN DO:
+                SESSION:SET-WAIT-STATE("":U).
+                RETURN NO-APPLY.
+            END. /* IF  RETURN-VALUE = "NO" */
+        END. /* IF  RETURN-VALUE = */
+    END. /* IF  l-executar THEN */
+
+FOR EACH tt-parametros EXCLUSIVE-LOCK: DELETE tt-parametros. END.
+
+    create tt-parametros.
+    assign tt-parametros.cod-estabel          = ccod-estabel
+           tt-parametros.embarque             = cembarque
+           tt-parametros.cod-emitente         = ccod-emitente
+           tt-parametros.da-transacao         = ddata-trans
+           tt-parametros.da-emissao           = ddata-emissao
+           tt-parametros.da-venc-ipi          = ddata-vencto-ipi
+           tt-parametros.da-venc-icms         = ddata-vencto-icms
+           tt-parametros.nro-docto            = cnr-docto
+           tt-parametros.serie                = cserie
+           tt-parametros.nat-operacao         = cnatureza
+           tt-parametros.estab-fisc           = ccod-estabel-fisc
+           tt-parametros.ct-transit           = cconta-trans
+           tt-parametros.sc-transit           = cccusto-trans
+           tt-parametros.da-di                = ddata-di
+           tt-parametros.de-tot-desconto      = cdesc-tot
+           tt-parametros.da-cotacao           = ddata-cotacao
+           tt-parametros.observacao           = editor-2
+           tt-parametros.usuario              = v_cod_usuar_corren
+           tt-parametros.i-pais-impto-usuario = i-pais-impto-usuario
+           tt-parametros.l-icms-diferido      = licms-diferido.
+
+    IF NOT l-encontrou THEN
+        ASSIGN tt-parametros.declaracao-import    = ccod-decl-imp.
+    ELSE DO:
+        IF ccod-decl-imp-1:HIDDEN IN FRAME f-decl-imp THEN
+            ASSIGN tt-parametros.declaracao-import    = ccod-decl-imp.
+        ELSE
+            ASSIGN tt-parametros.declaracao-import    = ccod-decl-imp-1.
+    END.
+
+   &if  '{&bf_mat_versao_ems}' >= '2.04' &then
+         assign tt-parametros.l-nf-simples-remessa = input frame f-pg-cla l-nf-simples-remessa
+                tt-parametros.idi-nf-simples-remes = input frame f-pg-cla rs-classif-nf
+                tt-parametros.conta-contabil       = input frame f-pg-cla c-cta-aplic-nf
+                tt-parametros.ct-codigo            = input frame f-pg-cla c-cta-aplic-nf
+                tt-parametros.sc-codigo            = input frame f-pg-cla c-ccusto-aplic-nf.
+    &endif
+
+     if l-nota-fisc-fat:hidden in frame f-embarq = no then assign l-nff = input frame f-embarq l-nota-fisc-fat.
+    
+     run setAcompanhamento in h-bocx220a (input yes).
+
+    /*---[ Frank ]-----------------------------------------------------*/
+    RUN ValidaEmitenteEmbarque IN h-bocx220a (INPUT TABLE tt-parametros, OUTPUT l-emit-diferente, OUTPUT l-fornec-fundap).
+    
+    IF  l-fornec-fundap THEN DO:
+        run utp/ut-msgs.p (input "show":U, INPUT 28668, input "").
+        IF  RETURN-VALUE = "NO" THEN DO:
+            SESSION:SET-WAIT-STATE("":U). /*embarque esta contabilizado*/
+            return no-apply.
+        END. /* IF  RETURN-VALUE = "NO" */
+    END. /* IF  l-fornec-fundap */
+    
+    IF  l-emit-diferente THEN DO:
+        IF NOT l-encontrou THEN DO:
+            run utp/ut-msgs.p (input "show":U, INPUT 28666, input ccod-emitente).
+        END.
+        ELSE DO:
+            RUN pi-cria-row-errors (INPUT 28666,
+                                    INPUT ccod-emitente,
+                                    INPUT "").
+        END.        
+    END. /* IF  l-emit-diferente */
+    /*---[ Fim Frank ]-------------------------------------------------*/
+
+    IF NOT l-encontrou THEN
+        RUN pi-recebe-tp-nacionaliz      IN h-bocx220a (INPUT 1).
+    ELSE 
+        RUN pi-recebe-tp-nacionaliz      IN h-bocx220a (INPUT 2).
+
+    RUN validarParametrosdesembarque IN h-bocx220a (INPUT TABLE tt-parametros, OUTPUT TABLE tt-bo-erro).
+
+    /*inicio validacoes Nota Fiscal Simples Remessa*/
+    &IF  '{&bf_mat_versao_ems}' >= '2.04' &THEN
+         IF  (INPUT FRAME f-pg-cla l-nf-simples-remessa /*Nota Fiscal Simples Remessa*/ ) THEN 
+             IF  (INPUT FRAME f-pg-cla rs-classif-nf = 1 /*Nota Mae*/ ) THEN DO:
+                 /*RUN ValidaNotaFiscalMaeSimplesRemessa   IN h-bocx220a (INPUT tt-parametros.conta-contabil, OUTPUT TABLE tt-bo-erro).*/
+                 RUN ValidaNotaFiscalMaeSimplesRemessa   IN h-bocx220a (INPUT tt-parametros.ct-codigo, OUTPUT TABLE tt-bo-erro).
+              END. /* IF  (INPUT FRAME f-pg-cla rs-classif-nf = 1 */
+             ELSE DO:
+                 RUN ValidaNotaFiscalFilhaSimplesRemessa IN h-bocx220a (INPUT tt-parametros.nat-operacao, OUTPUT l-emite-duplic).
+                 IF  l-emite-duplic THEN DO:
+                     run utp/ut-msgs.p (input "show":U, INPUT 29560, input "").
+                     IF  RETURN-VALUE = "NO":U THEN RETURN NO-APPLY.
+                 END. /* IF  l-emite-duplic */
+             END. /* ELSE DO: */
+    &ENDIF.
+    /*fim validacoes Nota Fiscal Simples Remessa*/
+
+    /* s¢ deleta a tt-item-doc-est se o numero do embarque for diferente do embarque anterior, sen∆o
+    ** o programa im0100a.w abre com os dados carregados */
+    if  cembarque <> c-num-embarque 
+        AND NOT l-encontrou then do:
+        IF  l-executar THEN assign c-num-embarque = cembarque.
+
+        FOR EACH tt-item-doc-est EXCLUSIVE-LOCK: DELETE tt-item-doc-est. END.
+        ASSIGN l-chama-carregado = no.
+    end. /* if  cembarque <> c-num-embarque */
+    ELSE DO:
+        IF NOT l-encontrou THEN
+            assign l-chama-carregado = yes.
+        ELSE 
+            assign l-chama-carregado = NO.
+    END.
+
+    IF  CAN-FIND(FIRST tt-bo-erro)
+        OR CAN-FIND(FIRST RowErrors
+                    WHERE RowErrors.errorSubType = "ERROR":U) THEN DO:
+        IF NOT l-encontrou THEN DO:
+            FIND FIRST tt-bo-erro EXCLUSIVE-LOCK NO-ERROR.
+            assign c-num-embarque = "".    
+            IF NOT VALID-HANDLE(hShowMsg) 
+            THEN run utp/showmessage.w PERSISTENT SET hShowMsg.
+            ELSE DO:
+                DELETE PROCEDURE hShowMsg.
+                run utp/showmessage.w PERSISTENT SET hShowMsg.
+            END. /* ELSE DO: */
+            RUN setModal     IN hShowMsg (INPUT YES).
+            run showMessages IN hShowMsg (INPUT TABLE tt-bo-erro).
+            if valid-handle(h-bocx220a) then delete procedure h-bocx220a.
+            leave.
+        END.
+        ELSE DO:     
+            FOR EACH tt-bo-erro:
+                RUN pi-cria-row-errors (INPUT tt-bo-erro.cd-erro,
+                                        INPUT tt-bo-erro.parametros,
+                                        INPUT tt-bo-erro.mensagem).
+                DELETE tt-bo-erro.
+            END.
+        END.
+    end. /* IF  CAN-FIND(FIRST tt-bo-erro) */
+    else do:
+        CASE l-encontrou:
+            WHEN NO /* Embarque */ THEN DO:
+                run gerarItensdesembarque in h-bocx220a (input        table tt-parametros,
+                                                         input-output table tt-item-doc-est,
+                                                         output       table tt-bo-erro). 
+            END. /* WHEN 1 */
+            WHEN YES /* DI */ THEN DO:
+                IF VALID-HANDLE(h-bocx402) THEN DELETE PROCEDURE h-bocx402.
+                RUN cxbo/bocx402.p PERSISTENT SET h-bocx402.
+
+                EMPTY TEMP-TABLE tt-item-doc-est.
+
+                RUN gerarItensbyDI IN h-bocx402 (input        table tt-parametros,
+                                                 input-output table tt-item-doc-est,
+                                                 output       table tt-bo-erro).
+
+                RUN retornaCondPagto      IN h-bocx402(OUTPUT i-cod-cond-pag).
+                RUN retornaMoCodigo       IN h-bocx402(OUTPUT i-mo-codigo).
+                RUN retornaItinerario     IN h-bocx402(OUTPUT i-cod-itiner).
+                RUN retornaPtoControlBase IN h-bocx402(OUTPUT i-pto-contr-base).
+
+            END. /* WHEN 2 */
+        END CASE. /* CASE i-tp-nacionaliz: */
+
+        IF  NOT CAN-FIND(FIRST tt-bo-erro) OR 
+            CAN-FIND(FIRST RowErrors
+                    WHERE RowErrors.errorSubType = "ERROR":U) THEN DO:
+            IF  l-executar THEN DO:
+                find first tt-item-doc-est
+                     where tt-item-doc-est.tipo-con-est > 1 NO-ERROR.
+                if avail tt-item-doc-est then do:
+                    /* 
+                    ** se na tt-item-doc-est tiver algum item diferente de serial 
+                    ** Ç chamado o programa im0100a.w 
+                    */
+                    IF  NOT l-chama-carregado then do:
+                        FOR EACH tt-recebe EXCLUSIVE-LOCK: DELETE tt-recebe. END.                   
+                        
+                        for each tt-item-doc-est 
+                            where tt-item-doc-est.tipo-con-est <> 2:
+
+                            create tt-recebe. 
+                            assign tt-recebe.quantidade-informada  = 0
+                                   tt-recebe.quantidade-total      = tt-item-doc-est.quantidade
+                                   tt-recebe.quantidade-a-informar = tt-item-doc-est.quantidade
+                                   tt-recebe.numero-ordem          = tt-item-doc-est.numero-ordem
+                                   tt-recebe.parcela               = tt-item-doc-est.parcela
+                                   tt-recebe.preco-total           = tt-item-doc-est.preco-total
+                                   tt-recebe.preco-total-mo        = tt-item-doc-est.preco-total-mo
+                                   tt-recebe.peso-liquido-total    = tt-item-doc-est.peso-liquido.
+                        end. /* for each tt-item-doc-est */
+                    end. /* if  not l-chama-carregado */
+
+                    IF  (INPUT FRAME f-pg-cla l-nf-simples-remessa /* Nota Fiscal Simples Remessa */
+                    AND  INPUT FRAME f-pg-cla rs-classif-nf <> 1 /*Nota m∆e*/ )
+                    OR   NOT INPUT FRAME f-pg-cla l-nf-simples-remessa THEN DO:
+
+                        IF l-primeira-exec THEN DO:
+                            FOR EACH tt-itens-aux: DELETE tt-itens-aux. END.
+
+                            EMPTY TEMP-TABLE tt-item-doc-est-aux.
+
+                            /*Quando execuá∆o por di o tratamento deve ser feito para todos os embarques j† na primeira execuá∆o*/
+                            IF l-encontrou 
+                                AND i-tp-nacionaliz = 2 THEN DO:
+                                FOR EACH  bf-tt-embarqueDI
+                                    WHERE bf-tt-embarqueDI.log-marcado
+                                    AND   bf-tt-embarqueDI.cod-embarq <> tt-embarqueDI.cod-embarq:
+                                        CREATE tt-parametros.
+                                        ASSIGN tt-parametros.cod-estabel          = ccod-estabel
+                                               tt-parametros.embarque             = bf-tt-embarqueDI.cod-embarq
+                                               tt-parametros.cod-emitente         = bf-tt-embarqueDI.cod-emitente
+                                               tt-parametros.da-transacao         = bf-tt-embarqueDI.dt-trans
+                                               tt-parametros.da-emissao           = bf-tt-embarqueDI.dt-emissao
+                                               tt-parametros.da-venc-ipi          = bf-tt-embarqueDI.dt-venc-ipi
+                                               tt-parametros.da-venc-icms         = bf-tt-embarqueDI.dt-venc-icm
+                                               tt-parametros.nro-docto            = bf-tt-embarqueDI.nro-docto
+                                               tt-parametros.serie                = bf-tt-embarqueDI.serie-docto
+                                               tt-parametros.nat-operacao         = bf-tt-embarqueDI.nat-operacao
+                                               tt-parametros.estab-fisc           = bf-tt-embarqueDI.cod-estab-fiscal
+                                               tt-parametros.ct-transit           = REPLACE(bf-tt-embarqueDI.ct-transit,".","")
+                                               tt-parametros.sc-transit           = REPLACE(bf-tt-embarqueDI.sc-transit,".","")
+                                               tt-parametros.da-di                = ddata-di
+                                               tt-parametros.de-tot-desconto      = bf-tt-embarqueDI.tot-desconto
+                                               tt-parametros.da-cotacao           = ddata-cotacao
+                                               tt-parametros.observacao           = bf-tt-embarqueDI.observacao
+                                               tt-parametros.usuario              = v_cod_usuar_corren
+                                               tt-parametros.i-pais-impto-usuario = i-pais-impto-usuario
+                                               tt-parametros.l-icms-diferido      = bf-tt-embarqueDI.aliquota-icm.           
+                                END.  /* FOR EACH  tt-embarqueDI */                                                            
+
+                                RUN gerarItensbyDI IN h-bocx402 (input        table tt-parametros,
+                                                                 input-output table tt-item-doc-est-aux,
+                                                                 output       table tt-bo-erro).  
+
+                                FOR EACH  bf-tt-embarqueDI
+                                    WHERE bf-tt-embarqueDI.log-marcado
+                                    AND   bf-tt-embarqueDI.cod-embarq <> tt-embarqueDI.cod-embarq:
+                                    FOR FIRST tt-parametros
+                                        WHERE tt-parametros.embarque    = bf-tt-embarqueDI.cod-embarq 
+                                        AND   tt-parametros.cod-estabel = ccod-estabel :
+                                        DELETE tt-parametros.
+                                    END.
+                                END.  /* FOR EACH  tt-embarqueDI */     
+
+                            END.
+                            ELSE DO:
+                                FOR EACH tt-item-doc-est:
+                                    CREATE tt-item-doc-est-aux.
+                                    BUFFER-COPY tt-item-doc-est TO tt-item-doc-est-aux.
+                                END.
+                            END.
+
+                            ASSIGN i-seq-item-serie = 0.
+                            /* Quebra a tt-item-doc-est quando existir item controlado por numero de serie para gerar os movimentos de estoque */
+                            FOR EACH tt-item-doc-est-aux:
+                                IF  tt-item-doc-est-aux.tipo-con-est = 2 then do:
+                                    ASSIGN i-quebra = 0.
+                                    REPEAT:
+                                        ASSIGN i-quebra         = i-quebra + 1
+                                               i-seq-item-serie = i-seq-item-serie + 1.
+    
+                                        CREATE tt-itens-aux.
+                                        BUFFER-COPY tt-item-doc-est-aux EXCEPT sequencial TO tt-itens-aux.
+                                        ASSIGN tt-itens-aux.quantidade   = 1                                                          
+                                               tt-itens-aux.tipo-con-est = 2                                                          
+                                               tt-itens-aux.sequencial   = i-seq-item-serie.
+                        
+                                        IF i-quebra = tt-item-doc-est-aux.quantidade THEN LEAVE.
+                                    END. /* REPEAT: */
+                                END. /* IF  tt-item-doc-est.tipo-con-est = 2 */
+                                ELSE DO:
+                                    ASSIGN i-seq-item-serie = i-seq-item-serie + 1.
+                                    CREATE tt-itens-aux.
+                                    BUFFER-COPY tt-item-doc-est-aux EXCEPT sequencial TO tt-itens-aux.
+                                    ASSIGN tt-itens-aux.sequencial = i-seq-item-serie.
+                                END. /* ELSE DO: */
+                            END. /* FOR EACH tt-item-doc-est: */
+    
+                            RUN imp/im0100a.w (INPUT-OUTPUT TABLE tt-itens-aux,
+                                               INPUT-OUTPUT TABLE tt-recebe, 
+                                               INPUT l-chama-carregado, 
+                                               OUTPUT TABLE tt-bo-erro).
+
+                            ASSIGN l-primeira-exec = NO.
+                        END.
+
+                        /* procedimento criado para saber se foi clicado em cancela no programa im0100a.w,
+                        ** mostra na  tela a mensagem "O desembarque n∆o pode ser efetuado", e p†ra 
+                        ** a execuá∆o do programa */           
+                        FOR EACH  tt-item-doc-est
+                            WHERE tt-item-doc-est.tipo-con-est <> 1:
+
+                            FOR FIRST tt-item-doc-est-aux 
+                                WHERE tt-item-doc-est.numero-ordem = tt-item-doc-est-aux.numero-ordem
+                                AND   tt-item-doc-est.parcela      = tt-item-doc-est-aux.parcela      : END.
+                            
+                            FIND FIRST tt-itens-aux NO-LOCK
+                                WHERE  tt-itens-aux.numero-ordem  = tt-item-doc-est-aux.numero-ordem
+                                AND    tt-itens-aux.parcela       = tt-item-doc-est-aux.parcela NO-ERROR.
+                            IF  AVAIL tt-itens-aux THEN DO:
+                                ASSIGN tt-item-doc-est.lote = tt-itens-aux.lote.
+                                      
+                                IF  tt-item-doc-est.tipo-con-est = 3 
+                                THEN ASSIGN tt-item-doc-est.dt-vali-lote = tt-itens-aux.dt-vali-lote.
+                       
+                                IF  tt-item-doc-est.tipo-con-est = 4 
+                                THEN ASSIGN tt-item-doc-est.cod-refer = tt-itens-aux.cod-refer
+                                            tt-item-doc-est.dt-vali-lote = tt-itens-aux.dt-vali-lote.
+
+                            END. /* IF  AVAIL tt-itens-aux */
+                        END. /* FOR EACH  tt-item-doc-est */
+                        
+                        find first tt-itens-aux EXCLUSIVE-LOCK 
+                            where  tt-itens-aux.lote         =  "" 
+                            and    tt-itens-aux.tipo-con-est <> 1 no-error.
+                        if  avail  tt-itens-aux then do:
+                            find first tt-bo-erro EXCLUSIVE-LOCK NO-ERROR.
+                            if  not avail tt-bo-erro then do:
+                                assign i-seq-erro = i-seq-erro + 1.
+                                run utp/ut-msgs.p (input "msg":U, input 19522, input return-value).
+                                create tt-bo-erro.
+                                assign tt-bo-erro.i-sequen = i-seq-erro
+                                       tt-bo-erro.cd-erro  = 19522
+                                       tt-bo-erro.mensagem = return-value.    
+                            end. /* if  not avail tt-bo-erro */               
+                        end. /* if  avail  tt-itens-aux */
+                    END. /* IF  (INPUT FRAME f-pg-cla ... */
+                    ELSE DO:  /*Se for nota M∆e de Simples Remessa*/
+                        RUN utp/ut-msgs.p (INPUT "show":U, INPUT 34141, INPUT "").
+                        FOR EACH tt-item-doc-est EXCLUSIVE-LOCK BREAK BY tt-item-doc-est.it-codigo:
+                            CASE tt-item-doc-est.tipo-con-est:
+                                WHEN 2 THEN DO:
+                                    IF FIRST-OF (tt-item-doc-est.it-codigo) THEN ASSIGN i-cont-nr-serie = 1.
+                                    ASSIGN tt-item-doc-est.lote = "LNSRMX" + STRING(i-cont-nr-serie)
+                                           i-cont-nr-serie      = i-cont-nr-serie + 1.
+                                    FOR EACH  tt-itens-aux
+                                        WHERE tt-itens-aux.numero-ordem  = tt-item-doc-est.numero-ordem
+                                        AND   tt-itens-aux.parcela       = tt-item-doc-est.parcela:
+                                        ASSIGN tt-itens-aux.lote = "LNSRMX" + STRING(i-cont-nr-serie).
+                                    END. /* FOR EACH  tt-itens-aux */
+                                END. /* WHEN 2 THEN */
+                                WHEN 3 THEN DO:
+                                    ASSIGN tt-item-doc-est.lote         = "LNSRMX"
+                                           tt-item-doc-est.dt-vali-lote = 12/31/9999.
+                                    FOR EACH  tt-itens-aux
+                                        WHERE tt-itens-aux.numero-ordem  = tt-item-doc-est.numero-ordem
+                                        AND   tt-itens-aux.parcela       = tt-item-doc-est.parcela:
+                                        ASSIGN tt-itens-aux.lote         = "LNSRMX"
+                                               tt-itens-aux.dt-vali-lote = 12/31/9999.
+                                    END. /* FOR EACH  tt-itens-aux */
+                                END. /* WHEN 3 THEN */
+                                WHEN 4 THEN DO:
+                                    ASSIGN tt-item-doc-est.lote         = "LNSRMX"
+                                           tt-item-doc-est.dt-vali-lote = 12/31/9999.
+                                    RUN inbo/boin375.p PERSISTENT SET h-boin375.
+                                    RUN buscaReferenciaPadrao IN h-boin375 (INPUT  tt-item-doc-est.it-codigo, OUTPUT tt-item-doc-est.cod-refer).
+                                    FOR EACH  tt-itens-aux
+                                        WHERE tt-itens-aux.numero-ordem  = tt-item-doc-est.numero-ordem
+                                        AND   tt-itens-aux.parcela       = tt-item-doc-est.parcela:
+                                        ASSIGN tt-itens-aux.lote         = "LNSRMX"
+                                               tt-itens-aux.dt-vali-lote = 12/31/9999
+                                               tt-itens-aux.cod-refer    = tt-item-doc-est.cod-refer.
+                                    END. /* FOR EACH  tt-itens-aux */
+
+                                    IF  VALID-HANDLE(h-boin375) THEN DO:
+                                        DELETE PROCEDURE h-boin375.
+                                        ASSIGN h-boin375 = ?.
+                                    END. /* IF  VALID-HANDLE(h-boin375) */
+                                END. /* WHEN 4 THEN */
+                            END CASE. /* CASE tt-item-doc-est.tipo-con-est: */
+                        END. /* FOR EACH tt-item-doc-est */
+                        ASSIGN l-chama-carregado = YES.
+                    END. /* ELSE DO: */
+                end.  /* if  avail  tt-item-doc-est */
+            END. /* IF  l-executar */
+            ELSE DO: /* Conferància */
+                /* Se n∆o for nacionalizaá∆o n∆o ir† solicitar que o usu†rio informe lote, numero de sÇrie e referencia,
+                   essas informaá‰es ser∆o preenchidas com um lote fict°cio conforme abaixo para evitar validaá‰es do recebimento */
+                FOR EACH tt-item-doc-est EXCLUSIVE-LOCK:
+                    IF  tt-item-doc-est.lote = "" THEN DO:
+                        ASSIGN tt-item-doc-est.lote         = "zawbvcts99"
+                               tt-item-doc-est.situacao     = YES
+                               tt-item-doc-est.dt-vali-lote = 12/31/9999.
+
+                        IF  tt-item-doc-est.tipo-con-est = 4 THEN DO:
+                            FOR FIRST referencia FIELDS(cod-refer) NO-LOCK. END.
+                            IF AVAIL referencia THEN ASSIGN tt-item-doc-est.cod-refer = referencia.cod-refer.
+                        END. /* IF  tt-item-doc-est.tipo-con-est = 4 */
+                    END. /* IF  tt-item-doc-est.lote = "" */
+                END. /* FOR EACH tt-item-doc-est */
+            END. /* ELSE DO: */
+
+            IF  NOT CAN-FIND(FIRST tt-bo-erro) THEN DO:
+                IF  l-chama-carregado THEN DO:
+                    FOR EACH tt-itens-aux EXCLUSIVE-LOCK:
+                        ASSIGN tt-itens-aux.situacao = YES.
+                        FIND FIRST tt-item-doc-est  
+                            WHERE  tt-item-doc-est.numero-ordem = tt-itens-aux.numero-ordem  
+                            AND    tt-item-doc-est.parcela      = tt-itens-aux.parcela NO-ERROR.
+                        IF  AVAIL tt-item-doc-est THEN ASSIGN tt-item-doc-est.situacao = YES.
+                    END. /* FOR EACH tt-itens-aux */
+                END. /* if  l-chama-carregado */
+
+                IF NOT l-encontrou THEN
+                    RUN pi-recebe-tp-nacionaliz      IN h-bocx220a (INPUT 1).
+                ELSE 
+                    RUN pi-recebe-tp-nacionaliz      IN h-bocx220a (INPUT 2).
+                /*Para nacionalizaá∆o por DI a condiá∆o de pagto deve ser setada na bocx220*/
+                IF l-encontrou THEN DO:
+                    IF NOT AVAIL tt-parametros THEN
+                        FOR FIRST tt-parametros: END.
+
+                    IF  VALID-HANDLE(h-bocx383) THEN 
+                        DELETE PROCEDURE h-bocx383.
+
+                    RUN cxbo/bocx383.p PERSISTENT SET h-bocx383.
+                    
+                    RUN buscaMoedaNegociacao IN h-bocx383 (INPUT vnum-di-siscomex,
+                                                           OUTPUT i-moeda-negoc).
+
+                    IF  VALID-HANDLE(h-bocx383a) THEN DELETE PROCEDURE h-bocx383a.
+                        RUN cxbo/bocx383a.p PERSISTENT SET h-bocx383a.
+
+                    RUN retornaCotacaoDia    IN h-bocx383a   (INPUT vnum-di-siscomex,
+                                                              INPUT i-moeda-negoc,
+                                                              INPUT tt-parametros.da-cotacao,
+                                                              OUTPUT de-cotacao-dia).
+
+
+                    RUN pi-recebe-valores-di    IN h-bocx220a (INPUT i-cod-cond-pag,
+                                                               INPUT i-mo-codigo,
+                                                               INPUT de-cotacao-dia,
+                                                               INPUT i-cod-itiner,
+                                                               INPUT i-pto-contr-base).
+                END.
+
+                RUN executarDesembarque     IN h-bocx220a (INPUT  TABLE tt-parametros,  
+                                                           INPUT  TABLE tt-item-doc-est,
+                                                           INPUT  TABLE tt-itens-aux,   
+                                                           OUTPUT TABLE tt-bo-erro,     
+                                                           OUTPUT TABLE tt-retorno).
+
+                IF VALID-HANDLE(h-bocx383a) THEN DO:
+                    DELETE PROCEDURE h-bocx383a.
+                    ASSIGN h-bocx383a = ?.
+                END.
+            END. /* if  not can-find(first tt-bo-erro) */
+            ELSE ASSIGN c-num-embarque = "".            
+        END. /* if  not can-find(first tt-bo-erro) */
+        ELSE ASSIGN c-num-embarque = "".
+
+        /*Se n∆o for nacionalizaá∆o e foi informado lote fict°cio, zera as informaá‰es do lote, referencia ou numero de serie,
+        para n∆o abrir o im0100a carregado caso o usu†rio nacionalize o embarque sem fechar o programa im0100*/
+        FOR EACH tt-item-doc-est EXCLUSIVE-LOCK:
+            IF  tt-item-doc-est.lote = "zawbvcts99" THEN DO:
+                ASSIGN tt-item-doc-est.lote         = ""
+                       tt-item-doc-est.situacao     = NO
+                       tt-item-doc-est.dt-vali-lote = ?
+                       tt-item-doc-est.cod-refer    = "".
+                FOR EACH  tt-itens-aux
+                    WHERE tt-itens-aux.numero-ordem  = tt-item-doc-est.numero-ordem
+                    AND   tt-itens-aux.parcela       = tt-item-doc-est.parcela:    
+                    ASSIGN tt-itens-aux.lote         = ""
+                           tt-itens-aux.situacao     = NO
+                           tt-itens-aux.dt-vali-lote = ?
+                           tt-itens-aux.cod-refer    = "".
+                END. /* FOR EACH  tt-itens-aux */
+            END. /* IF  tt-item-doc-est.lote = "zawbvcts99" */
+        END. /* FOR EACH tt-item-doc-est */
+
+        /*
+         * o erro 52512 refere-se apenas uma mensagem de aviso ao usu†rio, que o n£mero da nota foi alterado, seguindo as regras do faturamento.
+         * Como n∆o Ç uma mensagem de erro n∆o pode interromper o processo de geraá∆o da nota.
+         */
+        IF CAN-FIND(FIRST tt-bo-erro where tt-bo-erro.cd-erro <> 52512)
+           OR CAN-FIND(FIRST RowErrors
+                       WHERE RowErrors.errorSubType = "ERROR":U) THEN DO:
+                       
+            IF NOT l-encontrou THEN DO:
+                FIND FIRST tt-bo-erro EXCLUSIVE-LOCK NO-ERROR.
+                if  not valid-handle(hShowMsg) then run utp/showmessage.w persistent set hShowMsg.
+                ELSE DO:
+                    delete procedure hShowMsg.            
+                    run utp/showmessage.w persistent set hShowMsg.
+                END.
+                assign l-verifica-erro = no.            
+                RUN setModal     IN hShowMsg (INPUT YES).
+                run showMessages IN hShowMsg (input table tt-bo-erro).                        
+                if valid-handle(h-bocx220a) then delete procedure h-bocx220a.
+                leave.
+            END.
+            ELSE DO:
+                FOR EACH tt-bo-erro:
+                    RUN pi-cria-row-errors (INPUT tt-bo-erro.cd-erro,
+                                            INPUT tt-bo-erro.parametros,
+                                            INPUT tt-bo-erro.mensagem).
+                    DELETE tt-bo-erro.
+                END.
+            END.
+        end. /* if  avail tt-bo-erro ***/
+        else do:
+            for each tt-retorno NO-LOCK:
+                    RUN pi-cria-row-errors (INPUT tt-retorno.cd-erro,
+                                            INPUT tt-retorno.parametros,
+                                            INPUT tt-retorno.mensagem).
+                    IF tt-retorno.cd-erro <> 52512
+                    OR l-executar THEN
+                    DELETE tt-retorno.
+            end.
+
+            IF  NOT l-executar THEN DO:
+                RUN pi-gera-relat-acomp IN THIS-PROCEDURE.
+                FIND FIRST tt-retorno WHERE tt-retorno.cd-erro = 52512 NO-LOCK NO-ERROR.
+                IF AVAIL tt-retorno THEN
+                    DELETE tt-retorno.
+            END. /* IF  NOT l-executar */
+            ELSE DO:
+                CASE l-encontrou:
+                    WHEN NO /*---[ EMBARQUE ]---*/ THEN DO:
+                        ASSIGN c-num-embarque       = ""
+                               cembarque:SCREEN-VALUE IN FRAME f-embarq = ""
+                               cembarque            = ""
+                               ccod-estabel         = ""
+                               ccod-emitente        = 0
+                               ddata-trans          = today
+                               ddata-emissao        = today
+                               ddata-vencto-ipi     = today
+                               ddata-vencto-icms    = today
+                               cnr-docto cserie     = ""
+                               cnatureza            = ""
+                               ccod-estabel-fisc    = ""
+                               cconta-trans         = ""
+                               ccod-decl-imp        = ""
+                               ddata-di             = today
+                               cdesc-tot            = 0
+                               ddata-cotacao        = today
+                               editor-2             = ""
+                               licms-diferido       = no
+                               l-nf-simples-remessa = no
+                               rs-classif-nf        = 1
+                               c-cta-aplic-nf       = "".
+                        
+                        disp cembarque 
+                             ccod-estabel 
+                             ccod-emitente
+                             ddata-trans 
+                             ddata-emissao 
+                             ddata-vencto-ipi
+                             ddata-vencto-icms 
+                             cnr-docto cserie
+                             cnatureza 
+                             ccod-estabel-fisc 
+                             cconta-trans
+                             ccod-decl-imp 
+                             ddata-di 
+                             cdesc-tot
+                             editor-2 
+                             ddata-cotacao
+                             licms-diferido
+                             with frame f-embarq.
+                    END. /* WHEN 1 */
+                    WHEN YES /*---[ DECLARAÄ«O DE IMPORTAÄ«O ]---*/ THEN DO:
+                        ASSIGN ccod-decl-imp-1:SCREEN-VALUE IN FRAME f-decl-imp = "" 
+                               ccod-estabel-1:SCREEN-VALUE  IN FRAME f-decl-imp = ""
+                               ddata-cotacao-1:SCREEN-VALUE IN FRAME f-decl-imp = "" 
+                               ddata-di-1:SCREEN-VALUE      IN FRAME f-decl-imp = ""
+                               icod-di-ems:SCREEN-VALUE     IN FRAME f-decl-imp = "".
+
+                        NEXT.
+                    END. /* WHEN 2 */
+                END CASE.
+            END. /* ELSE DO: */
+        end. /* else do: */
+    end. /* else do: */
+    delete procedure h-bocx220a.    
+    ASSIGN h-bocx220a = ?.
+   
+end. /* do on error undo, return error on stop  undo, return error: */     

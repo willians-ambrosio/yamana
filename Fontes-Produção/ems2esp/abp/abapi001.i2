@@ -1,0 +1,143 @@
+&ANALYZE-SUSPEND _VERSION-NUMBER UIB_v9r12
+&ANALYZE-RESUME
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _CUSTOM _DEFINITIONS Include 
+/********************************************************************************
+** Copyright DATASUL S.A. (1997)
+** Todos os Direitos Reservados.
+**
+** Este fonte e de propriedade exclusiva da DATASUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+*****************************************************************************
+**
+**       PROGRAMA: ABAPI001.i2
+**
+**       DATA....: Julho de 2003
+**
+**       AUTOR...: Marcio Willwock - Manufatura - DATASUL S.A.
+**
+**       OBJETIVO: API para Atualiza‡Æo de Apontamentos de Abastecimento e
+**                 Lubrifica‡Æo
+**
+*****************************************************************************/
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+
+&ANALYZE-SUSPEND _UIB-PREPROCESSOR-BLOCK 
+
+/* ********************  Preprocessor Definitions  ******************** */
+
+
+
+/* _UIB-PREPROCESSOR-BLOCK-END */
+&ANALYZE-RESUME
+
+
+
+/* *********************** Procedure Settings ************************ */
+
+&ANALYZE-SUSPEND _PROCEDURE-SETTINGS
+/* Settings for THIS-PROCEDURE
+   Type: Include
+   Allow: 
+   Frames: 0
+   Add Fields to: Neither
+   Other Settings: INCLUDE-ONLY
+ */
+&ANALYZE-RESUME _END-PROCEDURE-SETTINGS
+
+/* *************************  Create Window  ************************** */
+
+&ANALYZE-SUSPEND _CREATE-WINDOW
+/* DESIGN Window definition (used by the UIB) 
+  CREATE WINDOW Include ASSIGN
+         HEIGHT             = 6.04
+         WIDTH              = 26.43.
+/* END WINDOW DEFINITION */
+                                                                        */
+&ANALYZE-RESUME
+
+ 
+
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _CUSTOM _MAIN-BLOCK Include 
+
+
+/* ***************************  Main Block  *************************** */
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+
+
+/* **********************  Internal Procedures  *********************** */
+
+&ANALYZE-SUSPEND _UIB-CODE-BLOCK _PROCEDURE piCriaErro Include 
+PROCEDURE piCriaErro :
+/*------------------------------------------------------------------------------
+  Purpose:     piCriaErro
+  Parameters:  entrada pErrorNumber      = N£mero do erro
+               entrada pErrorType        = Tipo do erro (EMS)
+               entrada pErrorParameters  = Parƒmetros necess rios para erros
+  Notes:       Insere registro na temptable RowErrors manualmente
+------------------------------------------------------------------------------*/
+DEFINE INPUT PARAMETER pErrorNumber      AS INTEGER   NO-UNDO.
+DEFINE INPUT PARAMETER pErrorType        AS CHARACTER NO-UNDO.
+DEFINE INPUT PARAMETER pErrorParameters  AS CHARACTER NO-UNDO.
+
+DEFINE VARIABLE iErrorSequence    AS INTEGER    NO-UNDO.
+DEFINE VARIABLE cErrorSubType     AS CHARACTER  NO-UNDO.
+DEFINE VARIABLE cErrorDescription AS CHARACTER  NO-UNDO.
+DEFINE VARIABLE cErrorHelp        AS CHARACTER  NO-UNDO.
+
+/** Busca o Tipo de Mensagem do EMS **/
+RUN utp/ut-msgs.p (INPUT "TYPE":U,
+                   INPUT pErrorNumber,
+                   INPUT pErrorParameters).
+CASE {uninc/i01un001.i 06 RETURN-VALUE}:
+    WHEN 1 THEN
+        ASSIGN cErrorSubType = "ERROR":U.
+    WHEN 2 THEN
+        ASSIGN cErrorSubType = "WARNING":U.
+    WHEN 4 THEN
+        ASSIGN cErrorSubType = "INFORMATION":U.
+END CASE.
+
+/** Busca Texto da Mensagem **/
+RUN utp/ut-msgs.p (INPUT "MSG":U,
+                   INPUT pErrorNumber,
+                   INPUT pErrorParameters).
+ASSIGN cErrorDescription = RETURN-VALUE.
+
+/** Busca Help da Mensagem **/
+RUN utp/ut-msgs.p (INPUT "HELP":U,
+                   INPUT pErrorNumber,
+                   INPUT pErrorParameters).
+ASSIGN cErrorHelp = RETURN-VALUE.
+
+
+/*--- Atualiza vari vel de sequˆncia de erros ---*/
+IF CAN-FIND(LAST RowErrors) THEN DO:
+    FIND LAST RowErrors.
+    ASSIGN iErrorSequence = RowErrors.ErrorSequence + 1.
+END.
+ELSE
+    ASSIGN iErrorSequence = iErrorSequence + 1.
+
+CREATE RowErrors.
+ASSIGN RowErrors.ErrorSequence    = iErrorSequence
+       RowErrors.ErrorNumber      = pErrorNumber
+       RowErrors.ErrorType        = pErrorType
+       RowErrors.ErrorSubType     = cErrorSubType
+       RowErrors.ErrorDescription = cErrorDescription
+       RowErrors.ErrorHelp        = cErrorHelp
+       RowErrors.ErrorParameters  = pErrorParameters.
+
+return "OK":U.
+
+END PROCEDURE.
+
+/* _UIB-CODE-BLOCK-END */
+&ANALYZE-RESUME
+

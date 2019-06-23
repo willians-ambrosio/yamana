@@ -1,0 +1,14 @@
+ADD FIELD "item-cest" OF "nfe-it-nota-fisc-rec" AS integer 
+  DESCRIPTION "Codigo Especificador da Substituicao Tributaria CEST, que estabelece a sistematica de uniformizacao e identificacao das mercadorias e bens passiveis de sujeicao aos regimes de substituicao tributaria e de antecipacao de recolhimento do ICMS"
+  FORMAT "9999999"
+  INITIAL "0"
+  LABEL "Cest"
+  POSITION 124
+  MAX-WIDTH 4
+  ORDER 1250
+
+.
+PSC
+cpstream=ibm850
+.
+0000037047

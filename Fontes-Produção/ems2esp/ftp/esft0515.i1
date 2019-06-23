@@ -1,0 +1,805 @@
+/*****************************************************************************
+**
+**   INCLUDE :  esft0515.I1
+**   OBJETIVO:  Nota Fiscal
+**
+****************************************************************************/
+    assign da-venc-dup          = ?
+           i-cont6              = 0
+           i-parcela            = 0
+           i-fatura             = ""
+           i-qt-volumes         = 0
+           de-aliquota-iss      = 0
+           de-vl-dup            = 0
+           de-cotacao           = 0
+           de-tot-ipi           = 0
+           de-tot-ipi-nota      = 0
+           de-tot-ipi-calc      = 0
+           de-tot-icm           = 0
+           de-tot-iss           = 0
+           de-tot-icmssubs-obs  = 0
+           de-tot-bicmssubs-obs = 0
+           de-tot-icmssubs      = 0
+           de-tot-bicmssubs     = 0
+           de-tot-icms-obs      = 0
+           de-tot-bas-ipi       = 0
+           de-tot-ipi-dev-obs   = 0
+           de-tot-bas-iss       = 0
+           de-tot-bas-icm       = 0
+           de-vl-dup            = 0
+           i-cont-item          = 0
+           i-codigo             = 0
+           c-pago               = " "
+           c-mess               = "  "
+           c-mensagem1          = ""
+           c-mensagem2          = ""
+           c-especie            = " "
+           c-nat                = " "
+           c-num-nota           = " "
+           c-num-duplic         = " ".
+
+if emitente.natureza = 1 then 
+   assign c-cgc = if param-global.formato-id-pessoal <> ""
+                  then string(nota-fiscal.cgc, param-global.formato-id-pessoal)
+                  else nota-fiscal.cgc.
+else 
+    if emitente.natureza = 2 then 
+       assign c-cgc = if param-global.formato-id-federal <> ""
+                      then string(nota-fiscal.cgc, param-global.formato-id-federal)
+                      else nota-fiscal.cgc.
+    else
+       assign c-cgc = nota-fiscal.cgc.
+
+/*-------------------------------  Work-File  --------------------------------*/
+
+  find estabelec of nota-fiscal no-lock no-error.
+
+/**---------------CODIGO SUFRAMA---------------*/
+
+if  avail cidade-zf then 
+    assign c-cod-suframa-est = estabelec.cod-suframa
+           c-cod-suframa-cli = emitente.cod-suframa.
+else
+    assign c-cod-suframa-est = ""
+           c-cod-suframa-cli = "".
+
+/*--------------------------------------------*/
+
+  for each item-nota:
+      delete item-nota.
+  end.
+
+  for each it-nota-fisc of nota-fiscal,
+      each item
+      where item.it-codigo = it-nota-fisc.it-codigo no-lock:
+
+      assign r-it-nota      = rowid(it-nota-fisc)
+             r-natur-oper   = rowid(natur-oper)
+             r-nota-fiscal  = rowid(nota-fiscal)
+             r-item         = rowid(item).
+
+      if substring(it-nota-fisc.nat-operacao,1,3) <>
+         substring(nota-fiscal.nat-operacao,1,3) then
+         do:
+            find natur-oper 
+                 where natur-oper.nat-operacao = it-nota-fisc.nat-operacao no-lock no-error.
+            {cdp/cd0620.i1 nota-fiscal.cod-estabel}
+            assign c-nat = {cdp/cd0620.i2 natur-oper nota-fiscal.dt-emis-nota "'XXXX'" "'XXX'"}. 
+         end.
+
+      run ftp/ft0515a.p (input r-it-nota,
+                         output i-codigo,
+                         output l-sub).
+
+      run ftp/ft0515d.p (input r-it-nota,
+                         if  avail cidade-zf
+                         then rowid(cidade-zf)
+                         else ?).
+  end.
+
+  find natur-oper
+       where rowid(natur-oper) = r-natur-oper no-lock no-error.
+
+  assign r-nota-fiscal = rowid(nota-fiscal).
+
+  if  nota-fiscal.emite-duplic then run ftp/ft0515c.p.
+
+  do i-cont4 = 1 to 6:
+     if i-parcela[i-cont4] <> 0 then i-dup = i-dup + 1 .
+  end.
+
+ /*-----------------------  DADOS DO ESTABELECIMENTO  ------------------------*/
+
+  put skip (5).  /* salto de pagina inicial */
+  
+  c-num-nota = string(nota-fiscal.nr-nota-fis).
+  put c-num-nota at 130 skip (3) /* (4) */.
+  
+  /* Define o formato de impressao da natureza de operacao */
+  assign c-formato-cfop = if  substr(natur-oper.char-2,78,10) <> " "
+                          then trim(substr(natur-oper.char-2,78,10))
+                          else "9.99".
+  
+  {cdp/cd0620.i1 nota-fiscal.cod-estabel}                                                       
+  {cdp/cd0620.i3 nat-operacao nota-fiscal.dt-emis-nota}.
+   put c-desc-cfop-nat                                                            at 6
+       {cdp/cd0620.i2 nat-operacao nota-fiscal.dt-emis-nota "' '" c-formato-cfop}  at 54 /*56*/.
+
+  /*------ INS. EST. DO SUBSTITUITO TRIB. ------*/
+
+  if  l-sub = yes then do:
+
+       find first estab-uf
+            where estab-uf.cod-estabel = nota-fiscal.cod-estabel
+            and   estab-uf.estado      = nota-fiscal.estado  no-lock no-error.
+       if avail estab-uf then do:
+          put estab-uf.ins-estadual   at 65.
+       end.
+  end.
+  
+put skip(2).
+
+/*---------------------  OBSERVACOES DA NOTA FISCAL  -------------------------*/
+
+  /*------  OBSERVACOES  ------*/
+  
+  assign c-mensagem2 = nota-fiscal.observ-nota.
+  
+  /* Integracao Modulo Importacao */   
+  
+  find first param-global no-lock.
+  if avail param-global and param-global.modulo-07 then do:
+    if avail emitente  and
+       avail estabelec and
+      (emitente.natureza = 3 or emitente.natureza = 4) and
+       emitente.pais <> estabelec.pais then do: 
+        /* retorna temp-table com as despesas de importacao do documento e
+        ** que estiverem com o parametro de "Imprime Nota Fiscal"(desp-imp.log-1) marcado no 
+        ** programa Cadastro Despesa/Impostos Importacao (cd2565) */
+        run imp/im9031.p (input rowid(nota-fiscal),
+                          output table tt-desp).                                  
+        for each tt-desp:
+            assign c-mensagem2 = c-mensagem2 + " | "
+                               + string(tt-desp.cod-desp) + "-"
+                               + tt-desp.descricao + " / "
+                               + trim(string(tt-desp.val-desp,">>>>>,>>>,>>9.99999")).
+        end.
+    end.
+  end.  
+  
+  /* ******************************************************************************** */
+
+  run pi-print-editor(input c-mensagem2, input 75).
+  for each tt-editor:
+      if  i-cont6 < 8 then 
+          assign i-cont6         = i-cont6 + 1
+                 c-mess[i-cont6] = tt-editor.conteudo.
+      else
+          leave.
+  end.
+  
+  /*------  CODIGO DE MENSAGEM DA NOTA FISCAL  ------*/
+
+  find mensagem
+       where mensagem.cod-mensag = nota-fiscal.cod-mensag no-lock no-error.
+  if  avail mensagem then do:
+      run pi-print-editor(input mensagem.texto-mensag, input 79).
+      for each tt-editor:
+          c-mensagem1 = c-mensagem1 + tt-editor.conteudo.
+      end.
+      run pi-print-editor(input substr(c-mensagem1,1,381), input 75).
+      for each tt-editor:
+          if  i-cont6 < 8 then 
+              assign i-cont6         = i-cont6 + 1 
+                     c-mess[i-cont6] = tt-editor.conteudo.
+          else
+              leave.
+      end.
+  end.
+  
+  /***********************************************************************************************
+  ------  IMPRIME CàDIGO DA REPARTI€ÇO FISCAL  ------
+
+  if  trim(substr(estabelec.char-2,62,20)) <> "" 
+      and i-cont6 < 18 then do:                  
+          assign i-cont6         = i-cont6 + 1
+                 c-mess[i-cont6] = "Cod.Repart.Fiscal: " + substr(estabelec.char-2,62,20).
+  end.
+  ************************************************************************************************/
+ /*------  CIDADE ZONA FRANCA ------*/
+
+  if  avail cidade-zf 
+  and de-conv  > 0
+  and de-conv <> 1 
+  and i-cont6 < 8 
+  then do:
+          if  natur-oper.nat-operacao begins "6" then do:
+              assign i-cont6         = i-cont6 + 1
+                     c-mess[i-cont6] = "Desconto de" 
+                                       + string(((de-conv * 100 - 100) * -1),">>9.99")
+                                       + "%, de ICMS Referente a "
+                                       + "Vendas para Zona Franca..: "
+                     i-cont6         = i-cont6 + 1
+                     c-mess[i-cont6] = string(nota-fiscal.dec-1, ">>>,>>>,>>9.99").
+          end.
+          else do:
+              assign i-cont6         = i-cont6 + 1
+                     c-mess[i-cont6] =
+                    "Desconto de " + string(((de-conv * 100 - 100) * -1), ">>9.99") +
+                     "%, de ICMS Referente a Vendas para Area de livre "
+                     i-cont6         = i-cont6 + 1
+                     c-mess[i-cont6] = "Comercio..: " +
+                                       string(nota-fiscal.dec-1, ">>>,>>>,>>9.99").
+          end.
+  end.
+
+  /*-------- IMPRIME O CODIGO SUFRAMA DO CLIENTE E DO ESTABELECIMENTO ---------*/
+
+  if  c-cod-suframa-est <> "" 
+  and i-cont6 < 8 then 
+      assign i-cont6         = i-cont6 + 1
+             c-mess[i-cont6] = "Registro do Estabelecimento na SUFRAMA: " +
+                               c-cod-suframa-est.
+  if  c-cod-suframa-cli <> ""
+  and i-cont6 < 8 then 
+      assign i-cont6         = i-cont6 + 1
+             c-mess[i-cont6] = "Registro do Cliente na SUFRAMA: " +
+                               c-cod-suframa-cli.
+
+  /*------  SUBSTITUICAO TRIBUTARIA  ------*/
+
+  if  de-tot-icmssubs-obs > 0 
+  and i-cont6 < 8 then do:
+       assign i-cont6         = i-cont6 + 1
+              c-mess[i-cont6] =
+                     "ICMS  Retido  na  fonte  por Substituicao Tributaria"
+              i-cont6         = i-cont6 + 1
+              c-mess[i-cont6] = "com base: " +
+                                string(de-tot-bicmssubs-obs, ">>>,>>>,>>9.99") +
+                                " e valor: " +
+                                string(de-tot-icmssubs-obs, ">>>,>>>,>>9.99").
+       if  estabelec.estado = "SP" 
+       and emitente.estado  = "SP" 
+       and i-cont6 < 8 then 
+           assign i-cont6         = i-cont6 + 1
+                  c-mess[i-cont6] = "Valor do ICMS: " +
+                                     string(de-tot-icms-obs, ">>>,>>>,>>9.99").
+  end.
+
+  /*------  IPI REFERENTE A DEVOLUCAO  ------*/
+
+  if  de-tot-ipi-dev-obs  > 0 
+  and  i-cont6 < 8 then 
+      assign i-cont6         = i-cont6 + 1
+             c-mess[i-cont6] = "Valor do IPI Referente a Devolucao..: " +
+                               string(de-tot-ipi-dev-obs,">>>>>>>>9.99").
+
+/*------  VALOR DO IPI SOBRE AS DESPESAS  ------*/
+
+  if  de-tot-ipi-calc > 0 
+  and  i-cont6 < 8 then 
+      assign i-cont6         = i-cont6 + 1
+             c-mess[i-cont6] = "Valor do IPI sobre Despesas acessorias..: " +
+                               string(de-tot-ipi-nota - de-tot-ipi-calc
+                                      ,">>>>>>>>>9.99").
+
+/*------------- IMPRESSAO DOS DADOS DO EMITENTE --------------*/
+
+         put emitente.nome-emit at  6.
+
+         if  nota-fiscal.nome-ab-cli <> "brinde" then
+             put  "(" + string(emitente.cod-emitente, "999999999") + ")"  at 56 format "x(11)"
+                  c-cgc                                      at 100.
+
+         put nota-fiscal.dt-emis-nota format "99/99/9999" at 128 skip(1).
+
+ /*----------ENDERECO DO EMITENTE-------------------------------------------*/
+      
+      if  nota-fiscal.nome-ab-cli <> "brinde" then
+          put nota-fiscal.endereco   at  6
+              nota-fiscal.bairro     at 79
+              nota-fiscal.cep        at 113 /* 115*/.
+
+      if  b-nota-fiscal.dt-saida <> ? then do:
+
+          put substring(string(b-nota-fiscal.dt-saida ,"99/99/9999"),1,2)
+                  + "/" +
+              substring(string(b-nota-fiscal.dt-saida ,"99/99/9999"),4,2)
+                  + "/" +
+              substring(string(b-nota-fiscal.dt-saida ,"99/99/9999"),9,2) /* substring(string(b-nota-fiscal.dt-saida ,"99/99/9999"),7,4) */
+              at 130 format "x(10)".
+      end.
+      put skip(1).
+
+      if  nota-fiscal.nome-ab-cli <> "brinde" then
+          put nota-fiscal.cidade     at  6
+              emitente.telefone[1]   at 67
+              nota-fiscal.estado     at 87 /* 91 */
+              nota-fiscal.ins-estadual  at 100.
+
+      if  l-dt = yes then
+          put hr-saida  at 130.  /* nao esta sendo gravada na nota */
+
+      put skip(3).
+
+
+      /*------  NAO TEM DUPLICATAS 
+
+      do i = 1 to 2:
+
+         if i-fatura[i] = "" then do:
+            put " " skip.
+            next.
+         end.
+         else do:
+             
+                  put i-fatura[i]      format "9999999"     at  41  
+                  "/"                                       at  48
+                  i-parcela[i]     format "99"              at  49
+                  de-vl-dup[i]                              at  59
+                  da-venc-dup[i]                            at  81.
+              if  i-parcela[i + 2] <> 0 then do:
+                   put i-fatura[i]      format "9999999"    at  97
+                      "/"                                   at 104
+                      i-parcela[i + 2]     format "99"      at 105
+                      de-vl-dup[i + 2]                      at 115
+                      da-venc-dup[i + 2]                    at 140.
+              end.        
+              put skip.
+          end.
+      end.
+      -------- FIM DA DUPLICATA*/
+      
+      
+      
+
+/* ---------------------  ITENS DA NOTA FISCAL FATURA  ---------------------- */
+
+  for each it-nota-fisc of nota-fiscal,
+
+      each  item
+      where item.it-codigo = it-nota-fisc.it-codigo,
+
+      each  item-nota
+      where item-nota.registro = rowid(it-nota-fisc) no-lock
+
+      break by item-nota.sit-tribut
+            by item-nota.aliquota-icm
+            by item-nota.nr-seq-fat:
+
+      /*------  PESQUISA A DESCRICAO DO PRODUTO  ------ */
+         
+      if  item.ind-imp-desc = 1 then /* Descri‡Æo */
+          assign c-desc-prod = item.desc-item.
+
+      if  item.ind-imp-desc = 2           /* Descri‡Æo + Narrativa */
+      or  item.ind-imp-desc = 5           /* Narrativa Item */
+      or  item.ind-imp-desc = 6           /* Uma Linha Narrativa */
+      or  item.ind-imp-desc = 10 then do: /* Descri‡Æo + 24 Narrativa Item */
+      
+          if  item.ind-imp-desc = 2
+          or  item.ind-imp-desc = 10 then
+              assign c-desc-prod = item.desc-item.
+          else 
+              assign c-desc-prod = "".
+    
+          find narrativa of item no-lock no-error.
+          
+          if avail narrativa then 
+             assign c-desc-prod = c-desc-prod +
+                                  if  item.ind-imp-desc = 6 then
+                                      trim(entry(1,substring(narrativa.descricao,1,76),chr(10)))
+                                  else if item.ind-imp-desc = 10 then
+                                      trim(entry(1,substring(narrativa.descricao,1,24),chr(10)))
+                                  else                        
+                                      narrativa.descricao.
+      end.
+
+      if  item.ind-imp-desc = 3          /* Descri‡Æo + Narrativa Item/Cliente */
+      or  item.ind-imp-desc = 8 then do: /* Descri‡Æo + 24 Narrativa Item/Cliente */
+          find item-cli
+               where item-cli.nome-abrev = nota-fiscal.nome-ab-cli
+               and   item-cli.it-codigo  = it-nota-fisc.it-codigo
+               no-lock no-error.
+               
+          assign c-desc-prod = item.desc-item.
+          
+          if  avail item-cli then
+              assign c-desc-prod = c-desc-prod +
+                                   if item.ind-imp-desc = 3 then          
+                                      item-cli.narrativa
+                                   else
+                                      trim(entry(1,substring(item-cli.narrativa,1,24),chr(10))).
+      end.
+
+      if  item.ind-imp-desc = 4            /* Descri‡Æo + Narrativa Informada */
+      or  item.ind-imp-desc = 7            /* Narrativa Informada */
+      or  item.ind-imp-desc = 9 then do:   /* Descri‡Æo + 24 Narrativa Informada */
+      
+          if  item.ind-imp-desc = 4
+          or  item.ind-imp-desc = 9 then
+              assign c-desc-prod = item.desc-item.
+          else 
+              assign c-desc-prod = "".
+      
+          find nar-it-nota
+               where nar-it-nota.cod-estabel  = it-nota-fisc.cod-estabel
+               and   nar-it-nota.serie        = it-nota-fisc.serie
+               and   nar-it-nota.nr-nota-fis  = it-nota-fisc.nr-nota-fis
+               and   nar-it-nota.nr-sequencia = it-nota-fisc.nr-seq-fat
+               and   nar-it-nota.it-codigo    = it-nota-fisc.it-codigo
+               no-lock no-error.
+
+          if avail nar-it-nota then 
+             assign c-desc-prod = c-desc-prod +
+                                  if item.ind-imp-desc = 9 then
+                                     trim(entry(1,substring(nar-it-nota.narrativa,1,24),chr(10)))
+                                  else
+                                     nar-it-nota.narrativa.
+      end.
+
+    /*------  VERIFICA A CLASSIFICACAO FISCAL DO ITEM  ------*/
+
+    if  it-nota-fisc.class-fisc <> "" then do:
+        assign c-class-fiscal = it-nota-fisc.class-fisc.
+    end.
+    else do :
+        assign c-class-fiscal = item.class-fisc.
+    end.
+
+    /*------  QUANTIDADE/UNIDADE FATURADA  ------*/
+
+    assign c-un-fatur  = if   it-nota-fisc.ind-fat-qtfam = no 
+                         then it-nota-fisc.un-fatur[1]
+                         else it-nota-fisc.un-fatur[2]
+           de-qt-fatur = if   it-nota-fisc.ind-fat-qtfam = no 
+                         then it-nota-fisc.qt-faturada[1]
+                         else it-nota-fisc.qt-faturada[2].
+    
+/*-----------------------  IMPRESSAO DOS ITENS  ------------------------------*/
+
+    if nota-fiscal.perc-desco1   <> 0 or
+       nota-fiscal.perc-desco2   <> 0 or
+       nota-fiscal.per-des-icms  <> 0 or
+       it-nota-fisc.per-des-item <> 0 then
+       assign de-desc = it-nota-fisc.vl-merc-ori - it-nota-fisc.vl-merc-liq.
+    else assign de-desc = 0.
+
+    run pi-print-editor(input replace(replace(c-desc-prod, chr(13), " "), chr(10), " ") , input 42).
+    find first tt-editor no-lock no-error.
+    
+    put item.it-codigo              format "x(16)"           at    6 
+        (if avail tt-editor 
+         then tt-editor.conteudo
+         else " ")                  format "x(31)"           at   23
+        item-nota.sit-tribut        format "999"             at   54 /* 56 */ 
+        c-un-fatur                  format "x(2)"            at   61 /* 63 */
+        de-qt-fatur                 format ">>>>>>9.999"     at   72 /* at   75 */.
+
+/* -----------------  PARA ZONA FRANCA DE MANAUS 7% DE IPI  ----------------- */
+
+    if avail cidade-zf then do:
+           put it-nota-fisc.vl-preuni / de-conv   format ">>>>,>>9.99"      at 95  /* at 96 */
+               it-nota-fisc.vl-merc-liq / de-conv format ">>>,>>>,>>9.99"   at 118 /* at 123 */.
+           if it-nota-fisc.cd-trib-icm <> 3 then
+               put it-nota-fisc.aliquota-icm          format ">9.9"         at 134 /* at 140 */.
+
+/* -----------------  IPI DO ITEM DA NOTA FISCAL ZONA FRANCA ---------------- */               
+
+           /*if  it-nota-fisc.aliquota-ipi <> 0
+           or  it-nota-fisc.vl-ipi-it    <> 0
+           or  nota-fiscal.esp-docto     <> 20
+           then do:
+               if  it-nota-fisc.vl-despes-it > 0
+               and it-nota-fisc.vl-ipi-it    > 0
+               and it-nota-fisc.cd-trib-ipi <> 3 then do:
+
+                   {ftp/ft0513.i1}  /* Determina valor do IPI */
+
+                   assign de-vl-ipi-it = de-vl-ipi-it / de-conv.
+      
+                   put it-nota-fisc.aliquota-ipi           format ">9.9"        at 97
+                       de-vl-ipi-it                        format ">>>,>>9.99"  at 102.
+               end.        
+               else do:
+                   if it-nota-fisc.cd-trib-ipi <> 3 then
+                      put it-nota-fisc.aliquota-ipi        format ">9.9"        at 97
+                          it-nota-fisc.vl-ipi-it / de-conv format ">>>,>>9.99"  at 102.
+               end.                                                             
+           end.*/    
+    end.
+
+/* ------------------  NOTA FISCAL FATURA DE OUTRAS REGIOES ----------------- */
+
+    else do:
+           put it-nota-fisc.vl-preuni     format ">>>>,>>9.99"       at 94 /* at  96 */
+               it-nota-fisc.vl-merc-liq   format ">>>,>>>,>>9.99"    at 118 /* at  123 */.
+           if it-nota-fisc.cd-trib-icm <> 3 then
+               put it-nota-fisc.aliquota-icm  format ">9.9"          at  134 /* at 140 */.
+
+/* ------------------ IPI DO ITEM DA NOTA FISCAL DE OUTRAS REGIOES ---------- */
+
+         /*if  it-nota-fisc.aliquota-ipi <> 0
+           or  it-nota-fisc.vl-ipi-it    <> 0
+           or  nota-fiscal.esp-docto     <> 20
+           then
+               if  it-nota-fisc.vl-despes-it > 0
+               and it-nota-fisc.vl-ipi-it    > 0 
+               and it-nota-fisc.cd-trib-ipi <> 3 then do:
+
+                   {ftp/ft0513.i1}  /* Determina valor do IPI */
+                   
+                    put it-nota-fisc.aliquota-ipi     format ">9.9"        at 97 
+                        de-vl-ipi-it                  format ">>>,>>9.99"  at 102.
+               end.
+               else
+                   if it-nota-fisc.cd-trib-ipi <> 3 then
+                       put it-nota-fisc.aliquota-ipi format ">9.9"        at 97
+                           it-nota-fisc.vl-ipi-it    format ">>>,>>9.99"  at 102.*/
+    end.
+    
+/*--------------IMPRESSAO DA DESCRICAO DO ITEM ----------------------------*/
+
+    find first tt-editor no-lock no-error.
+    if avail tt-editor then delete tt-editor.
+    for each tt-editor:
+        if i-cont-item < 15 then do:
+           assign i-cont-item = i-cont-item + 1.
+           put tt-editor.conteudo format "x(31)" at 3.
+        end.
+    end.
+
+/*----------------------------  ACUMULA TOTAIS  ------------------------------*/
+    /* Helder - Alteracao para que o programa utilize o valor de icms e ipi, tambem quando o tipo de tributacao for igual a outros */
+    assign de-tot-bas-icm   = de-tot-bas-icm   + (if it-nota-fisc.cd-trib-icm = 3 then 
+                                                     it-nota-fisc.vl-icmsou-it 
+                                                  else it-nota-fisc.vl-bicms-it)
+           de-tot-icm       = de-tot-icm       + (if it-nota-fisc.cd-trib-icm <> 2 /*3*/
+                                                  then it-nota-fisc.vl-icms-it
+                                                  else 0)
+           de-tot-bas-ipi   = de-tot-bas-ipi   + (if it-nota-fisc.cd-trib-ipi = 3 then
+                                                     it-nota-fisc.vl-ipiou-it
+                                                  else it-nota-fisc.vl-bipi-it)
+           de-tot-ipi       = de-tot-ipi       + (if it-nota-fisc.cd-trib-ipi <> 2 /*3*/
+                                                  then it-nota-fisc.vl-ipi-it
+                                                  else 0)
+           de-tot-bas-iss   = de-tot-bas-iss   + it-nota-fisc.vl-biss-it
+           de-tot-iss       = de-tot-iss       + it-nota-fisc.vl-iss-it
+           de-tot-icmssubs  = de-tot-icmssubs  + it-nota-fisc.vl-icmsub-it
+           de-tot-bicmssubs = de-tot-bicmssubs + it-nota-fisc.vl-bsubs-it.
+
+
+    assign i-cont-item = i-cont-item + 1. /* controle de linhas */
+
+  end.
+
+  put skip (14 - i-cont-item).  /* nr de linhas a serem puladas */
+
+/*---------------------------  IMPRIME TOTAIS  -------------------------------*/
+  if  de-tot-bas-iss <> 0 then do:
+      assign de-aliquota-iss = de-tot-iss * 100 / de-tot-bas-iss.
+  end.
+  else do:
+      assign de-aliquota-iss = 0 .
+  end.
+
+  if de-tot-icmssubs-obs <> 0 then
+     if estabelec.estado = "SP" and
+        emitente.estado  = "SP" then
+              assign de-tot-icm = 0.
+
+
+  put   de-tot-bas-icm           format ">>>,>>>,>>9.99"  at 11 /* 14 */
+        de-tot-icm               format ">>>,>>>,>>9.99"  at 38 /* 41 */
+        de-tot-bicmssubs         format ">>>,>>>,>>9.99"  at 64 /* 67 */
+        de-tot-icmssubs          format ">>>,>>>,>>9.99"  at 93 /* 96 */
+        nota-fiscal.vl-mercad    format ">>>,>>>,>>9.99"  at 121 /* 124 - at 130 */ skip (1).
+
+  put   nota-fiscal.vl-frete     format ">>>,>>>,>>9.99"  at 11 /* 14 */
+        nota-fiscal.vl-seguro    format ">>>,>>>,>>9.99"  at 38 /* 41 */
+        nota-fiscal.vl-embalagem format ">>>,>>>,>>9.99"  at 64 /* 67 */
+        de-tot-ipi               format ">>>,>>>,>>9.99"  at 93 /* 96 */
+        nota-fiscal.vl-tot-nota  format ">>>,>>>,>>9.99"  at 121 /* 124 - at 130 */ skip (2).
+
+/*------------------  TRANSPORTADORA E DESPESAS ACESSORIAS  ------------------*/
+
+  find transporte
+       where transporte.nome-abrev = nota-fiscal.nome-trans no-lock no-error.
+
+  if   nota-fiscal.cidade-cif <> ""
+  then assign c-pago = "1".
+  else assign c-pago = "2".
+
+
+  /*------  ESPECIE  ------*/
+
+  i = 0.
+  for each nota-embal use-index ch-nota-emb
+      where nota-embal.cod-estabel = nota-fiscal.cod-estabel
+      and   nota-embal.serie       = nota-fiscal.serie
+      and   nota-embal.nr-nota-fis = nota-fiscal.nr-nota-fis no-lock:
+
+      i = i + 1.
+      if i > 5 then leave.
+      
+  &if defined (bf_dis_embalagem) &then
+     if param-global.dec-1 = 1 then do:    
+       find eb-embalagem where
+            eb-embalagem.cod-sigla-emb = nota-embal.sigla-emb no-lock no-error.
+       if available(eb-embalagem) then
+             c-especie[i] = eb-embalagem.descricao.
+         else c-especie[i] = " ".
+         i-qt-volumes[i] = nota-embal.qt-volumes.
+       end.
+      end.
+      else do:
+         find embalag where
+            embalag.sigla-emb = nota-embal.sigla-emb no-lock no-error.
+         if available(embalag) then
+             c-especie[i] = embalag.descricao.
+          else c-especie[i] = " ".
+           i-qt-volumes[i] = nota-embal.qt-volumes.
+         end.
+      end.
+  &else
+       find embalag where
+            embalag.sigla-emb = nota-embal.sigla-emb no-lock no-error.
+        if available(embalag) then
+             c-especie[i] = embalag.descricao.
+          else c-especie[i] = " ".
+          i-qt-volumes[i] = nota-embal.qt-volumes.
+        end.
+  &endif      
+               
+   /*------  TRANSPORTADORA  ------*/
+
+   if  avail transporte then do:
+       put transporte.nome                                     at  6
+           c-pago                                              at  74 /* 78 */
+           nota-fiscal.placa                                   at  90
+           nota-fiscal.uf-placa                                at  105 /* 110 */
+           transporte.cgc                                      at  120 skip(1).
+
+       put transporte.endereco                                 at   6
+           transporte.cidade                                   at  66
+           transporte.estado                                   at  105 /* 110 */
+           transporte.ins-estadual                             at  120 skip.
+
+   end.
+   else  put c-pago                                                at 76 /* 78 */ skip.
+       
+   /*------  DADOS DOS VOLUMES  ------*/
+   /* alteração para imprimir brancos no lugar de zeros - solicitado por Fabio Firmino em 18/12/2003 e alterado por Silvia */
+   if i-qt-volumes[1] = 0          and 
+      nota-fiscal.peso-bru-tot = 0 and 
+      nota-fiscal.peso-liq-tot = 0 then do:    
+      put " "   at  6
+          " "   at 32
+          " "   at 60  /*62*/ 
+          " "   at 87  /*90*/
+          " "   at 104 /*107*/ 
+          " "   at 122 .
+
+
+     /* obs.: as inibições abaixo, realizadas pela Patrícia foram solicitadas pelo Franco em 15/01/2004 */
+
+      do i = 2 to 5:
+           if i-qt-volumes[i] <> 0 then
+           do:
+              /* Incluido por Helder, solicitado por Ricardo Pinto 18/01/2006 */
+              if nota-fiscal.nat-operacao <> "6902ii" and nota-fiscal.nat-operacao <> "7101ii" then
+                 put i-qt-volumes[i]   format ">>>,>>9"                   at 6.
+
+              put /* i-qt-volumes[i]                                    at 6    inibido por Patricia em 15/01 */
+                  c-especie[i]       format "x(18)"                                   at 32.
+           end.       
+           else put " " at 32.
+      end.
+
+   end.
+   else do:
+   
+      /* Incluido por Helder, solicitado por Ricardo Pinto 18/01/2006 */
+      if nota-fiscal.nat-operacao <>"6902ii" and nota-fiscal.nat-operacao <> "7101ii" then
+         put i-qt-volumes[1]   format ">>>,>>9"                      at  6.
+
+      put /* i-qt-volumes[1]                                       at  6   inibido por Patricia em 15/01 */
+           c-especie[1]           format "x(18)"                                 at 32
+           nota-fiscal.marca-volume                                at  60 /*62*/ .
+           /*nota-fiscal.nr-volumes                                at  88 /*90*/ 
+             nota-fiscal.peso-bru-tot   format ">>>,>>>,>>9.999"   at  104 /*107*/ 
+             nota-fiscal.peso-liq-tot   format ">>>,>>>,>>9.999"   at 122 inibido por Patricia em 15/01*/
+             
+      /* Incluido por Helder, solicitado por Ricardo Pinto 18/01/2006 */
+      if nota-fiscal.nat-operacao <> "6902ii" and nota-fiscal.nat-operacao <> "7101ii" then
+         put nota-fiscal.nr-volumes                                at 87 /*90*/ 
+             nota-fiscal.peso-bru-tot   format ">>>,>>>,>>9.999"   at 104 /*107*/ 
+             nota-fiscal.peso-liq-tot   format ">>>,>>>,>>9.999"   at 122.
+
+        do i = 2 to 5:
+           if i-qt-volumes[i] <> 0 then
+           do:
+              /* Incluido por Helder, solicitado por Ricardo Pinto 18/01/2006 */
+              if nota-fiscal.nat-operacao <> "6902ii" and nota-fiscal.nat-operacao <> "7101ii" then
+                 put i-qt-volumes[i]                                    at 6.
+              
+              put /* i-qt-volumes[i]                                    at 6  inibido por Patricia em 15/01 */
+                  c-especie[i]      format "x(18)"                                    at 32.
+           end.       
+           else put " " at 32.
+        end.
+   end.
+
+   /******************************************************************************************************
+   ------- DADOS ADICIONAIS ------- NÇO IMPRIMIR DADOS DO REPRESENTANTE E PEDIDO
+   find repres where
+        repres.cod-rep = nota-fiscal.cod-rep no-lock no-error.
+   if avail repres then 
+      assign c-repres = " - " + repres.nome-abrev.
+   else c-repres = " ".
+   put nota-fiscal.cod-rep     at  6
+       c-repres                at  6.
+   if avail ped-venda then
+       put ped-venda.nr-pedido at 37.
+   put nota-fiscal.nr-pedcli   at 67.    
+   *******************************************************************************************************/
+   
+   /* ------ CLASSIFICA€ÇO FISCAL -------------
+   
+   put "Classifica‡Æo Fiscal: " at 6.
+   put c-class-fiscal format {cdp/cd0603.i3} at 29.  
+                                                  
+   put " " skip(1).
+
+     ------- TRANSPORTADORA REDESPACHO ------- */
+  /*
+  find transporte
+       where transporte.nome-abrev = nota-fiscal.nome-tr-red no-lock no-error.
+
+  if available transporte then do:
+     if transporte.endereco = "." then c-redesp = " ".
+     else do:
+          c-redesp =
+               substring(transporte.endereco,1,length(transporte.endereco)) +
+               " / ".
+          if transporte.bairro <> " " then
+             c-redesp = c-redesp +
+                      substring(transporte.bairro,1,length(transporte.bairro)) +
+                      " / ".
+           c-redesp = c-redesp +
+                      substring(transporte.cidade,1,length(transporte.cidade)) +
+                      " / " +
+                      substring(transporte.estado,1,length(transporte.estado)).
+           if transporte.telefone <> " " then
+              c-redesp = c-redesp + "(" +
+                         substring(transporte.telefone,1,
+                                   length(transporte.telefone)) + ")".
+      end.
+      if transporte.endereco <> "." then
+         put transporte.cod-transp                  at 15
+             " - "                                  at 21
+             transporte.nome                        at 24 skip
+             c-redesp                format "x(75)" at 15 skip(1).
+      else put " " at 15 skip
+               " " at 15 skip(1).
+   end.
+   else put " " at 15 skip(1).
+*/
+/*------------- IMPRESSAO DAS LINHAS DA OBS --------------*/
+
+/*if tt-param.destino = 1 then
+    PUT CONTROL CHR(27)+ CHR(80)+ CHR(27)+ CHR(15). /* Tamanho/Densidade 17 Caracteres pro Polegada */
+*/
+  do  i = 1 to 8:
+      put c-mess[i] format "x(75)" at 06 skip.
+  end.
+  
+/*if tt-param.destino = 1 then
+    PUT CONTROL CHR(27)+ CHR(80)+ CHR(18). /* Tamanho/Densidade 10 Caracteres pro Polegada */
+  */
+
+  put skip (9).
+
+  put c-num-nota at 130 skip(4).
+
+/* ESFT0515.I1 */

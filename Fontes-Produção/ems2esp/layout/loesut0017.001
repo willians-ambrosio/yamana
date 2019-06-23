@@ -1,0 +1,34 @@
++------------------------------------------------------------------------------------------------------------------------------+ 
+|                            Lay-out do Arquivo para Importacao de Preço Item Contrato                                         | 
+|------------------------------------------------------------------------------------------------------------------------------| 
+|                                               Formato: Planilha Excel                                                        | 
+|------------------------------------------------------------------------------------------------------------------------------| 
+| Ordem |     Descricao                                                                     | Coluna       |     Obrigatorio   | 
++------------------------------------------------------------------------------------------------------------------------------+ 
+|------------------------------------------------------------------------------------------------------------------------------| 
+|    1  | Estabelecimento                                                                   | Coluna A     |        SIM        | 
+|    2  | Pessoa                                                                            | Coluna B     |        SIM        | 
+|    3  | Fornecedor                                                                        | Coluna C     |        SIM        | 
+|    4  | Nome Abreviado                                                                    | Coluna D     |        SIM        | 
+|    5  | Data Referencia                                                                   | Coluna E     |        SIM        | 
+|    6  | Pais                                                                              | Coluna F     |        SIM        | 
+|    7  | UF                                                                                | Coluna G     |        SIM        | 
+|    8  | Imposto                                                                           | Coluna H     |        SIM        | 
+|    9  | Class Imposto                                                                     | Coluna I     |        SIM        | 
+|   10  | Especie                                                                           | Coluna J     |        SIM        | 
+|   11  | Serie                                                                             | Coluna K     |        SIM        | 
+|   12  | Titulo                                                                            | Coluna L     |        SIM        | 
+|   13  | Parcela                                                                           | Coluna M     |        SIM        | 
+|   14  | Vl Rendto Tribut                                                                  | Coluna N     |        SIM        | 
+|   15  | Dedução Inss                                                                      | Coluna O     |        SIM        | 
+|   16  | Dedução Dependentes                                                               | Coluna P     |        SIM        | 
+|   17  | Outras Deduções                                                                   | Coluna Q     |        SIM        | 
+|   18  | Aliq                                                                              | Coluna R     |        SIM        | 
+|   19  | Total Imposto Retido                                                              | Coluna S     |        SIM        | 
+|   20  | Data Nova                                                                         | Coluna T     |        SIM        | 
+|   21  | Ação                                                                              | Coluna U     |        SIM        | 
++------------------------------------------------------------------------------------------------------------------------------+ 
+
+
+
+

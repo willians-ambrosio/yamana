@@ -1,0 +1,14 @@
+ADD FIELD "url-webservice" OF "es-param-tax" AS character 
+  FORMAT "x(100)"
+  INITIAL ""
+  LABEL "URL W.S"
+  POSITION 3
+  MAX-WIDTH 200
+  COLUMN-LABEL "URL W.S"
+  ORDER 20
+
+.
+PSC
+cpstream=ibm850
+.
+0000000461

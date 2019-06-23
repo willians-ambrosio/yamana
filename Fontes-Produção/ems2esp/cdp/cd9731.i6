@@ -1,0 +1,28 @@
+/***********************************************************************
+** Copyright DATASUL S.A. (1997)
+** Todos os Direitos Reservados.
+** Este fonte e de propriedade exclusiva da DATASUL, sua reproducao
+** parcial ou total por qualquer meio, so podera ser feita mediante
+** autorizacao expressa.
+************************************************************************/
+/***********************************************************************
+** PROGRAMA: cd9731.i6
+**
+** DATA....: Abril de 2005
+**
+** OBJETIVO: verifica se a integra‡Æo on-line entre MIN e MMI est 
+**           ativada. A partir do EMS 206B passa a fazer parte do produto.
+************************************************************************/
+
+def var l-min-mmi as logical init no no-undo.
+
+&if "{&bf_mat_versao_ems}" >= "2.04" &then
+    &if "{&bf_mat_versao_ems}" >= "2.062" &then
+        assign l-min-mmi = yes.
+    &else
+        assign l-min-mmi = can-find (first funcao
+                                     where funcao.cd-funcao = "spp-min-mmi"
+                                       and funcao.ativo = yes).
+    &endif
+&endif
+
